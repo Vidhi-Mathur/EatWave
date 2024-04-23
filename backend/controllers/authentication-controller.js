@@ -1,6 +1,7 @@
 const User = require('../models/user-model')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+let blacklistedTokens = []
 
 const generateJWTToken = async(payload) => {
     return jwt.sign(payload, process.env.SECRET_KEY)
@@ -52,17 +53,28 @@ exports.postLogin = async(req, res, next) => {
     }
 }
 
-exports.postLogout = (req, res, next) => {
-
-}
-
-exports.authorizationMiddleware = async(req, res, next) => {
-    //No authorization header set
+exports.postLogout = async(req, res, next) => {
     try {
         let authorization = await req.headers.authorization
         if(!authorization) return res.status(401).json({message: 'Unauthorized'})
+        //Not a token
         let token = await authorization.split(' ')[1]
-        if(!token) return res.status(401).json({message: 'Unauthorized'})
+        blacklistedTokens.push(token)
+        res.status(200).json({message: 'Logged out successfully'})
+    }
+    catch(err) {
+        next(err)
+    }
+}
+
+exports.authorizationMiddleware = async(req, res, next) => {
+    try {
+        //No authorization header set
+        let authorization = await req.headers.authorization
+        if(!authorization) return res.status(401).json({message: 'Unauthorized'})
+        //Not a token
+        let token = await authorization.split(' ')[1]
+        if(!token || blacklistedTokens.includes(token)) return res.status(401).json({message: 'Unauthorized'})
         //Verify
         let decodedToken = await jwt.verify(token, process.env.SECRET_KEY)
         req.encodedData = decodedToken
