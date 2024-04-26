@@ -3,13 +3,17 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
-const authRoutes = require('./routes/authentication-route')
+const authRoutes = require('./routes/user-related/authentication-route')
+const restaurantRoute = require('./routes/restaurant-related/restaurant-route')
+const menuRoute = require('./routes/restaurant-related/menu-route')
 
 //Setting views
 app.use(bodyParser.json())
 
 //Forwarding
 app.use('/', authRoutes)
+app.use('/restaurant/menu', menuRoute)
+app.use('/restaurant', restaurantRoute)
 
 //Error Handling
 app.use((err, req, res, next) => {
