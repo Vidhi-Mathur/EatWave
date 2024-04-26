@@ -30,15 +30,17 @@ const restaurant = new schema({
     },
     menu: {
         type: mongoose.Schema.ObjectId,
-        ref: 'Menu'
+        ref: 'Menu',
+        required: true
     },
     review: {
         type: mongoose.Schema.ObjectId,
         ref: 'Review'
     },
-    paymentMethods: [{
-        methods: ['Cash', 'Credit-Card', 'Debit-Card', 'UPI', 'Net-Banking']
-    }],
+    paymentMethods: [[{
+        type: String,
+        enum: ['Cash', 'Credit-Card', 'Debit-Card', 'UPI', 'Net-Banking']
+    }]],
     deliveryCharges: {
         type: Number,
         default: 0
