@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const authController = require('../controllers/authentication-controller')
+const authController = require('../../controllers/user-related/authentication-controller')
 
 //POST /eatwave/signup
 router.post('/signup', authController.postSignup)
