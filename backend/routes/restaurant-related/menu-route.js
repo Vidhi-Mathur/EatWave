@@ -8,7 +8,7 @@ router.get('/:id', menuController.getMenuById)
 //POST /eatwave/restaurant/menu/new
 router.post('/new', menuController.createMenu)
 
-//PATCH /eatwave/restaurant/menu/:menuId/items/:itemId
+//PATCH  /eatwave/restaurant/menu/:menuId/items/:itemId
 router.patch('/:menuId', menuController.updateMenu)
 
 module.exports = router
