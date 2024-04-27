@@ -39,3 +39,44 @@ exports.getRestaurantById = async(req, res, next) => {
         next(err)
     }
 }
+
+exports.updateRestaurant = async(req, res, next) => {
+    try {
+        const { id } = req.params
+        const restaurant = await Restaurant.findById(id)
+        if(!restaurant) return res.status(404).json({message: 'No associated restaurant found'})    
+        const updatedFields = req.body
+        if(updatedFields.menu){
+            //Delete old menu
+            await Menu.findByIdAndDelete(restaurant.menu)
+            //Save new one
+            restaurant.menu = updatedFields.menu
+            //Update restaurant in menu
+            const menu = await Menu.findById(updatedFields.menu)
+            menu.restaurant = restaurant._id
+            await menu.save()
+            delete updatedFields.menu
+        }
+        Object.assign(restaurant, updatedFields)
+        await restaurant.save()
+        res.status(200).json({ restaurant })
+    }
+    catch(err) {
+        next(err)
+    }
+}
+
+exports.deleteRestaurant = async(req, res, next) => {
+    try {
+        const { id } = req.params
+        const restaurant = await Restaurant.findById(id)
+        if(!restaurant) return res.status(404).json({message: 'No associated restaurant found'})
+        await Restaurant.findByIdAndDelete(id)
+        //Delete associated menu with that restaurant
+        await Menu.deleteMany({ restaurant: restaurant._id })
+        res.status(200).json({message: 'Deleted successfully'})
+    }
+    catch(err){
+        next(err)
+    }
+}
