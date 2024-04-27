@@ -11,7 +11,7 @@ router.post('/new', restaurantController.createRestaurant)
 //PATCH /eatwave/restaurant/:id
 router.patch('/:id', restaurantController.updateRestaurant)
 
-//DELETE /eatwave/restaurant/:id
+//DELETE  /eatwave/restaurant/:id
 router.delete('/:id', restaurantController.deleteRestaurant)
 
 module.exports = router
