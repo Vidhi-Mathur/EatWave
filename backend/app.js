@@ -6,6 +6,7 @@ const mongoose = require('mongoose')
 const authRoutes = require('./routes/user-related/authentication-route')
 const restaurantRoute = require('./routes/restaurant-related/restaurant-route')
 const menuRoute = require('./routes/restaurant-related/menu-route')
+const orderRoute = require('./routes/shared/order-route')
 
 //Setting views
 app.use(bodyParser.json())
@@ -14,6 +15,7 @@ app.use(bodyParser.json())
 app.use('/', authRoutes)
 app.use('/restaurant/menu', menuRoute)
 app.use('/restaurant', restaurantRoute)
+app.use('/order', orderRoute)
 
 //Error Handling
 app.use((err, req, res, next) => {
