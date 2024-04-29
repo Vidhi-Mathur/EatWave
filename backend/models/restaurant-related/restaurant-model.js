@@ -44,7 +44,12 @@ const restaurant = new schema({
     deliveryCharges: {
         type: Number,
         default: 0
-    }
+    },
+    pastOrders: [{
+        type: mongoose.Schema.ObjectId,
+        ref: 'Order',
+        default: null
+    }]
 })
 
 module.exports = mongoose.model('Restaurant', restaurant)
