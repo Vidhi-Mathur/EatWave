@@ -19,6 +19,10 @@ const user = new schema({
         type: mongoose.Schema.ObjectId,
         ref: 'Order',
         default: null
+    }],
+    reviews: [{
+        type: mongoose.Schema.ObjectId,
+        ref: 'Review'
     }]
 })
 

@@ -2,13 +2,20 @@ const mongoose = require('mongoose')
 const schema = mongoose.Schema
 
 const review = new schema({
+    order: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Order',
+        required: true
+    },
     restaurant: {
         type: mongoose.Schema.ObjectId,
-        ref: 'Restaurant'
+        ref: 'Restaurant',
+        required: true
     },
     reviewer: {
         type: mongoose.Schema.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
     },
     rating: {
         type: Number,
@@ -18,7 +25,7 @@ const review = new schema({
     },
     comments: {
         type: String,
-        required: true
+        default: ""
     },
     date: {
         type: Date,

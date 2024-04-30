@@ -49,6 +49,10 @@ const restaurant = new schema({
         type: mongoose.Schema.ObjectId,
         ref: 'Order',
         default: null
+    }],
+    reviews: [{
+        type: mongoose.Types.ObjectId,
+        ref: 'Review'
     }]
 })
 

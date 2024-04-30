@@ -38,6 +38,11 @@ const order = new schema({
         type: String,
         enum: ['Placed', 'Confirmed', 'Preparing', 'On the way', 'Delivered', 'Cancelled'],
         default: 'Placed'
+    },
+    review: {
+        type: mongoose.Types.ObjectId,
+        ref: 'Review',
+        default: null
     }
 }, { timestamps: true })
 
