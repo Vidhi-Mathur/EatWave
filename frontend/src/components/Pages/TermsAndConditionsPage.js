@@ -1,10 +1,10 @@
 import React from "react";
 import backgroundImage from '../../assets/EatWaveLogo1.png'
-import HomePage from "./HomePage";
+import Layout from "../UI/Layout";
 
 const TermsAndConditions = () => {
   return (
-    <HomePage customisedImageUrl={backgroundImage}>
+    <Layout customisedImageUrl={backgroundImage}>
   <div className="container mx-auto px-4 py-8 max-h-[calc(100vh-98px)] overflow-y-auto">
      <p className="mb-4">
         Last updated on March 31, 2023
@@ -66,7 +66,7 @@ const TermsAndConditions = () => {
         This policy may change from time to time, your continued use of EatWave's Services after it makes any change is deemed to be acceptance of those changes, so please check the policy periodically for updates.
       </p>
     </div>
-    </HomePage>
+    </Layout>
   );
 };
 
