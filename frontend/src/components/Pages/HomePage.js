@@ -1,19 +1,13 @@
-import React from "react";
-import Header from "../UI/Header";
-import backgroundImage from "../../assets/EatWaveBg.jpeg";
+import Layout from "../UI/Layout";
+import TopPicks from "../restaurant-related/TopPicks";
 
-const HomePage = ({children, customisedImageUrl}) => {
+const HomePage = () => {
   return (
-    <div className="relative">
-      <Header />
-      <div
-        className="fixed top-0 left-0 w-full h-full bg-cover bg-no-repeat bg-center z-0"
-        style={{ backgroundImage: `url(${customisedImageUrl || backgroundImage})` }}
-      />
-      {/* Appers above background image */}
-      <div className="relative z-10">{children}</div>
-    </div>
+    <Layout>
+      <TopPicks />
+    </Layout>
   );
 };
 
 export default HomePage;
+
