@@ -1,11 +1,15 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Card from "../UI/Card";
 import PersonIcon from '@mui/icons-material/Person';
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
+import { useContext, useState } from "react";
+import { AuthContext } from "../../store/Auth-Context";
 
 const AuthForm = ({ signupMode, toggleHandler }) => {
+    const { signup, login } = useContext(AuthContext)
+    const navigate = useNavigate()
+    const [token, setToken] = useState(null)
     const submitHandler = async (e) => {
         e.preventDefault();
         const form = new FormData(e.target)
@@ -21,12 +25,16 @@ const AuthForm = ({ signupMode, toggleHandler }) => {
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': token? `Bearer ${token}`: ' ' 
                 },
                 body: JSON.stringify(data)
             })
             if (!response) throw new Error('Failed to Submit Form')
             const result = await response.json()
+            signupMode? signup(): login()
+            setToken(result.token)
+            navigate('/')
             //In case needed anywhere in component
             return result
         }
