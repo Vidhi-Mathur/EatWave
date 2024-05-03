@@ -42,7 +42,7 @@ exports.getReviewByOrderId = async(req, res, next) => {
         const id = req.params.order
         const order = await Order.findById(id)
         if(!order) return res.status(404).json({message: 'Order not found'})
-        const review = await Review.find({ order: id }).select('_id')
+        const review = await Review.find({ order: id })
         res.status(200).json({ review })
    }
    catch(err) {
@@ -55,7 +55,8 @@ exports.getReviewsByRestaurantId = async(req, res, next) => {
         const id = req.params.restaurant
         const restaurant = await Restaurant.findById(id)
         if(!restaurant) return res.status(404).json({message: 'Restaurant not found'})
-        const reviews = await Review.find({ restaurant: id }).select('_id')
+        //To populate reviewer field with corresponding user's name
+        const reviews = await Review.find({ restaurant: id }).populate('reviewer', 'name')
         res.status(200).json({ reviews })
     }
     catch(err) {
