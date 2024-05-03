@@ -3,15 +3,9 @@ import { Link } from 'react-router-dom';
 import Card from '../UI/Card';
 import StarIcon from '@mui/icons-material/Star';
 
-// ReviewStar component to display the review star enclosed in a small box
 const ReviewStar = ({ rating }) => (
-    <div className="flex items-center bg-green-900">
-      <div className="flex items-center">
-        <StarIcon style={{color: 'ghostwhite'}}/>
-      </div>
-      <div className="ml-2 text-white w-5">{rating}</div>
-    </div>
-  );
+    <button className="bg-orange-600 text-white px-2 py-1 rounded-md"><StarIcon style={{color: 'ghostwhite'}} /> {rating}</button>
+);
 
 const TopPicks = () => {
     const [topRestaurants, setTopRestaurants] = useState([]);
@@ -24,7 +18,6 @@ const TopPicks = () => {
                     throw new Error('Can\'t fetch restaurants');
                 }
                 const result = await response.json();
-                console.log(result.topRestaurants)
                 setTopRestaurants(result.topRestaurants);
             } catch (err) {
                 console.log(err);
