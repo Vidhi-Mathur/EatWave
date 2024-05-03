@@ -33,10 +33,6 @@ const restaurant = new schema({
         ref: 'Menu',
         required: true
     },
-    review: {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Review'
-    },
     paymentMethods: [[{
         type: String,
         enum: ['Cash', 'Credit-Card', 'Debit-Card', 'UPI', 'Net-Banking']
