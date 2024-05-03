@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Layout from "../UI/Layout";
-import Card from "../UI/Card";
+import Content from "../UI/Content";
+import { Menu } from "../restaurant-related/Menu";
+import { Review } from "../restaurant-related/Review";
 
 const RestaurantDetailPage = () => {
     const { id } = useParams();
     const [restaurantDetail, setRestaurantDetail] = useState(null);
+    const [showMenu, setShowMenu] = useState(false)
+    const [showReviews, setShowReviews] = useState(false)
 
     useEffect(() => {
         const fetchRestaurantDetails = async () => {
@@ -27,11 +31,9 @@ const RestaurantDetailPage = () => {
 
     return (
         <Layout>
-            <div className="container mx-auto px-4 py-8 max-h-[calc(100vh-98px)] overflow-y-auto">
-            <Card>
+            <Content>
             <div className="max-w-4xl mx-auto px-4 py-8">
                 <h1 className="text-3xl font-bold mb-4">{restaurantDetail.name}</h1>
-
                 {/* Restaurant Images */}
                 {restaurantDetail.images && restaurantDetail.images.length > 0 && (
                     <div className="mb-8">
@@ -61,28 +63,18 @@ const RestaurantDetailPage = () => {
                             </div>
                         </div>
 
-                        {/* Reviews */}
-                        <div className="mb-8">
-                            <h2 className="text-xl font-semibold mb-2">Reviews</h2>
-                            {restaurantDetail.reviews.map((review, index) => (
-                                <div key={index} className="mb-4">
-                                    <p className="text-gray-700 mb-2">{review.user}: {review.comment}</p>
-                                    <div className="flex items-center">
-                                        {[...Array(review.rating)].map((_, i) => (
-                                            <svg key={i} xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
-                                            </svg>
-                                        ))}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-
                         {/* Menu */}
                         <div className="mb-8">
-                            <h2 className="text-xl font-semibold mb-2">Menu</h2>
-                            {/* Render menu items here */}
+                            <button onClick={() => setShowMenu(!showMenu)} className="bg-orange-600 text-white px-4 py-2 rounded-md">Show Menu</button>
+                            {showMenu && <Menu id={restaurantDetail.menu}/>}
                         </div>
+
+                        {/* Reviews */}
+                        <div className="mb-8">
+                            <button onClick={() => setShowReviews(!showReviews)} className="bg-orange-600 text-white px-4 py-2 rounded-md">Show Reviews</button>
+                            {showReviews && <Review id={id} />}
+                        </div>
+                        
                     </div>
 
                     {/* Right Column */}
@@ -95,8 +87,7 @@ const RestaurantDetailPage = () => {
                     </div>
                 </div>
             </div>
-            </Card>
-            </div>
+            </Content>
         </Layout>
     );
 }
