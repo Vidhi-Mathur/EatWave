@@ -11,7 +11,7 @@ export const MenuCtxProvider = ({children}) => {
         items: []
     })
 
-    const addToCart = ({itemId}) => {
+    const addToCart = ({itemId, name, price}) => {
         setCart((prevCart) => {
             //Copy
             let newCart = [...prevCart.items]
@@ -33,7 +33,9 @@ export const MenuCtxProvider = ({children}) => {
             else {
                 newItem = {
                     id: itemId,
-                    quantity: 1
+                    name,
+                    quantity: 1,
+                    price
                 }
                 newCart.push(newItem)
             }
