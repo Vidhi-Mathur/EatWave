@@ -1,21 +1,25 @@
 import { useEffect, useState } from "react"
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-export const Review = ({id}) => {
+export const Review = ({restaurantId}) => {
     const [reviews, setReviews] = useState(null)
 
     useEffect(() => {
         const fetchReviews = async() => {
-            const response = await fetch(`http://localhost:3000/review/restaurant/${id}`)
-            if (!response.ok) {
-                throw new Error("Can't fetch restaurant details");
+            try {
+                const response = await fetch(`http://localhost:3000/review/restaurant/${restaurantId}`)
+                 if (!response.ok) {
+                    throw new Error("Can't fetch restaurant details");
+                }
+                const result = await response.json()
+                setReviews(result.reviews)
             }
-            const result = await response.json()
-            console.log(result.reviews);
-            setReviews(result.reviews)
+            catch(err) {
+                console.log(err)
+            }
         }
         fetchReviews()
-    }, [id])
+    }, [restaurantId])
     
     if(!reviews) return <div>Loading...</div>
 

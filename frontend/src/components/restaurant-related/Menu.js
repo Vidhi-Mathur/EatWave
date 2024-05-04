@@ -2,14 +2,16 @@ import { useContext, useEffect, useState } from "react"
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 import { MenuContext } from "../../store/Menu-Context";
+import { AuthContext } from "../../store/Auth-Context";
 
-export const Menu = ({id}) => {
+export const Menu = ({menuId}) => {
     const [menu, setMenu] = useState(null)
+    const { isAuthenticated } = useContext(AuthContext)
     const { items, addToCart, removeFromCart } = useContext(MenuContext)
     useEffect(() => {
         const fetchMenu = async() => {
             try {
-                const response = await fetch(`http://localhost:3000/restaurant/menu/${id}`)
+                const response = await fetch(`http://localhost:3000/restaurant/menu/${menuId}`)
                 if (!response.ok) {
                     throw new Error("Can't fetch restaurant details");
                 }
@@ -21,7 +23,7 @@ export const Menu = ({id}) => {
             }
         }
         fetchMenu()
-    }, [id])
+    }, [menuId])
 
     if(!menu) return <div>Loading...</div>
     return (
@@ -37,15 +39,15 @@ export const Menu = ({id}) => {
                         <p className="text-gray-600">{item.description}</p>
                         <p className="text-gray-800 mt-2">${item.price}</p>
                         </div>
-                        <div>
-                            {quantity === 0? <button onClick={() => addToCart({itemId: item._id})} className="bg-orange-100 px-4 py-3 rounded-md">ADD</button>: (
+                        {isAuthenticated && (<div>
+                            {quantity === 0? <button onClick={() => addToCart({itemId: item._id, name: item.name, price: item.price})} className="bg-orange-100 px-4 py-3 rounded-md">ADD</button>: (
                                  <div className="flex items-center">
                                  <button onClick={() => removeFromCart({itemId: item._id})} className="bg-orange-100 px-3 py-2 rounded-md"><RemoveIcon /></button>
                                  <span className="px-4">{quantity}</span>
-                                 <button onClick={() => addToCart({itemId: item._id})} className="bg-orange-100 px-3 py-2 rounded-md"><AddIcon /></button>
+                                 <button onClick={() => addToCart({itemId: item._id, name: item.name, price: item.price})} className="bg-orange-100 px-3 py-2 rounded-md"><AddIcon /></button>
                              </div>
                             )}
-                        </div>
+                        </div>)}
                     </div>
                     </>
                     )

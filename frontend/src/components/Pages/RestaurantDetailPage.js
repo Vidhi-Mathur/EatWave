@@ -6,7 +6,7 @@ import { Menu } from "../restaurant-related/Menu";
 import { Review } from "../restaurant-related/Review";
 
 const RestaurantDetailPage = () => {
-    const { id } = useParams();
+    const { restaurantId } = useParams();
     const [restaurantDetail, setRestaurantDetail] = useState(null);
     const [showMenu, setShowMenu] = useState(false)
     const [showReviews, setShowReviews] = useState(false)
@@ -14,7 +14,7 @@ const RestaurantDetailPage = () => {
     useEffect(() => {
         const fetchRestaurantDetails = async () => {
             try {
-                const response = await fetch(`http://localhost:3000/restaurant/${id}`);
+                const response = await fetch(`http://localhost:3000/restaurant/${restaurantId}`);
                 if (!response.ok) {
                     throw new Error("Can't fetch restaurant details");
                 }
@@ -25,7 +25,7 @@ const RestaurantDetailPage = () => {
             }
         };
         fetchRestaurantDetails();
-    }, [id]);
+    }, [restaurantId]);
 
     if (!restaurantDetail) return <div>Loading...</div>;
 
@@ -66,13 +66,13 @@ const RestaurantDetailPage = () => {
                         {/* Menu */}
                         <div className="mb-8">
                             <button onClick={() => setShowMenu(!showMenu)} className="bg-orange-600 text-white px-4 py-2 rounded-md">Show Menu</button>
-                            {showMenu && <Menu id={restaurantDetail.menu}/>}
+                            {showMenu && <Menu menuId={restaurantDetail.menu} />}
                         </div>
 
                         {/* Reviews */}
                         <div className="mb-8">
                             <button onClick={() => setShowReviews(!showReviews)} className="bg-orange-600 text-white px-4 py-2 rounded-md">Show Reviews</button>
-                            {showReviews && <Review id={id} />}
+                            {showReviews && <Review restaurantId={restaurantId} />}
                         </div>
                         
                     </div>
