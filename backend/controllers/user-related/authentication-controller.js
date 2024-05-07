@@ -77,7 +77,7 @@ exports.authorizationMiddleware = async(req, res, next) => {
         if(!token || blacklistedTokens.includes(token)) return res.status(401).json({message: 'Unauthorized'})
         //Verify
         let decodedToken = await jwt.verify(token, process.env.SECRET_KEY)
-        req.encodedData = decodedToken
+        req.user = decodedToken
         next()
     }
     catch(err){
