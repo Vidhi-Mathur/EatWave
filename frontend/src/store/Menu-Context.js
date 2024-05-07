@@ -3,13 +3,16 @@ import { createContext, useState } from "react";
 export const MenuContext = createContext({
     items: [],
     addToCart: () => {},
-    removeFromCart: () => {}
+    removeFromCart: () => {},
+    restaurant: null,
+    setRestaurantId: () => {}
 })
 
 export const MenuCtxProvider = ({children}) => {
     const [cart, setCart] = useState({
         items: []
     })
+    const [restaurantId, setRestaurantId] = useState(null)
 
     const addToCart = ({itemId, name, price}) => {
         setCart((prevCart) => {
@@ -73,7 +76,9 @@ export const MenuCtxProvider = ({children}) => {
     const ctxValue = {
         items: cart.items,
         addToCart,
-        removeFromCart
+        removeFromCart,
+        restaurant: restaurantId,
+        setRestaurantId
     }
 
     return <MenuContext.Provider value={ctxValue}>{children}</MenuContext.Provider>
