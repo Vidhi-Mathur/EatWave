@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Layout from "../UI/Layout";
 import Content from "../UI/Content";
 import { Menu } from "../restaurant-related/Menu";
 import { Review } from "../restaurant-related/Review";
+import { MenuContext } from "../../store/Menu-Context";
 
 const RestaurantDetailPage = () => {
     const { restaurantId } = useParams();
+    const { setRestaurantId } = useContext(MenuContext)
     const [restaurantDetail, setRestaurantDetail] = useState(null);
     const [showMenu, setShowMenu] = useState(false)
     const [showReviews, setShowReviews] = useState(false)
@@ -20,12 +22,13 @@ const RestaurantDetailPage = () => {
                 }
                 const result = await response.json();
                 setRestaurantDetail(result.restaurant);
+                setRestaurantId(result.restaurant._id)
             } catch (err) {
                 console.log(err);
             }
         };
         fetchRestaurantDetails();
-    }, [restaurantId]);
+    }, [restaurantId, setRestaurantId]);
 
     if (!restaurantDetail) return <div>Loading...</div>;
 
