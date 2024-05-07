@@ -5,7 +5,8 @@ const Order = require('../../models/shared/order-model')
 
 exports.placeOrder = async(req, res, next) => {
     try {
-        const { user, restaurant, items, totalCost, address } = req.body
+        const { restaurant, items, totalCost, address } = await req.body
+        const user = await req.user._id
         //User/ Restaurant/ items not found
         const existingUser = await User.findById(user)
         if(!existingUser) return res.status(404).json({message: 'No user found, try sign up before placing order'})
