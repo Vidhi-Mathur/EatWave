@@ -3,13 +3,12 @@ import Card from "../UI/Card";
 import PersonIcon from '@mui/icons-material/Person';
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { AuthContext } from "../../store/Auth-Context";
 
 const AuthForm = ({ signupMode, toggleHandler }) => {
-    const { signup, login } = useContext(AuthContext)
+    const { signup, login, token, setToken} = useContext(AuthContext)
     const navigate = useNavigate()
-    const [token, setToken] = useState(null)
     const submitHandler = async (e) => {
         e.preventDefault();
         const form = new FormData(e.target)

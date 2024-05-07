@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect } from "react"
+import { AuthContext } from "../../store/Auth-Context"
 
 export const Logout = () => {
-    const [token, setToken] = useState(null)
+    const { token, setToken } = useContext(AuthContext)
     useEffect(() => {
         const logoutUser = async() => {
             const response = await fetch('http://localhost:3000/logout', {
@@ -14,7 +15,7 @@ export const Logout = () => {
             setToken(null)
         }
         logoutUser()
-    }, [token])
+    }, [token, setToken])
     //As renders nothing
     return null
 }

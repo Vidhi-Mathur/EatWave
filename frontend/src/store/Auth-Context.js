@@ -4,25 +4,38 @@ export const AuthContext = createContext({
     isAuthenticated: false,
     login: () => {},
     signup: () => {},
-    logout: () => {}
-})
+    logout: () => {},
+    token: null,
+    setToken: () => {} 
+});
 
-export const AuthCtxProvider = ({children}) => {
-    const [auth, setAuth] = useState(false)
-    const login = () => {
-        setAuth(true)
-    }
-    const signup = () => {
-        setAuth(true)
-    }
+export const AuthCtxProvider = ({ children }) => {
+    const [auth, setAuth] = useState(false);
+    const [token, setToken] = useState(null); 
+
+    const login = (newToken) => {
+        setAuth(true);
+        setToken(newToken); 
+    };
+
+    const signup = (newToken) => {
+        setAuth(true);
+        setToken(newToken); 
+    };
+
     const logout = () => {
-        setAuth(false)
-    }
+        setAuth(false);
+        setToken(null); 
+    };
+
     const ctxValue = {
         isAuthenticated: auth,
         login,
         signup,
-        logout
-    }
-    return <AuthContext.Provider value={ctxValue}>{children}</AuthContext.Provider>
-}
+        logout,
+        token, 
+        setToken 
+    };
+
+    return <AuthContext.Provider value={ctxValue}>{children}</AuthContext.Provider>;
+};
