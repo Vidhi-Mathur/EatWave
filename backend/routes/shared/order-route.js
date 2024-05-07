@@ -1,6 +1,9 @@
 const express = require('express')
 const router = express.Router()
 const orderController = require('../../controllers/shared/order-controller')
+const {authorizationMiddleware } = require('../../controllers/user-related/authentication-controller')
+
+router.user(authorizationMiddleware)
 
 //POST /eatwave/order/place
 router.post('/place', orderController.placeOrder)
@@ -14,7 +17,7 @@ router.patch('/status/:id', orderController.updateOrderStatus)
 //GET /eatwave/order/user_history/:id
 router.get('/user_history/:id', orderController.getUserOrderHistory)
 
-//GET /eavtwave/order/restaurant_history/:id
+//GET /eavwave/order/restaurant_history/:id
 router.get('/restaurant_history/:id', orderController.getRestaurantOrderHistory)
 
 //DELETE /eatwave/cancel/:id
