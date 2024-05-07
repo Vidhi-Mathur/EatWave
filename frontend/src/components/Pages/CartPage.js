@@ -4,6 +4,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import Layout from "../UI/Layout";
 import Content from "../UI/Content";
+import { NavLink } from "react-router-dom";
 
 const CartPage = () => {
   const { items, addToCart, removeFromCart } = useContext(MenuContext);
@@ -42,6 +43,7 @@ const CartPage = () => {
         })}
         <div className="mt-8 pb-2 pl-2">
           <h3 className="text-lg font-semibold">Total: ${totalPrice.toFixed(2)}</h3>
+          <NavLink to="/order"><button>Order</button></NavLink>
         </div>
       </Content>
     </Layout>
