@@ -3,7 +3,7 @@ const router = express.Router()
 const orderController = require('../../controllers/shared/order-controller')
 const {authorizationMiddleware } = require('../../controllers/user-related/authentication-controller')
 
-router.user(authorizationMiddleware)
+router.use(authorizationMiddleware)
 
 //POST /eatwave/order/place
 router.post('/place', orderController.placeOrder)
