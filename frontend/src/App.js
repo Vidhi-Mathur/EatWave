@@ -5,9 +5,11 @@ import AuthFormPage from './components/Pages/AuthPage.js';
 import TermsAndConditions from './components/Pages/TermsAndConditionsPage';
 import RestaurantDetailPage from './components/Pages/RestaurantDetailPage.js';
 import { AuthContext } from './store/Auth-Context.js';
-import CartPage from './components/Pages/CartPage.js';
+import { CartPage } from './components/Pages/CartPage.js';
 import { OrderPage } from './components/Pages/OrderPage.js';
 import { ErrorPage } from './components/Pages/ErrorPage.js';
+import { Cancel } from './components/Pages/Cancel.js';
+import { Success } from './components/Pages/Success.js';
 
 function App() {
   const { isAuthenticated } = useContext(AuthContext);
@@ -27,6 +29,8 @@ function App() {
                   <Route path='/order' element={<OrderPage />} />
                 </>
               )}
+              <Route path='/cancel' element={<Cancel />} />
+              <Route path='/success' element={<Success />} />
               <Route path="*" element={<ErrorPage />}/>
             </Routes>
       </Router>
