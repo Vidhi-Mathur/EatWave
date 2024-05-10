@@ -3,9 +3,10 @@ import { MenuContext } from "../../store/Menu-Context"
 import Card from "../UI/Card"
 import { AuthContext } from "../../store/Auth-Context";
 import Layout from "../UI/Layout";
-import { Link } from "react-router-dom";
+import { loadStripe } from "@stripe/stripe-js"
 
 export const Order = () => {
+    const publishableKey = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY
     const { restaurant, items } = useContext(MenuContext);
     const { token, setToken } = useContext(AuthContext)
     const orderHandler = async (e) => {
@@ -14,11 +15,8 @@ export const Order = () => {
         const address = Object.fromEntries(form.entries()); 
         const order = {
             restaurant,
-            items: items.map(item => ({ item: item.id, quantity: item.quantity})),
-            totalCost: items.reduce(
-                (sum, item) => sum + item.price * item.quantity,
-                0
-            ),
+            items: items.map(item => ({ item: item.id, name: item.name, quantity: item.quantity, price: item.price})),
+            totalCost: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
             address
         };
         try {
@@ -34,6 +32,10 @@ export const Order = () => {
                 throw new Error('Failed to place order');
             }
             const result = await response.json();
+            const stripe = await loadStripe(publishableKey)
+            await stripe.redirectToCheckout({
+                sessionId: result.order.session
+            })
             setToken(result.token);      
             return result;
         } catch (err) {
@@ -61,8 +63,8 @@ export const Order = () => {
             <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700">Postal Code</label>
             <input type="text" name="postalCode" placeholder="Postal Code" required className="w-full pl-3 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-orange-400" />
         </div>
+    <button type="submit" className="w-full py-2 px-4 bg-orange-400 text-white rounded-md hover:bg-orange-500 focus:outline-none focus:bg-orange-500">Pay and Order</button>
     </form>
-    <Link to='/payments'><button type="submit" className="w-full py-2 px-4 bg-orange-400 text-white rounded-md hover:bg-orange-500 focus:outline-none focus:bg-orange-500">Pay and Order</button></Link>
         </Card>
         </Layout>
     )
