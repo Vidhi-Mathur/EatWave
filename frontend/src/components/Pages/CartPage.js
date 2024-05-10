@@ -6,7 +6,7 @@ import Layout from "../UI/Layout";
 import Content from "../UI/Content";
 import { NavLink } from "react-router-dom";
 
-const CartPage = () => {
+export const CartPage = () => {
   const { items, addToCart, removeFromCart } = useContext(MenuContext);
   const totalPrice = items.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -49,5 +49,3 @@ const CartPage = () => {
     </Layout>
   );
 };
-
-export default CartPage;
