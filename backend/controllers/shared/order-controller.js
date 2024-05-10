@@ -1,45 +1,62 @@
-const User = require('../../models/user-related/user-model')
-const Restaurant = require('../../models/restaurant-related/restaurant-model')
-const Menu = require('../../models/restaurant-related/menu-model')
-const Order = require('../../models/shared/order-model')
+require('dotenv').config()
+const User = require('../../models/user-related/user-model');
+const Restaurant = require('../../models/restaurant-related/restaurant-model');
+const Menu = require('../../models/restaurant-related/menu-model');
+const Order = require('../../models/shared/order-model');
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
-exports.placeOrder = async(req, res, next) => {
+exports.placeOrder = async (req, res, next) => {
     try {
-        const { restaurant, items, totalCost, address } = await req.body
-        const user = await req.user._id
-        //User/ Restaurant/ items not found
-        const existingUser = await User.findById(user)
-        if(!existingUser) return res.status(404).json({message: 'No user found, try sign up before placing order'})
-        const existingResaturant = await Restaurant.findById(restaurant)
-        if(!existingResaturant) return res.status(404).json({message: 'No restaurant found'})
-        const menu = await Menu.findById(existingResaturant.menu)
-        //Check existing of each item into menu. No forEach() as asynchonous
-        for(const item of items){
-            const existingItem = menu.items.find(currItem => {
-                return currItem._id.toString() === item.item
-            })
-            if(!existingItem) return res.status(404).json({message: 'No such item exist in menu'})
+        const { restaurant, items, totalCost, address } = await req.body;
+        const user = await req.user._id;
+        const existingUser = await User.findById(user);
+        if (!existingUser) return res.status(404).json({ message: 'No user found, try sign up before placing order' });
+        const existingRestaurant = await Restaurant.findById(restaurant);
+        if (!existingRestaurant) return res.status(404).json({ message: 'No restaurant found' });
+        const menu = await Menu.findById(existingRestaurant.menu);
+        for (const item of items) {
+            const existingItem = menu.items.find(currItem => currItem._id.toString() === item.item);
+            if (!existingItem) return res.status(404).json({ message: 'No such item exist in menu' });
         }
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: items.map(item => {
+              return {
+                price_data: {
+                  currency: 'INR',
+                  product_data: {
+                    name: item.name
+                  },
+                  unit_amount: item.price * 100,
+                },
+                quantity: item.quantity,
+              };
+            }),
+            mode: 'payment',
+            success_url: 'http://localhost:3000/success',
+            cancel_url: 'http://localhost:3000/cancel'
+          })
         const order = new Order({
-            user, 
-            restaurant, 
-            items, 
-            totalCost, 
-            address
-        })
-        await order.save()
-        res.status(200).json({ order })
-        //Save placed order for that particular user
-        existingUser.pastOrders = order._id
-        await existingUser.save()
-        //Save placed order for that particular restaurant too
-        existingResaturant.pastOrders = order._id
-        await existingResaturant.save()
+            user,
+            restaurant,
+            items,
+            totalCost,
+            address,
+            session: session.id
+        });
+        await order.save();
+        res.status(200).json({ order });
+        // Save placed order for that particular user
+        existingUser.pastOrders = order._id;
+        await existingUser.save();
+        // Save placed order for that particular restaurant too
+        existingRestaurant.pastOrders = order._id;
+        await existingRestaurant.save();
+    } catch (err) {
+        console.error("Error placing order:", err); 
+        next(err);
     }
-    catch(err) {
-        next(err)
-    }
-}
+};
 
 exports.getOrderById = async(req, res, next) => {
     try {
