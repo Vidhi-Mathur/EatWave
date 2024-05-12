@@ -5,6 +5,9 @@ const {authorizationMiddleware } = require('../../controllers/user-related/authe
 
 router.use(authorizationMiddleware)
 
+//POST /eatwave/order/payment
+router.post('/payment', orderController.initiatePayment)
+
 //POST /eatwave/order/place
 router.post('/place', orderController.placeOrder)
 

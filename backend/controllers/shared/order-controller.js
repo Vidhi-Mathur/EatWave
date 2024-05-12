@@ -5,9 +5,9 @@ const Menu = require('../../models/restaurant-related/menu-model');
 const Order = require('../../models/shared/order-model');
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
-exports.placeOrder = async (req, res, next) => {
+exports.initiatePayment = async (req, res, next) => {
     try {
-        const { restaurant, items, totalCost, address } = await req.body;
+        const { restaurant, items } = await req.body;
         const user = await req.user._id;
         const existingUser = await User.findById(user);
         if (!existingUser) return res.status(404).json({ message: 'No user found, try sign up before placing order' });
@@ -33,16 +33,30 @@ exports.placeOrder = async (req, res, next) => {
               };
             }),
             mode: 'payment',
-            success_url: 'http://localhost:3000/success',
-            cancel_url: 'http://localhost:3000/cancel'
+            success_url: 'http://localhost:3001/success',
+            cancel_url: 'http://localhost:3001/cancel'
           })
+        res.status(200).json({ session: session.id });
+    } 
+    catch (err) {
+        next(err);
+    }
+};
+
+exports.placeOrder = async (req, res, next) => {
+    try {
+        const { restaurant, items, totalCost, address, session } = await req.body;
+        const stripeSession = await stripe.checkout.sessions.retrieve(session)
+        const user = await req.user._id;
+        const existingUser = await User.findById(user);
+        const existingRestaurant = await Restaurant.findById(restaurant);
         const order = new Order({
             user,
             restaurant,
             items,
             totalCost,
             address,
-            session: session.id
+            session: stripeSession
         });
         await order.save();
         res.status(200).json({ order });
@@ -52,8 +66,8 @@ exports.placeOrder = async (req, res, next) => {
         // Save placed order for that particular restaurant too
         existingRestaurant.pastOrders = order._id;
         await existingRestaurant.save();
-    } catch (err) {
-        console.error("Error placing order:", err); 
+    } 
+    catch (err) {
         next(err);
     }
 };
