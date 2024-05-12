@@ -27,10 +27,10 @@ function App() {
                 <>
                   <Route path='/cart' element={<CartPage />} />
                   <Route path='/order' element={<OrderPage />} />
+                  <Route path='/cancel' element={<Cancel />} />
+                  <Route path='/success' element={<Success />} />
                 </>
               )}
-              <Route path='/cancel' element={<Cancel />} />
-              <Route path='/success' element={<Success />} />
               <Route path="*" element={<ErrorPage />}/>
             </Routes>
       </Router>
