@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { useContext } from "react";
 import { MenuContext } from "../../store/Menu-Context"
 import Card from "../UI/Card"
 import { AuthContext } from "../../store/Auth-Context";
@@ -13,14 +13,36 @@ export const Order = () => {
         e.preventDefault();
         const form = new FormData(e.target);
         const address = Object.fromEntries(form.entries()); 
-        const order = {
+        // First, make the payment
+        const paymentOrder = {
             restaurant,
             items: items.map(item => ({ item: item.id, name: item.name, quantity: item.quantity, price: item.price})),
-            totalCost: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
-            address
         };
         try {
-            const response = await fetch('http://localhost:3000/order/place', {
+            const paymentResponse = await fetch('http://localhost:3000/order/payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': token ? `Bearer ${token}` : '' 
+                },
+                body: JSON.stringify(paymentOrder)
+            });
+            if (!paymentResponse.ok) throw new Error('Failed to make payment');
+            const paymentResult = await paymentResponse.json();
+            const stripe = await loadStripe(publishableKey);
+            // Redirect to Stripe checkout for payment
+            await stripe.redirectToCheckout({
+                sessionId: paymentResult.session
+            });
+            // Once payment is successful, place the order
+            const order = {
+                restaurant,
+                items: items.map(item => ({ item: item.id, name: item.name, quantity: item.quantity, price: item.price})),
+                totalCost: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
+                address,
+                session: paymentResult.session
+            };
+            const orderResponse = await fetch('http://localhost:3000/order/place', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -28,16 +50,10 @@ export const Order = () => {
                 },
                 body: JSON.stringify(order)
             });
-            if (!response.ok) {
-                throw new Error('Failed to place order');
-            }
-            const result = await response.json();
-            const stripe = await loadStripe(publishableKey)
-            await stripe.redirectToCheckout({
-                sessionId: result.order.session
-            })
-            setToken(result.token);      
-            return result;
+            if (!orderResponse.ok) throw new Error('Failed to place order');
+            const orderResult = await orderResponse.json(); 
+            setToken(orderResult.token);      
+            return orderResult;
         } catch (err) {
             console.log(err);
         }
