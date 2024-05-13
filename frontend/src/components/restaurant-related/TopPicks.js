@@ -9,27 +9,29 @@ const ReviewStar = ({ rating }) => (
 
 const TopPicks = () => {
     const [topRestaurants, setTopRestaurants] = useState([]);
+    const [error, setError] = useState(null)
 
     useEffect(() => {
         const fetchTopRestaurants = async () => {
             try {
                 const response = await fetch('http://localhost:3000/review/top-rated-restaurants');
-                if (!response.ok) {
-                    throw new Error('Can\'t fetch restaurants');
-                }
                 const result = await response.json();
+                if (!response.ok) {
+                    setError(result.message)
+                    return;
+                }
                 setTopRestaurants(result.topRestaurants);
             } catch (err) {
-                console.log(err);
+                setError("Fetching best restaurants failed, try again later")
             }
         };
-        
         fetchTopRestaurants();
     }, []);
 
     return (
         <div>
             <h1 className="text-3xl font-bold text-center mt-8 mb-4">Top Rated Restaurants</h1>
+            {error && <p className="text-red-500 text-center m-4">{error}</p>}
             {topRestaurants.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {topRestaurants.map((restaurant, index) => (

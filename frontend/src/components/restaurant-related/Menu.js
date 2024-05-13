@@ -5,21 +5,22 @@ import { MenuContext } from "../../store/Menu-Context";
 import { AuthContext } from "../../store/Auth-Context";
 
 export const Menu = ({menuId}) => {
-    const [menu, setMenu] = useState(null)
     const { isAuthenticated } = useContext(AuthContext)
     const { items, addToCart, removeFromCart } = useContext(MenuContext)
+    const [menu, setMenu] = useState(null)
+    const [error, setError] = useState(null)
     useEffect(() => {
         const fetchMenu = async() => {
             try {
                 const response = await fetch(`http://localhost:3000/restaurant/menu/${menuId}`)
-                if (!response.ok) {
-                    throw new Error("Can't fetch restaurant details");
-                }
                 const result = await response.json();
+                if (!response.ok) {
+                    setError(result.message)
+                }
                 setMenu(result.menu);
             }
             catch(err) {
-                console.log(err)
+                setError("Fetching Menu failed, try again later")
             }
         }
         fetchMenu()
@@ -28,6 +29,7 @@ export const Menu = ({menuId}) => {
     if(!menu) return <div>Loading...</div>
     return (
         <div className="max-w-4xl mx-auto px-4 py-8">
+            {error && <p className="text-red-500 text-center m-4">{error}</p>}
                 {menu.map((item) => {
                     const cartItem = items.find(cartItem => cartItem.id === item._id)
                     const quantity = cartItem? cartItem.quantity: 0;
