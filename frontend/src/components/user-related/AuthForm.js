@@ -3,12 +3,14 @@ import Card from "../UI/Card";
 import PersonIcon from '@mui/icons-material/Person';
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../../store/Auth-Context";
 
 const AuthForm = ({ signupMode, toggleHandler }) => {
     const { signup, login, token, setToken} = useContext(AuthContext)
     const navigate = useNavigate()
+    const [error, setError] = useState(null)
+    
     const submitHandler = async (e) => {
         e.preventDefault();
         const form = new FormData(e.target)
@@ -29,8 +31,11 @@ const AuthForm = ({ signupMode, toggleHandler }) => {
                 },
                 body: JSON.stringify(data)
             })
-            if (!response) throw new Error('Failed to Submit Form')
             const result = await response.json()
+            if (!response.ok){
+                setError(result.message)
+                return;
+            }
             signupMode? signup(): login()
             setToken(result.token)
             navigate('/')
@@ -38,14 +43,16 @@ const AuthForm = ({ signupMode, toggleHandler }) => {
             return result
         }
         catch (err) {
-            console.log(err)
+            setError(err)
         }
     }
+
 
     return (
         <Card>
             <h2 className="text-2xl font-semibold mb-4 text-center">{signupMode ? 'Sign Up' : 'Login'}</h2>
             {<p className="mt-2 text-center">{signupMode ? (<span onClick={toggleHandler}>Already have an account? try{' '}<Link to="/login" className="text-orange-400 hover:underline">Login</Link></span>) : (<span onClick={toggleHandler}>Don't have an account?{' '}<Link to="/signup" className="text-orange-400 hover:underline">Sign Up</Link></span>)}</p>}
+            {error && <p className="text-red-500 text-center m-4">{error}</p>}
             <form className="space-y-4" onSubmit={submitHandler}>
                 {signupMode && <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
