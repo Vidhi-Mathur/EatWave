@@ -1,7 +1,8 @@
-import { useState } from "react"
-import AuthForm from "../user-related/AuthForm"
+import React, { Suspense, useState } from "react"
 import backgroundImage from '../../assets/EatWaveBg2.jpg'
 import Layout from "../UI/Layout"
+
+const AuthForm = React.lazy(() => import("../user-related/AuthForm"))
 
 const AuthFormPage = ({signup}) => {
     const [signupMode, setSignupMode] = useState(signup)
@@ -11,7 +12,9 @@ const AuthFormPage = ({signup}) => {
     return (
         <>
         <Layout customisedImageUrl={backgroundImage}>
+            <Suspense fallback="Loading">
             <AuthForm signupMode={signupMode} toggleHandler={toggleHandler}/>
+            </Suspense>
         </Layout>
         </>
     )
