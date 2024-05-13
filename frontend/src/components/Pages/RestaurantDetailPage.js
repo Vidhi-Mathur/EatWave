@@ -12,6 +12,7 @@ const RestaurantDetailPage = () => {
     const [restaurantDetail, setRestaurantDetail] = useState(null);
     const [showMenu, setShowMenu] = useState(false)
     const [showReviews, setShowReviews] = useState(false)
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         const fetchRestaurantDetails = async () => {
@@ -23,6 +24,7 @@ const RestaurantDetailPage = () => {
                 const result = await response.json();
                 setRestaurantDetail(result.restaurant);
                 setRestaurantId(result.restaurant._id)
+                setLoading(false)
             } catch (err) {
                 console.log(err);
             }
@@ -30,12 +32,12 @@ const RestaurantDetailPage = () => {
         fetchRestaurantDetails();
     }, [restaurantId, setRestaurantId]);
 
-    if (!restaurantDetail) return <div>Loading...</div>;
 
     return (
         <Layout>
             <Content>
-            <div className="max-w-4xl mx-auto px-4 py-8">
+            {loading? <div>Loading...</div>: (
+                <div className="max-w-4xl mx-auto px-4 py-8">
                 <h1 className="text-3xl font-bold mb-4">{restaurantDetail.name}</h1>
                 {/* Restaurant Images */}
                 {restaurantDetail.images && restaurantDetail.images.length > 0 && (
@@ -90,6 +92,7 @@ const RestaurantDetailPage = () => {
                     </div>
                 </div>
             </div>
+            )}
             </Content>
         </Layout>
     );
