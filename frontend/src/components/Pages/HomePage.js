@@ -1,10 +1,13 @@
+import React, { Suspense } from "react";
 import Layout from "../UI/Layout";
-import TopPicks from "../restaurant-related/TopPicks";
+let TopPicks = React.lazy(() => import("../restaurant-related/TopPicks"))
 
 const HomePage = () => {
   return (
     <Layout>
+      <Suspense fallback="Loading">
       <TopPicks />
+      </Suspense>
     </Layout>
   );
 };
