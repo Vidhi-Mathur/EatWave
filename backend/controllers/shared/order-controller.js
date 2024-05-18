@@ -72,12 +72,12 @@ exports.placeOrder = async (req, res, next) => {
     }
 };
 
-exports.getOrderById = async(req, res, next) => {
+exports.getOrderByOrderId = async(req, res, next) => {
     try {
         const { id } = req.params
         const order = await Order.findById(id)
         if(!order) return res.status(404).json({message: 'Order not found'})
-        return res.status(200).json({ order })
+        res.status(200).json({ order })
     }
     catch(err) {
         next(err)
@@ -104,11 +104,10 @@ exports.updateOrderStatus = async(req, res, next) => {
 
 exports.getUserOrderHistory = async(req, res, next) => {
     try {
-        const { id } = req.params
-        const user = await User.findById(id)
+        const userId = await req.user._id;
+        const user = await User.findById(userId)
         if(!user) return res.status(404).json({message: 'No user found, try sign up.'})
-        //Only returns id
-        const orders = await Order.find({ user: id }).select('_id')
+        const orders = await Order.find({ user: userId })
         res.status(200).json({ orders })
     }
     catch(err) {

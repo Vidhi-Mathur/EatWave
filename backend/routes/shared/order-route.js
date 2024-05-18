@@ -11,14 +11,14 @@ router.post('/payment', orderController.initiatePayment)
 //POST /eatwave/order/place
 router.post('/place', orderController.placeOrder)
 
+//GET /eatwave/order/user_history
+router.get('/user_history', orderController.getUserOrderHistory)
+
 //GET /eatwave/order/:id
-router.get('/:id', orderController.getOrderById)
+router.get('/:id', orderController.getOrderByOrderId)
 
 //PATCH /eatwave/order/status/:id
 router.patch('/status/:id', orderController.updateOrderStatus)
-
-//GET /eatwave/order/user_history/:id
-router.get('/user_history/:id', orderController.getUserOrderHistory)
 
 //GET /eavwave/order/restaurant_history/:id
 router.get('/restaurant_history/:id', orderController.getRestaurantOrderHistory)
