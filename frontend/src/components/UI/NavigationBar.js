@@ -3,37 +3,35 @@ import SearchSharpIcon from '@mui/icons-material/SearchTwoTone';
 import HelpOutlineSharpIcon from '@mui/icons-material/HelpOutlineSharp';
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
 import LoginIcon from '@mui/icons-material/Login';
-import LogoutIcon from '@mui/icons-material/Logout';
 import ShoppingCartSharpIcon from '@mui/icons-material/ShoppingCartSharp';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
 import { useContext, useState } from "react";
 import { AuthContext } from "../../store/Auth-Context";
+import { DropDownMenu } from "./DropDownMenu";
 
 
 const NavLinks = (props) => {
-    const { isAuthenticated, logout } = useContext(AuthContext)
-    const logoutHandler = () => {
-        logout()
-    }
+    const { isAuthenticated } = useContext(AuthContext)
     return (
         <>
-        <NavLink to="/search" className="mr-16"><SearchSharpIcon /> Search</NavLink>
-        <NavLink to="/offers" className="mr-16"><LocalOfferOutlinedIcon /> Offers</NavLink>
-        <NavLink to="/help" className="mr-16"><HelpOutlineSharpIcon /> Help</NavLink> 
+        <NavLink to="/search" className="mr-4 md:mr-16"><SearchSharpIcon /> Search</NavLink>
+        <NavLink to="/offers" className="mr-4 md:mr-16"><LocalOfferOutlinedIcon /> Offers</NavLink>
+        <NavLink to="/help" className="mr-4 md:mr-16"><HelpOutlineSharpIcon /> Help</NavLink> 
         {isAuthenticated? (
             <>
-            <button onClick={logoutHandler} className="mr-16"><LogoutIcon /> Logout</button>
-            <NavLink to="/cart" className="mr-16"><ShoppingCartSharpIcon /> Cart</NavLink>
-            <NavLink to="/restaurant/add-restaurant" className="mr-16"><RestaurantIcon /> Add Restaurant</NavLink>
+            <NavLink to="/cart" className="mr-4 md:mr-16"><ShoppingCartSharpIcon /> Cart</NavLink>
+            <NavLink to="/restaurant/add-restaurant" className="mr-4 md:mr-16"><RestaurantIcon /> Add Restaurant</NavLink>
+            <DropDownMenu />
             </>
         ): (
-            <NavLink to="/signup" className="mr-16"><LoginIcon /> Signup</NavLink>
+            <NavLink to="/signup" className="mr-4 md:mr-16"><LoginIcon /> Signup</NavLink>
         )}
         </>
     )
 }
+
 const NavigationBar = (props) => {
     const [isOpen, setOpen] = useState(false);
 
