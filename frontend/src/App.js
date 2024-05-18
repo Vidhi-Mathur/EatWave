@@ -10,6 +10,8 @@ import { OrderPage } from './components/Pages/OrderPage.js';
 import { ErrorPage } from './components/Pages/ErrorPage.js';
 import { Cancel } from './components/Pages/Cancel.js';
 import { Success } from './components/Pages/Success.js';
+import { AccountPage } from './components/Pages/AccountPage.js';
+import { PastOrders } from './components/user-related/PastOrders.js';
 
 function App() {
   const { isAuthenticated } = useContext(AuthContext);
@@ -29,6 +31,10 @@ function App() {
                   <Route path='/order' element={<OrderPage />} />
                   <Route path='/cancel' element={<Cancel />} />
                   <Route path='/success' element={<Success />} />
+                  <Route path="/my-account" element={<AccountPage />}>
+                    <Route path="orders" element={<PastOrders />} />
+                    {/* <Route path="/favorites" element={} /> */}
+                  </Route>
                 </>
               )}
               <Route path="*" element={<ErrorPage />}/>
