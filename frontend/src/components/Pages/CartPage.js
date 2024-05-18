@@ -42,10 +42,15 @@ export const CartPage = () => {
           );
         })}
         <div className="mt-8 pb-2 pl-2 flex justify-between">
+        {totalPrice === 0 && <h3 className="text-lg font-semibold">Nothing added</h3>}
+        {totalPrice > 0 && (
+          <>
   <h3 className="text-lg font-semibold">Total: ${totalPrice.toFixed(2)}</h3>
   <button className="py-2 px-6 mr-2 mb-4 bg-orange-400 text-white rounded-md hover:bg-orange-500 focus:outline-none focus:bg-orange-500">
     <NavLink to="/order">Order</NavLink>
   </button>
+  </>
+  )}
 </div>
       </Content>
     </Layout>
