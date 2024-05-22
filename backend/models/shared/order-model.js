@@ -43,10 +43,6 @@ const order = new schema({
         type: mongoose.Types.ObjectId,
         ref: 'Review',
         default: null
-    },
-    session: {
-        type: String,
-        required: true
     }
 }, { timestamps: true })
 
