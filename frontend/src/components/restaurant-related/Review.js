@@ -23,8 +23,17 @@ export const Review = ({restaurantId}) => {
         fetchReviews()
     }, [error.message, restaurantId])
     
-    if(!reviews) return <div>Loading...</div>
+    if (error) {
+        return <p className="text-red-500 text-center m-4">{error}</p>;
+    }
 
+    if (reviews === null) {
+        return <div>Loading...</div>;
+    }
+
+    if (reviews.length === 0) {
+        return <div className="max-w-4xl mx-auto px-4 py-8">No reviews available</div>;
+    }
     return (
         <div className="max-w-4xl mx-auto px-4 py-8">
                 {error && <p className="text-red-500 text-center m-4">{error}</p>}
