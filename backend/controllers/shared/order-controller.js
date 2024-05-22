@@ -1,13 +1,19 @@
 require('dotenv').config()
+const crypto = require('crypto')
+const RazorPay = require('razorpay')
 const User = require('../../models/user-related/user-model');
 const Restaurant = require('../../models/restaurant-related/restaurant-model');
 const Menu = require('../../models/restaurant-related/menu-model');
 const Order = require('../../models/shared/order-model');
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+
+const razorpayInstance = new RazorPay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET
+})
 
 exports.initiatePayment = async (req, res, next) => {
     try {
-        const { restaurant, items } = await req.body;
+        const { restaurant, items, totalAmount } = await req.body;
         const user = await req.user._id;
         const existingUser = await User.findById(user);
         if (!existingUser) return res.status(404).json({ message: 'No user found, try sign up before placing order' });
@@ -18,25 +24,11 @@ exports.initiatePayment = async (req, res, next) => {
             const existingItem = menu.items.find(currItem => currItem._id.toString() === item.item);
             if (!existingItem) return res.status(404).json({ message: 'No such item exist in menu' });
         }
-        const session = await stripe.checkout.sessions.create({
-            payment_method_types: ['card'],
-            line_items: items.map(item => {
-              return {
-                price_data: {
-                  currency: 'INR',
-                  product_data: {
-                    name: item.name
-                  },
-                  unit_amount: item.price * 100,
-                },
-                quantity: item.quantity,
-              };
-            }),
-            mode: 'payment',
-            success_url: 'http://localhost:3001/success',
-            cancel_url: 'http://localhost:3001/cancel'
-          })
-        res.status(200).json({ session: session.id });
+        const order = await razorpayInstance.orders.create({
+            amount: totalAmount*100,
+            currency: 'INR'
+        })
+        res.status(200).json({ order: order.id, key: process.env.RAZORPAY_KEY_ID})
     } 
     catch (err) {
         next(err);
@@ -45,27 +37,29 @@ exports.initiatePayment = async (req, res, next) => {
 
 exports.placeOrder = async (req, res, next) => {
     try {
-        const { restaurant, items, totalCost, address, session } = await req.body;
-        const stripeSession = await stripe.checkout.sessions.retrieve(session)
+        const { restaurant, items, totalCost, address, payment_id, order_id, signature } = await req.body;
         const user = await req.user._id;
         const existingUser = await User.findById(user);
         const existingRestaurant = await Restaurant.findById(restaurant);
+        const generatedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET).update(`${order_id}|${payment_id}`).digest('hex');
+        if (generatedSignature !== signature) {
+        return res.status(400).json({ message: 'Invalid signature, payment verification failed' });
+        }
         const order = new Order({
             user,
             restaurant,
             items,
             totalCost,
-            address,
-            session: stripeSession
+            address
         });
         await order.save();
-        res.status(200).json({ order });
         // Save placed order for that particular user
-        existingUser.pastOrders = order._id;
+        existingUser.pastOrders.push(order._id);
         await existingUser.save();
         // Save placed order for that particular restaurant too
-        existingRestaurant.pastOrders = order._id;
+        existingRestaurant.pastOrders.push(order._id);
         await existingRestaurant.save();
+        res.status(200).json({ order });
     } 
     catch (err) {
         next(err);
@@ -104,10 +98,16 @@ exports.updateOrderStatus = async(req, res, next) => {
 
 exports.getUserOrderHistory = async(req, res, next) => {
     try {
-        const userId = await req.user._id;
+        const userId = req.user._id;
         const user = await User.findById(userId)
         if(!user) return res.status(404).json({message: 'No user found, try sign up.'})
-        const orders = await Order.find({ user: userId })
+        const orders = await Order.find({ user: userId }).populate('restaurant').populate({path: 'items.item', select: 'name', model: 'Menu'})
+        orders.forEach(order => {
+            order.items.forEach(item => {
+                console.log(item); // Accessing the name of each item
+            });
+        });
+
         res.status(200).json({ orders })
     }
     catch(err) {
@@ -122,6 +122,7 @@ exports.getRestaurantOrderHistory = async(req, res, next) => {
         if(!restaurant) return res.status(404).json({message: 'No restaurant found, try sign up.'})
         //Only returns id
         const orders = await Order.find({ restaurant: id }).select('_id')
+        console.log(orders)
         res.status(200).json({ orders })
     }
     catch(err) {
