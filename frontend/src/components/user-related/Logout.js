@@ -8,6 +8,7 @@ export const Logout = () => {
             const response = await fetch('http://localhost:3000/logout', {
                 method: 'POST',
                 headers: {
+                    'Content-Type': 'application/json', 
                     'Authorization': `Bearer ${token}`
                 }
             })
