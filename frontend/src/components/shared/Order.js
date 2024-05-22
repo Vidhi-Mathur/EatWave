@@ -3,10 +3,8 @@ import { MenuContext } from "../../store/Menu-Context"
 import Card from "../UI/Card"
 import { AuthContext } from "../../store/Auth-Context";
 import Layout from "../UI/Layout";
-import { loadStripe } from "@stripe/stripe-js"
 
 export const Order = () => {
-    const publishableKey = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY
     const { restaurant, items } = useContext(MenuContext);
     const { token, setToken } = useContext(AuthContext)
     const [error, setError] = useState(null)
@@ -14,54 +12,62 @@ export const Order = () => {
         e.preventDefault();
         const form = new FormData(e.target);
         const address = Object.fromEntries(form.entries()); 
-        // First, make the payment
-        const paymentOrder = {
+        const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+        const checkoutOrder = {
             restaurant,
             items: items.map(item => ({ item: item.id, name: item.name, quantity: item.quantity, price: item.price})),
+            totalAmount
         };
         try {
-            const paymentResponse = await fetch('http://localhost:3000/order/payment', {
+            const checkoutResponse = await fetch('http://localhost:3000/order/checkout', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': token ? `Bearer ${token}` : '' 
                 },
-                body: JSON.stringify(paymentOrder)
+                body: JSON.stringify(checkoutOrder)
             });
-            const paymentResult = await paymentResponse.json();
-            if (!paymentResponse.ok){
-                setError(paymentResult.message)
+            const checkoutResult = await checkoutResponse.json();
+            if (!checkoutResponse.ok){
+                setError(checkoutResult.message)
                 return;
             }
-            const stripe = await loadStripe(publishableKey);
-            // Redirect to Stripe checkout for payment
-            await stripe.redirectToCheckout({
-                sessionId: paymentResult.session
-            });
-            // Once payment is successful, place the order
-            const order = {
-                restaurant,
-                items: items.map(item => ({ item: item.id, name: item.name, quantity: item.quantity, price: item.price})),
-                totalCost: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
-                address,
-                session: paymentResult.session
+            setToken(checkoutResult.token);      
+            const options = {
+                key: checkoutResult.key,
+                amount: totalAmount * 100,
+                currency: "INR",
+                name: "EatWave",
+                description: "Payment for your order",
+                order_id: checkoutResult.order,
+                handler: async (response) => {
+                    const orderResult = await fetch('http://localhost:3000/order/place', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': token? `Bearer ${token}`: ' ' 
+                        },
+                        body: JSON.stringify({
+                            restaurant,
+                            items: checkoutOrder.items,
+                            totalCost: totalAmount,
+                            address,
+                            payment_id: response.razorpay_payment_id,
+                            order_id: response.razorpay_order_id,
+                            signature: response.razorpay_signature
+                        })
+                    });
+                    if (!orderResult.ok) {
+                        setError('Order placement failed.');
+                    }
+                    else window.location.href = '/my-account'
+                }
             };
-            const orderResponse = await fetch('http://localhost:3000/order/place', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': token ? `Bearer ${token}` : '' 
-                },
-                body: JSON.stringify(order)
-            });
-            const orderResult = await orderResponse.json(); 
-            if (!orderResponse.ok){
-                setError(orderResult.message)
-                return;
-            }
-            setToken(orderResult.token);      
-            return orderResult;
+            const razorpay = new window.Razorpay(options);
+            razorpay.open();
+            return checkoutResult;
         } catch (err) {
+            console.log(err)
             setError("Placing order failed, try again later")
         }
     };
