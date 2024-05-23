@@ -101,13 +101,7 @@ exports.getUserOrderHistory = async(req, res, next) => {
         const userId = req.user._id;
         const user = await User.findById(userId)
         if(!user) return res.status(404).json({message: 'No user found, try sign up.'})
-        const orders = await Order.find({ user: userId }).populate('restaurant').populate({path: 'items.item', select: 'name', model: 'Menu'})
-        orders.forEach(order => {
-            order.items.forEach(item => {
-                console.log(item); // Accessing the name of each item
-            });
-        });
-
+        const orders = await Order.find({ user: userId }).populate('restaurant')
         res.status(200).json({ orders })
     }
     catch(err) {
