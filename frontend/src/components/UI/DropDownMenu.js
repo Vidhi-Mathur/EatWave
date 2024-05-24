@@ -27,7 +27,7 @@ export const DropDownMenu = () => {
                 {dropDown && (
                     <div className="z-10 absolute bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
                     <nav className="py-2 text-sm text-gray-700 dark:text-gray-200">
-                    <NavLink to='/my-account/profile' className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Profile</NavLink>
+                    <NavLink to='/my-account' className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Profile</NavLink>
                     <NavLink to='/my-account/orders' className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Orders</NavLink>
                     <NavLink to='/my-account/favorites' className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Favorites</NavLink>
                     <button onClick={logoutHandler} className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Logout</button>
