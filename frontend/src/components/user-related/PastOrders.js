@@ -43,14 +43,14 @@ export const PastOrders = () => {
 
     return (
         <div>
-            <h1>Past Orders</h1>
-            <ul>
+            <h1 className="text-2xl font-bold mb-4">Past Orders</h1>
+            <ul className="space-y-4">
                 {orders && orders.map(order => (
-                    <li key={order._id}>
-                        <h1>ORDER #{order._id}</h1>
-                        <p>from {order.restaurant.name}</p>
-                        <p>Ordered on {formattedDate(order.createdAt)}</p>
-                        <p>Total Paid: Rs. {order.totalCost}</p>
+                    <li key={order._id} className="border rounded p-4 shadow">
+                        <h1 className="font-semibold">ORDER #{order._id}</h1>
+                        <p className="text-gray-700">from {order.restaurant.name}</p>
+                        <p className="text-gray-700">Ordered on {formattedDate(order.createdAt)}</p>
+                        <p className="text-gray-700">Total Paid: Rs. {order.totalCost}</p>
                     </li>
                 ))}
             </ul>
