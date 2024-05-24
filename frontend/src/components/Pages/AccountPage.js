@@ -9,14 +9,32 @@ export const AccountPage = () => {
     return (
         <Layout>
             <Content>
-                <div className="justify-start">
-                <table className="table-auto">
-                    <tr><NavLink to="/my-account/orders"><ShoppingBagIcon /> Orders</NavLink></tr>
-                    <tr><NavLink to="/my-account/favorites"><FavoriteIcon /> Favorites</NavLink></tr>
-                    <tr><NavLink to="/my-account/addresses"><LocationOnIcon /> Addresses</NavLink></tr>
-                </table>
-                </div>
-                    <Outlet />
+            <div className="container mx-auto p-4">
+      <main className="flex">
+        <nav className="w-1/4 p-4">
+          <ul>
+            <li className="mb-2">
+              <NavLink to="/my-account/orders" className="flex items-center p-2 hover:bg-gray-100 rounded">
+                <span className="ml-2"><ShoppingBagIcon /> Orders</span>
+              </NavLink>
+            </li>
+            <li className="mb-2">
+              <NavLink to="/my-account/favorites" className="flex items-center p-2 hover:bg-gray-100 rounded">
+                <span className="ml-2"><FavoriteIcon /> Favorites</span>
+              </NavLink>
+            </li>
+            <li className="mb-2">
+              <NavLink to="/my-account/addresses" className="flex items-center p-2 hover:bg-gray-100 rounded">
+                <span className="ml-2"><LocationOnIcon /> Addresses</span>
+              </NavLink>
+            </li>
+          </ul>
+        </nav>
+        <section className="w-3/4 p-4">
+          <Outlet />
+        </section>
+      </main>
+    </div>
             </Content>
         </Layout>
     )
