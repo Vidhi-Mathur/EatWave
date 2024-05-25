@@ -9,9 +9,10 @@ import { CartPage } from './components/Pages/CartPage.js';
 import { OrderPage } from './components/Pages/OrderPage.js';
 import { ErrorPage } from './components/Pages/ErrorPage.js';
 import { Cancel } from './components/Pages/Cancel.js';
-import { Success } from './components/Pages/Success.js';
+import { SuccessPage } from './components/Pages/SuccessPage.js';
 import { AccountPage } from './components/Pages/AccountPage.js';
 import { PastOrders } from './components/user-related/PastOrders.js';
+import { AddRestaurantPage } from './components/Pages/AddRestaurantPage.js';
 
 function App() {
   const { isAuthenticated } = useContext(AuthContext);
@@ -24,13 +25,13 @@ function App() {
               <Route path="/login" element={<AuthFormPage signup={false} />} />
               <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
               <Route path="/restaurant/:restaurantId" element={<RestaurantDetailPage />} />
-              <Route path='/restaurant/add-restaurant' element={<RestaurantDetailPage />} />
+              <Route path='/restaurant/add-restaurant' element={<AddRestaurantPage />} />
               {isAuthenticated && (
                 <>
                   <Route path='/cart' element={<CartPage />} />
                   <Route path='/order' element={<OrderPage />} />
                   <Route path='/cancel' element={<Cancel />} />
-                  <Route path='/success' element={<Success />} />
+                  <Route path='/success' element={<SuccessPage />} />
                   <Route path="/my-account" element={<AccountPage />}>
                     <Route path="orders" element={<PastOrders />} />
                     {/* <Route path="/favorites" element={} /> */}
@@ -45,3 +46,4 @@ function App() {
 }
 
 export default App;
+
