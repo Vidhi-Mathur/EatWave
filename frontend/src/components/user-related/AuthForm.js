@@ -51,7 +51,15 @@ const AuthForm = ({ signupMode, toggleHandler }) => {
     return (
         <Card>
             <h2 className="text-2xl font-semibold mb-4 text-center">{signupMode ? 'Sign Up' : 'Login'}</h2>
-            {<p className="mt-2 text-center">{signupMode ? (<span onClick={toggleHandler}>Already have an account? try{' '}<Link to="/login" className="text-orange-400 hover:underline">Login</Link></span>) : (<span onClick={toggleHandler}>Don't have an account?{' '}<Link to="/signup" className="text-orange-400 hover:underline">Sign Up</Link></span>)}</p>}
+            {<p className="mt-2 text-center">{signupMode ? (
+                <span onClick={toggleHandler}>
+                    Already have an account? try{' '}<Link to="/login" className="text-orange-400 hover:underline">Login</Link>
+                </span>
+            ) : (
+                <span onClick={toggleHandler}>
+                    Don't have an account?{' '}<Link to="/signup" className="text-orange-400 hover:underline">Sign Up</Link>
+                </span>)}
+            </p>}
             {error && <p className="text-red-500 text-center m-4">{error}</p>}
             <form className="space-y-4" onSubmit={submitHandler}>
                 {signupMode && <div>
