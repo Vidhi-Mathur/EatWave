@@ -4,6 +4,7 @@ import { StepIndicator } from '../UI/StepIndicator';
 export const AddRestaurant = () => {
   const steps = ['Restaurant Information', 'Restaurant Documents', 'Menu Setup'];
   const [currentStep, setCurrentStep] = useState(0);
+  const [formData, setFormData] = useState({});
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
@@ -17,114 +18,151 @@ export const AddRestaurant = () => {
     }
   };
 
-  const submitHandler = (e) => {
-    e.preventDefault();
-    const form = new FormData(e.target)
-    const data = Object.fromEntries(form.entries())
-    console.log(data)
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
+  const submitHandler = (e) => {
+    e.preventDefault();
+    const form = new FormData(e.target);
+    const data = Object.fromEntries(form.entries());
+    console.log({ ...formData, ...data });
+  };
+
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-    <div className="bg-white shadow-md rounded-lg p-6">
-    <div className="flex">
-      <StepIndicator steps={steps} currentStep={currentStep} />
-      <div className="w-3/4 p-4">
-        <form onSubmit={submitHandler} className='space-y-4'>
-          {currentStep === 0 && (
-            <>
-            <h1>Basic Details</h1>
-            <div className='border rounded p-4 shadow'>
-              <input type="text" name="owner" className="border p-2 w-full mb-4" placeholder="Owner's Full Name"/>
-              <input type="text" name="restaurant" className="border p-2 w-full mb-4" placeholder="Restaurant's Name"/>
-              {/* Later - ToDo add location*/}
-              <p>Add Restaurant Location</p>
-            </div>
-            <h1>Owner Basic Details</h1>
-            <div className='border rounded p-4 shadow'>
-              <input type="email" name="email" className="border p-2 w-full mb-4" placeholder="Email Address"/>
-              <input type="number" name="phone" className="border p-2 w-full mb-4" placeholder="Mobile Number"/>
-              <p>Provide your <strong>Whatsapp Number</strong> to get insights on ratings, menu etc.</p>
-              <input type="radio" id="same_whatsapp" name="whatsapp_option" value="same" />
-              <label for="same_whatsapp">My Whatsapp Number is same as above</label>
-              <input type="radio" id="different_whatsapp" name="whatsapp_option" value="different" />
-              <label for="different_whatsapp">I have a different Whatsapp number</label>
-            </div>
-            <h1>Working Days</h1>
-            <div className='border rounded p-4 shadow'>
-              {/* Later - ToDo make button work*/}
-              <button>Select All</button>
-              <input type='checkbox' id="monday" name="working days" value="Monday" />
-              <label for="monday">Monday</label>
-              <input type='checkbox' id="tuesday" name="working days" value="Tuesday" />
-              <label for="tuesday">Tuesday</label>
-              <input type='checkbox' id="wednesday" name="working days" value="Wednesday" />
-              <label for="wednesday">Wednesday</label>
-              <input type='checkbox' id="thursday" name="working days" value="Thursday" />
-              <label for="thursday">Thursday</label>
-              <input type='checkbox' id="friday" name="working days" value="Friday" />
-              <label for="friday">Friday</label>
-              <input type='checkbox' id="saturday" name="working days" value="Saturday" />
-              <label for="saturday">Saturday</label>
-              <input type='checkbox' id="sunday" name="working days" value="Sunday" />
-              <label for="sunday">Sunday</label>
+    <div className="min-h-screen flex items-center justify-center mt-4 mb-4">
+      <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-4xl">
+        <div className="flex">
+          <StepIndicator steps={steps} currentStep={currentStep} />
+          <div className="w-3/4 p-4">
+            <form onSubmit={submitHandler} className="space-y-4">
+              {currentStep === 0 && (
+                <>
+                  <h1 className='text-2xl font-bold'>Restaurant Information</h1>
+                  <div className="border rounded p-4 shadow mb-6">
+                    <h1 className="text-md font-semibold mb-2">Basic Details</h1>
+                    <input type="text" name="owner" className="border p-2 w-full mb-4" placeholder="Owner's Full Name" onChange={handleChange}/>
+                    <input type="text" name="restaurant" className="border p-2 w-full mb-4" placeholder="Restaurant's Name" onChange={handleChange} />
+                    <button type="button" className="text-orange-500 mb-4">Add Restaurant Location</button>
+                  </div>
+                  <div className="border rounded p-4 shadow mb-6">
+                    <h1 className="text-md font-semibold mb-2">Owner Contact Details</h1>
+                    <input type="email" name="email" className="border p-2 w-full mb-4" placeholder="Email Address" onChange={handleChange}/>
+                    <input type="text" name="phone" className="border p-2 w-full mb-4" placeholder="Phone Number" onChange={handleChange}/>
+                    <p>Provide your <strong>WhatsApp Number</strong> to get insights on ratings, menu etc.</p>
+                    <div className="flex items-center mt-4 mb-4">
+                      <input type="radio" id="same_whatsapp" name="whatsapp_option" value="same" className="mr-2" onChange={handleChange}/>
+                      <label htmlFor="same_whatsapp">My WhatsApp Number is same as above</label>
+                    </div>
+                    <div className="flex items-center">
+                      <input type="radio" id="different_whatsapp" name="whatsapp_option" value="different" className="mr-2" onChange={handleChange}/>
+                      <label htmlFor="different_whatsapp">I have a different WhatsApp number</label>
+                    </div>
+                  </div>
+                  <div className="border rounded p-4 shadow mb-6">
+                    <h1 className="text-md font-semibold mb-2">Working Days</h1>
+                    <button type="button" className="text-orange-500 mb-4">Select All</button>
+                    <div className="grid grid-cols-2 gap-2">
+                      {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
+                        <div key={day} className="flex items-center">
+                          <input type="checkbox" id={day.toLowerCase()} name="working_days" value={day} className="mr-2" onChange={handleChange}/>
+                          <label htmlFor={day.toLowerCase()}>{day}</label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border rounded p-4 shadow mb-6">
+                    <h1 className="text-md font-semibold mb-2">Opening and Closing Time</h1>
+                    <div className="mt-4">
+                      <label className="block mb-2">Opening Time</label>
+                      <input type="time" name="opening_time" className="border p-2 w-full mb-4" onChange={handleChange}/>
+                      <label className="block mb-2">Closing Time</label>
+                      <input type="time" name="closing_time" className="border p-2 w-full mb-4" onChange={handleChange}/>
+                    </div>
+                    <p>Opening and Closing Time remains same on all working days</p>
+                  </div>
+                </>
+              )}
+              {currentStep === 1 && (
+                <>
+                  <h1 className='text-2xl font-bold'>Restaurant Documents</h1>
+                  <div className="border rounded p-4 shadow mb-6">
+                    <h1 className="text-md font-semibold mb-2">Enter PAN and GSTIN details</h1>
+                    <input type="text" name="pan" className="border p-2 w-full mb-4" placeholder="Business/Owner PAN" onChange={handleChange}/>
+                    <input type="text" name="gst" className="border p-2 w-full mb-4" placeholder="GSTIN" onChange={handleChange}/>
+                    <div className="flex items-center">
+                      <input type="checkbox" id="has_gst" name="gst_option" value="gst" className="mr-2" onChange={handleChange}/>
+                      <label htmlFor="has_gst">I don't have a GST number</label>
+                    </div>
+                  </div>
+                  <div className="border rounded p-4 shadow mb-6">
+                    <h1 className="text-md font-semibold mb-2">Official Bank Details</h1>
+                    <p className='mb-2'>Payments from EatWave will be credited here</p>
+                    <input type="text" name="ifsc" className="border p-2 w-full mb-4" placeholder="Bank IFSC code" onChange={handleChange}/>
+                    <input type="text" name="account" className="border p-2 w-full mb-4" placeholder="Bank Account number" onChange={handleChange}/>
+                  </div>
+                  <div className="border rounded p-4 shadow">
+                    <h1 className="text-md font-semibold">FSSAI certificate</h1>
+                    <input type="number" name="fssai" className="border p-2 w-full mb-4" placeholder="FSSAI certificate number" onChange={handleChange}/>
+                  </div>
+                </>
+              )}
+              {currentStep === 2 && (
+                <>
+                  <h1 className='text-2xl font-bold'>Menu Setup</h1>
+                  <div className="border rounded p-4 shadow mb-6">
+                    <h1 className="text-md font-semibold mb-2">What Kind of food is on your menu?</h1>
+                    <div className="flex items-center mb-4">
+                      <input type="radio" id="veg" name="food_option" value="veg" className="mr-2" onChange={handleChange}/>
+                      <label htmlFor="veg">Veg only</label>
+                    </div>
+                    <div className="flex items-center">
+                      <input type="radio" id="both_food" name="food_option" value="both_food" className="mr-2" onChange={handleChange}/>
+                      <label htmlFor="both_food">Both Veg & Non-veg</label>
+                    </div>
+                    <hr className="my-4" />
+                    <div>
+                      <h2 className="text-md font-semibold mb-2">Add cuisines that you serve</h2>
+                      <button type="button" className="text-orange-500 mb-4">+ Add More</button>
+                    </div>
+                  </div>
+                  <div className="border rounded p-4 shadow mb-6">
+                    <h3 className="text-md font-semibold mb-2">Cost for two</h3>
+                    <input type="number" id="cost" name="cost" placeholder="Rs." className="border p-2 w-full mb-4" onChange={handleChange}/>
+                  </div>
+                  <div className="border rounded p-4 shadow mb-6">
+                  <h3 className="text-md font-semibold mb-2">Add your menu</h3>
+                  <input type="file" name="menu" className="border p-2 w-full mb-4" onChange={handleChange}/>
+                  </div>
+                  <div className="border rounded p-4 shadow mb-6">
+                  <h3 className="text-md font-semibold mb-2">Packaging Charges</h3>
+                  <p className="mb-4">Not applicable on Indian Breads, packaged items, and beverages</p>
+                  <input type="number" id="packing_cost" name="packing_cost" placeholder="Rs." className="border p-2 w-full mb-4" onChange={handleChange}/>
+                  </div>
+                </>
+              )}
+              <div className="flex justify-between">
+                {currentStep > 0 && (
+                  <button type="button" onClick={handleBack} className="bg-gray-500 text-white py-2 px-4 rounded">
+                    Back
+                  </button>
+                )}
+                {currentStep < steps.length - 1 ? (
+                  <button type="button" onClick={handleNext} className="bg-orange-500 text-white py-2 px-4 rounded">
+                    Proceed
+                  </button>
+                ) : (
+                  <button type="submit" className="bg-green-500 text-white py-2 px-4 rounded">
+                    Submit
+                  </button>
+                )}
               </div>
-              <h1>Opening and Closing Time</h1>
-              <div className='border rounded p-4 shadow'>
-              <input type='radio' id='same_time' name='timing_slot' value="same" />
-              <label for="same_time">I open and close my restaurant at same time on all working days</label>
-              <input type='radio' id='different_time' name='timing_slot' value="different"/>
-              <label for="different_time">I have separate daywise time</label>
-              {/* Later - ToDo make additional slots available*/}
-              <p>Opening Time</p>
-              <p>Closing Time</p>
-              </div>
-            </>
-          )}
-          {currentStep === 1 && (
-            <div>
-              <label className="block mb-2">Email</label>
-              <input
-                type="email"
-                name="email"
-                className="border p-2 w-full mb-4"
-              />
-              <label className="block mb-2">Phone</label>
-              <input
-                type="text"
-                name="phone"
-                className="border p-2 w-full mb-4"
-              />
-            </div>
-          )}
-          {currentStep === 2 && (
-            <div>
-              <h3 className="mb-4">Review your information</h3>
-              <p><strong>Name:</strong> </p>
-              <p><strong>Email:</strong> </p>
-              <p><strong>Phone:</strong> </p>
-            </div>
-          )}
-          <div className="flex justify-between">
-            {currentStep > 0 && (
-              <button type="button" onClick={handleBack} className="bg-gray-500 text-white py-2 px-4 rounded">
-                Back
-              </button>
-            )}
-            {currentStep < steps.length - 1 ? (
-              <button type="button" onClick={handleNext} className="bg-blue-500 text-white py-2 px-4 rounded">
-                Proceed
-              </button>
-            ) : (
-              <button type="submit" className="bg-green-500 text-white py-2 px-4 rounded">
-                Submit
-              </button>
-            )}
+            </form>
           </div>
-        </form>
+        </div>
       </div>
-    </div>
-    </div>
     </div>
   );
 };
