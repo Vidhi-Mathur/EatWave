@@ -28,8 +28,9 @@ export const AddRestaurant = () => {
         if (checked) return { ...prevState, working_days: [...prevState.working_days, value] };
         else return { ...prevState, working_days: prevState.working_days.filter(day => day !== value) };
       });
-    } 
-    else setFormData({ ...formData, [name]: value })
+    } else if (!name.startsWith('name-') || !name.startsWith('description-') || !name.startsWith('price-') || !name.startsWith('tags-')) {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const selectAllHandler = () => {
@@ -44,7 +45,8 @@ export const AddRestaurant = () => {
   
   const submitHandler = (e) => {
     e.preventDefault();
-    console.log({ ...formData });
+    const finalData = { ...formData, menu_items: menuItems };
+    console.log(finalData);
   };
 
   const changeMenuItemHandler = (e, idx) => {
@@ -65,7 +67,7 @@ export const AddRestaurant = () => {
   }
   
   const generateMenuItems = () => {
-    return { name: '', description: '', price: '', tags: []}
+    return { name: '', description: '', price: '', tags: [] }
   }
 
   return (
