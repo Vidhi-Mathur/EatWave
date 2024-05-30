@@ -32,6 +32,10 @@ export const AddRestaurant = () => {
       setCuisine(receivedCuisine)
   }
 
+  const removeCuisineHandler = (receivedCuisine) => {
+    setCuisine(cuisine.filter(c => c !== receivedCuisine))
+  }
+
   const changeHandler = (e) => {
     const { name, value, type, checked } = e.target;
     if (type === 'checkbox' && name === 'working_days') {
@@ -170,16 +174,18 @@ export const AddRestaurant = () => {
                       </div>
                       <hr className="my-4" />
                       <div>
-                        {/* Later ToDo - Add cuisines */}
                         <h2 className="text-md font-semibold mb-2">Add cuisines that you serve</h2>
-                        <button type="button" className="text-orange-500 mb-4" onClick={openModalHandler}>+ Add More</button>
+                        {cuisine.map((cuisineItem, idx) => (
+                            <button key={idx} type="button"  className='mr-2 mb-2 px-2 py-1 border rounded bg-green-500 text-white' onClick={() => removeCuisineHandler(cuisineItem)}>{cuisineItem} <span>&times;</span></button>
+                        ))}
                         <AddCuisine ref={dialog} onSelectCuisine={cuisineHandler}/>
+                        <button type="button" className="text-orange-500 mb-4" onClick={openModalHandler}>+ Add More</button>
                       </div>
                     </div>
                     <div className="border rounded p-4 shadow mb-6">
                     <h3 className="text-md font-semibold mb-2">Add your menu</h3>
                     {menuItems.map((item, idx) => (
-                      <AddMenuItems key={idx} idx={idx} item={item} changeMenuItem={changeMenuItemHandler} removeMenuItem={removeMenuItemHandler}/>
+                      <AddMenuItems key={idx} idx={idx} item={item} onChangeMenuItem={changeMenuItemHandler} onRemoveMenuItem={removeMenuItemHandler}/>
                     ))}
                     <button type="button" className="text-orange-500 mb-4" onClick={addMenuItemHandler}>+ Add More</button>
                     </div>
