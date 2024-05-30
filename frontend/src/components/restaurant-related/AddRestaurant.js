@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import { useState, useRef } from 'react';
 import { StepIndicator } from '../UI/StepIndicator';
 import { AddMenuItems } from './AddMenuItems';
+import { AddCuisine } from './AddCuisine';
 
 let weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 let steps = ['Restaurant Information', 'Restaurant Documents', 'Menu Setup'];
@@ -8,6 +9,8 @@ export const AddRestaurant = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({ working_days: [] });
   const [menuItems, setMenuItems] = useState([])
+  const [cuisine, setCuisine] = useState([])
+  const dialog = useRef()
 
   const nextHandler = () => {
     if (currentStep < steps.length - 1) {
@@ -20,6 +23,14 @@ export const AddRestaurant = () => {
       setCurrentStep(currentStep - 1);
     }
   };
+
+  const openModalHandler = () => {
+    dialog.current.showModal()
+  }
+
+  const cuisineHandler = (receivedCuisine) => {
+      setCuisine(receivedCuisine)
+  }
 
   const changeHandler = (e) => {
     const { name, value, type, checked } = e.target;
@@ -45,7 +56,7 @@ export const AddRestaurant = () => {
   
   const submitHandler = (e) => {
     e.preventDefault();
-    const finalData = { ...formData, menu_items: menuItems };
+    const finalData = { ...formData, menu_items: menuItems, cuisine_items: cuisine };
     console.log(finalData);
   };
 
@@ -161,7 +172,8 @@ export const AddRestaurant = () => {
                       <div>
                         {/* Later ToDo - Add cuisines */}
                         <h2 className="text-md font-semibold mb-2">Add cuisines that you serve</h2>
-                        <button type="button" className="text-orange-500 mb-4">+ Add More</button>
+                        <button type="button" className="text-orange-500 mb-4" onClick={openModalHandler}>+ Add More</button>
+                        <AddCuisine ref={dialog} onSelectCuisine={cuisineHandler}/>
                       </div>
                     </div>
                     <div className="border rounded p-4 shadow mb-6">
