@@ -8,7 +8,7 @@ exports.createMenu = async(req, res, next) => {
             items: items,
             restaurant: null
         })
-        res.status(200).json({message: menu})
+        res.status(200).json({ menu })
     }
     catch(err) {
         next(err)
