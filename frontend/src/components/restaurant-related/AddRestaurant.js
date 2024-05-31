@@ -1,11 +1,13 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useContext } from 'react';
 import { StepIndicator } from '../UI/StepIndicator';
 import { AddMenuItems } from './AddMenuItems';
 import { AddCuisine } from './AddCuisine';
+import { AuthContext } from '../../store/Auth-Context';
 
 let weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 let steps = ['Restaurant Information', 'Restaurant Documents', 'Menu Setup'];
 export const AddRestaurant = () => {
+  const {token, setToken} = useContext(AuthContext)
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({ working_days: [] });
   const [menuItems, setMenuItems] = useState([])
@@ -28,12 +30,65 @@ export const AddRestaurant = () => {
     dialog.current.showModal()
   }
 
+  const selectAllHandler = () => {
+    setFormData(prevState => {
+      if (prevState.working_days.length === weekdays.length) {
+        return { ...prevState, working_days: [] };
+      } else {
+        return { ...prevState, working_days: weekdays };
+      }
+    });
+  };
+
+  const generateMenuItems = () => {
+    return { name: '', description: '', price: 0, tags: [] }
+  }
+
+  const addMenuItemHandler = () => {
+    setMenuItems(prevMenuItems => [...prevMenuItems, generateMenuItems()])
+  }
+
+  const removeMenuItemHandler = (idx) => {
+    const updatedItems = menuItems.filter((_,i) => i !== idx)
+    setMenuItems(updatedItems)
+  }
+  
+  const changeMenuItemHandler = (e, idx) => {
+    const { name, value } = e.target;
+    const updatedItems = [...menuItems];
+    const field = name.split('-')[0];
+    updatedItems[idx][field] = value;
+    setMenuItems(updatedItems);
+  }
+
   const cuisineHandler = (receivedCuisine) => {
-      setCuisine(receivedCuisine)
+    setCuisine(receivedCuisine)
   }
 
   const removeCuisineHandler = (receivedCuisine) => {
     setCuisine(cuisine.filter(c => c !== receivedCuisine))
+  }
+
+  const saveMenuHandler = async() => {
+    try {
+      const response = await fetch('http://localhost:3000/restaurant/menu/new', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : ''
+        },
+        body: JSON.stringify({items: menuItems})
+      })
+      if(!response.ok){
+         throw new Error("Can't save menu, try again later")
+      }
+      const result = await response.json()
+      setToken(result.token)
+      return result
+    }
+    catch(err) {
+      console.log(err)
+    }
   }
 
   const changeHandler = (e) => {
@@ -48,42 +103,16 @@ export const AddRestaurant = () => {
     }
   };
 
-  const selectAllHandler = () => {
-    setFormData(prevState => {
-      if (prevState.working_days.length === weekdays.length) {
-        return { ...prevState, working_days: [] };
-      } else {
-        return { ...prevState, working_days: weekdays };
-      }
-    });
-  };
-  
   const submitHandler = (e) => {
     e.preventDefault();
-    const finalData = { ...formData, menu_items: menuItems, cuisine_items: cuisine };
+    const filteredFormData = Object.fromEntries(
+      Object.entries(formData).filter(
+        ([key]) => !key.startsWith('name-') && !key.startsWith('description-') && !key.startsWith('price-')
+      )
+    );
+    const finalData = { ...filteredFormData, menu_items: menuItems, cuisine_items: cuisine };
     console.log(finalData);
   };
-
-  const changeMenuItemHandler = (e, idx) => {
-    const { name, value } = e.target;
-    const updatedItems = [...menuItems];
-    const field = name.split('-')[0];
-    updatedItems[idx][field] = value;
-    setMenuItems(updatedItems);
-  }
-
-  const removeMenuItemHandler = (idx) => {
-    const updatedItems = menuItems.filter((_,i) => i !== idx)
-    setMenuItems(updatedItems)
-  }
-
-  const addMenuItemHandler = () => {
-    setMenuItems(prevMenuItems => [...prevMenuItems, generateMenuItems()])
-  }
-  
-  const generateMenuItems = () => {
-    return { name: '', description: '', price: '', tags: [] }
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center mt-4 mb-4">
@@ -108,15 +137,6 @@ export const AddRestaurant = () => {
                       <h1 className="text-md font-semibold mb-2">Owner Contact Details</h1>
                       <input type="email" name="email" className="border p-2 w-full mb-4" placeholder="Email Address" />
                       <input type="text" name="phone" className="border p-2 w-full mb-4" placeholder="Phone Number" />
-                      <p>Provide your <strong>WhatsApp Number</strong> to get insights on ratings, menu etc.</p>
-                      <div className="flex items-center mt-4 mb-4">
-                        <input type="radio" id="same_whatsapp" name="whatsapp_option" value="same" className="mr-2" />
-                        <label htmlFor="same_whatsapp">My WhatsApp Number is same as above</label>
-                      </div>
-                      <div className="flex items-center">
-                        <input type="radio" id="different_whatsapp" name="whatsapp_option" value="different" className="mr-2" />
-                        <label htmlFor="different_whatsapp">I have a different WhatsApp number</label>
-                      </div>
                     </div>
                     <div className="border rounded p-4 shadow mb-6">
                       <div className='flex items-center justify-between mb-2'>
@@ -187,7 +207,8 @@ export const AddRestaurant = () => {
                     {menuItems.map((item, idx) => (
                       <AddMenuItems key={idx} idx={idx} item={item} onChangeMenuItem={changeMenuItemHandler} onRemoveMenuItem={removeMenuItemHandler}/>
                     ))}
-                    <button type="button" className="text-orange-500 mb-4" onClick={addMenuItemHandler}>+ Add More</button>
+                    <button type="button" className="text-orange-500 mb-4 mr-4" onClick={addMenuItemHandler}>+ Add More</button>
+                    {menuItems.length > 0 && <button type="button" className="bg-orange-500 text-white py-2 px-4 rounded" onClick={saveMenuHandler}>Save Menu</button>}
                     </div>
                     <div className="border rounded p-4 shadow mb-6">
                     <h3 className="text-md font-semibold mb-2">Packaging Charges</h3>
