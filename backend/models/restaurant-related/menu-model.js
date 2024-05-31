@@ -23,7 +23,8 @@ const menu = new schema({
     }],
     restaurant: {
         type: mongoose.Types.ObjectId,
-        ref: 'Restaurant'
+        ref: 'Restaurant',
+        default: null
     }
 })
 
