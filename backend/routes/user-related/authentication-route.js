@@ -11,4 +11,7 @@ router.post('/login', authController.postLogin)
 //POST /eatwave/logout
 router.post('/logout', authController.postLogout)
 
+//POST /eatwave/refresh-token
+router.post('/refresh-token', authController.refreshToken)
+
 module.exports = router
