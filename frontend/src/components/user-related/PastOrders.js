@@ -16,22 +16,38 @@ const formattedDate = (dateString) => {
 };
 
 export const PastOrders = () => {
-    const { token, setToken } = useContext(AuthContext);
+    const { token, fetchRefreshToken } = useContext(AuthContext);
     const [orders, setOrders] = useState(null);
     useEffect(() => {
         const fetchPastOrders = async () => {
             try {
-                const response = await fetch("http://localhost:3000/order/user_history", {
+                let response = await fetch("http://localhost:3000/order/user_history", {
                     headers: {
                         'Authorization': token ? `Bearer ${token}` : ' '
                     }
                 });
                 if (!response.ok) {
-                    throw new Error("No orders found, try again later");
+                    if(response.status === 401){
+                        const refreshResponse = await fetchRefreshToken()
+                        if(refreshResponse){
+                            response = await fetch("http://localhost:3000/order/user_history", {
+                                headers: {
+                                    'Authorization': `Bearer ${refreshResponse.accessToken}`
+                                }
+                            });
+                            if(!response.ok) {
+                                throw new Error("Can't fetch past orders, try again later")
+                            }
+                        }
+                        else {
+                            throw new Error("Session expired, try again later")
+                        }
+                    }
+                    else {
+                        throw new Error("Can't fetch past orders, try again later")
+                    }
                 }
                 const result = await response.json();
-                console.log(result)
-                setToken(result.token)
                 setOrders(result.orders);
                 return result
             } catch (error) {
@@ -39,7 +55,7 @@ export const PastOrders = () => {
             }
         };
         fetchPastOrders();
-    }, [token, setToken]);
+    }, [fetchRefreshToken, token]);
 
     return (
         <div>
