@@ -23,7 +23,10 @@ const user = new schema({
     reviews: [{
         type: mongoose.Schema.ObjectId,
         ref: 'Review'
-    }]
+    }],
+    refreshToken: {
+        type: String
+    }
 })
 
 module.exports = mongoose.model('User', user)
