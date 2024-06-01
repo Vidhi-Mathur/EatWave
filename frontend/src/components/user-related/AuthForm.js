@@ -16,13 +16,7 @@ const AuthForm = ({ signupMode, toggleHandler }) => {
         const form = new FormData(e.target)
         const data = Object.fromEntries(form.entries())
         try {
-            let url
-            if (signupMode) {
-                url = 'http://localhost:3000/signup'
-            }
-            else {
-                url = 'http://localhost:3000/login'
-            }
+            let url = signupMode? 'http://localhost:3000/signup': 'http://localhost:3000/login'
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -36,8 +30,8 @@ const AuthForm = ({ signupMode, toggleHandler }) => {
                 setError(result.message)
                 return;
             }
-            signupMode? signup(): login()
-            setToken(result.token)
+            signupMode? signup(result.accessToken, result.refreshToken): login(result.accessToken, result.refreshToken)
+            setToken(result.accessToken)
             navigate('/')
             //In case needed anywhere in component
             return result
