@@ -7,11 +7,12 @@ import { AuthContext } from '../../store/Auth-Context';
 let weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 let steps = ['Restaurant Information', 'Restaurant Documents', 'Menu Setup'];
 export const AddRestaurant = () => {
-  const {token, setToken} = useContext(AuthContext)
+  const {token, fetchRefreshToken} = useContext(AuthContext)
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({ working_days: [] });
   const [menuItems, setMenuItems] = useState([])
   const [cuisine, setCuisine] = useState([])
+  const [menuId, setMenuId] = useState()
   const dialog = useRef()
 
   const nextHandler = () => {
@@ -83,7 +84,7 @@ export const AddRestaurant = () => {
          throw new Error("Can't save menu, try again later")
       }
       const result = await response.json()
-      setToken(result.token)
+      setMenuId(result.menu._id)
       return result
     }
     catch(err) {
@@ -98,20 +99,85 @@ export const AddRestaurant = () => {
         if (checked) return { ...prevState, working_days: [...prevState.working_days, value] };
         else return { ...prevState, working_days: prevState.working_days.filter(day => day !== value) };
       });
-    } else if (!name.startsWith('name-') || !name.startsWith('description-') || !name.startsWith('price-') || !name.startsWith('tags-')) {
+    } 
+    else if(name.startsWith('address.')) {
+      const addressField = name.split('.')[1]
+      setFormData(prevState => ({
+        ...prevState,
+        address: {
+          ...prevState.address,
+          [addressField]: value
+        }
+      }))
+    }
+    else {
       setFormData({ ...formData, [name]: value });
     }
   };
 
-  const submitHandler = (e) => {
+  const submitHandler = async(e) => {
     e.preventDefault();
-    const filteredFormData = Object.fromEntries(
+    const filteredData = Object.fromEntries(
       Object.entries(formData).filter(
         ([key]) => !key.startsWith('name-') && !key.startsWith('description-') && !key.startsWith('price-')
       )
     );
-    const finalData = { ...filteredFormData, menu_items: menuItems, cuisine_items: cuisine };
-    console.log(finalData);
+    const restaurantData = { 
+      restaurantName: filteredData.restaurant,
+      ownerName: filteredData.owner,
+      phone: filteredData.phone, 
+      email: filteredData.email, 
+      //To fix later
+      address: filteredData.address, 
+      openingTime: filteredData.opening_time, 
+      closingTime: filteredData.closing_time,
+      workingDays: filteredData.working_days, 
+      menu: menuId,
+      packagingCharges: filteredData.packaging_cost,
+      accountNumber: filteredData.account,
+      fssai: filteredData.fssai, 
+      foodType: filteredData.food_option,
+      cuisine
+      };
+    try {
+      let response = await fetch('http://localhost:3000/restaurant/new', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : ''
+        },
+        body: JSON.stringify(restaurantData)
+      })
+      if(!response.ok){
+        if(response.status === 401) {
+            const refreshResponse = await fetchRefreshToken()
+            if(refreshResponse){
+                response = await fetch('http://localhost:3000/restaurant/new', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${refreshResponse.accessToken}`
+                  },
+                  body: JSON.stringify(restaurantData)
+                });
+                if(!response.ok) {
+                    throw new Error("Can't save restaurant, try again later")
+                }
+            }
+            else {
+                throw new Error("Session expired, try again later")
+            }
+        }
+        else {
+            throw new Error("Can't save restaurant, try again later")
+        }
+     }
+     const result = await response.json()
+     return result
+    }
+    catch(err) {
+      console.log(err)
+    }
   };
 
   return (
@@ -131,7 +197,11 @@ export const AddRestaurant = () => {
                       <input type="text" name="owner" className="border p-2 w-full mb-4" placeholder="Owner's Full Name" />
                       <input type="text" name="restaurant" className="border p-2 w-full mb-4" placeholder="Restaurant's Name"  />
                       {/* Later - ToDo add location*/}
-                      <button type="button" className="text-orange-500 mb-4">Add Restaurant Location</button>
+                      <h1 className="text-md font-semibold mb-2">Address</h1>
+                      <input type="text" name="address.street" className="border p-2 w-full mb-2" placeholder="Street" />
+                      <input type="text" name="address.city" className="border p-2 w-full mb-2" placeholder="City" />
+                      <input type="text" name="address.state" className="border p-2 w-full mb-2" placeholder="State" />
+                      <input type="number" name="address.postalCode" className="border p-2 w-full mb-2" placeholder="Postal Code" />
                     </div>
                     <div className="border rounded p-4 shadow mb-6">
                       <h1 className="text-md font-semibold mb-2">Owner Contact Details</h1>
