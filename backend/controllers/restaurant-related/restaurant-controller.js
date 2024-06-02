@@ -3,25 +3,31 @@ const Restaurant = require('../../models/restaurant-related/restaurant-model')
 
 exports.createRestaurant = async(req, res, next) => {
     try {
-        const { name, phone, email, address, openingHours, workingDays, menu, review, paymentMethods, deliveryCharges } = req.body
+        const { restaurantName, ownerName, phone, email, address, openingTime, closingTime, workingDays, menu, packagingCharges, accountNumber, fssai, foodType, cuisine } = req.body
         const menuCard = await Menu.findById(menu)
         if(!menuCard) return res.status(404).json({message: 'No associated menu found'})
         const newRestaurant = await Restaurant.create({
-            name, 
+            restaurantName,
+            ownerName,
             phone, 
             email, 
             address, 
-            openingHours, 
+            openingTime, 
+            closingTime,
             workingDays, 
             menu: menuCard._id, 
             review: null,
-            paymentMethods, 
-            deliveryCharges
+            packagingCharges, 
+            accountNumber, 
+            fssai, 
+            foodType,
+            cuisine
         })
+        await newRestaurant.save()
         //Associated id of restaurant to menu
         menuCard.restaurant = newRestaurant._id
         await menuCard.save()
-        res.status(200).json({message: newRestaurant })
+        res.status(200).json({ newRestaurant })
     }
     catch(err){
         next(err)
