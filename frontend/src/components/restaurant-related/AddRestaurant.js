@@ -9,8 +9,7 @@ let steps = ['Restaurant Information', 'Restaurant Documents', 'Menu Setup'];
 export const AddRestaurant = () => {
   const {token, fetchRefreshToken} = useContext(AuthContext)
   const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState({ working_days: [] });
-  const [menuItems, setMenuItems] = useState([])
+  const [formData, setFormData] = useState({ working_days: [], menuItems: [] });
   const [cuisine, setCuisine] = useState([])
   const [menuId, setMenuId] = useState()
   const dialog = useRef()
@@ -46,20 +45,27 @@ export const AddRestaurant = () => {
   }
 
   const addMenuItemHandler = () => {
-    setMenuItems(prevMenuItems => [...prevMenuItems, generateMenuItems()])
+    setFormData(prevState => ({
+      ...prevState,
+      menuItems: [...prevState.menuItems, generateMenuItems()]
+    }))
   }
 
   const removeMenuItemHandler = (idx) => {
-    const updatedItems = menuItems.filter((_,i) => i !== idx)
-    setMenuItems(updatedItems)
+    setFormData(prevState => ({
+      ...prevState,
+      menuItems: prevState.menuItems.filter((_,i) => i !== idx)
+    }))
   }
   
   const changeMenuItemHandler = (e, idx) => {
     const { name, value } = e.target;
-    const updatedItems = [...menuItems];
     const field = name.split('-')[0];
-    updatedItems[idx][field] = value;
-    setMenuItems(updatedItems);
+   setFormData(prevState => {
+    const updatedItems = [...prevState.menuItems]
+    updatedItems[idx][field] = value
+    return { ...prevState, menuItems: updatedItems }
+   })
   }
 
   const cuisineHandler = (receivedCuisine) => {
@@ -78,7 +84,7 @@ export const AddRestaurant = () => {
           'Content-Type': 'application/json',
           'Authorization': token ? `Bearer ${token}` : ''
         },
-        body: JSON.stringify({items: menuItems})
+        body: JSON.stringify({items: formData.menuItems})
       })
       if(!response.ok){
          throw new Error("Can't save menu, try again later")
@@ -274,11 +280,11 @@ export const AddRestaurant = () => {
                     </div>
                     <div className="border rounded p-4 shadow mb-6">
                     <h3 className="text-md font-semibold mb-2">Add your menu</h3>
-                    {menuItems.map((item, idx) => (
+                    {formData.menuItems.map((item, idx) => (
                       <AddMenuItems key={idx} idx={idx} item={item} onChangeMenuItem={changeMenuItemHandler} onRemoveMenuItem={removeMenuItemHandler}/>
                     ))}
                     <button type="button" className="text-orange-500 mb-4 mr-4" onClick={addMenuItemHandler}>+ Add More</button>
-                    {menuItems.length > 0 && <button type="button" className="bg-orange-500 text-white py-2 px-4 rounded" onClick={saveMenuHandler}>Save Menu</button>}
+                    {formData.menuItems.length > 0 && <button type="button" className="bg-orange-500 text-white py-2 px-4 rounded" onClick={saveMenuHandler}>Save Menu</button>}
                     </div>
                     <div className="border rounded p-4 shadow mb-6">
                     <h3 className="text-md font-semibold mb-2">Packaging Charges</h3>
