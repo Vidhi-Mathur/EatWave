@@ -2,8 +2,12 @@ const mongoose = require('mongoose')
 const schema = mongoose.Schema
 
 const restaurant = new schema({
-    name: {
+    restaurantName: {
         type: String,
+        required: true
+    },
+    ownerName: {
+        type: String, 
         required: true
     },
     phone: {
@@ -18,28 +22,45 @@ const restaurant = new schema({
         street: String,
         city: String,
         state: String,
-        postalCode: String
+        postalCode: Number,
     },
-    openingHours: {
-        type: Map,
-        of: String
+    openingTime: {
+        type: String,
+        required: true
+    },
+    closingTime: {
+        type: String,
+        required: true
     },
     workingDays: {
-        type: Map,
-        of: String
+        type: [String],
+        required: true
+    },
+    packagingCharges: {
+        type: Number,
+        default: 0
+    },
+    accountNumber: {
+        type: Number,
+        required: true
+    },
+    fssai: {
+        type: Number,
+        required: true
+    },
+    foodType: {
+        type: String,
+        enum: ['veg', 'both'],
+        required: true
+    },
+    cuisine: {
+        type: [String],
+        required: true
     },
     menu: {
         type: mongoose.Schema.ObjectId,
         ref: 'Menu',
         required: true
-    },
-    paymentMethods: [[{
-        type: String,
-        enum: ['Cash', 'Credit-Card', 'Debit-Card', 'UPI', 'Net-Banking']
-    }]],
-    deliveryCharges: {
-        type: Number,
-        default: 0
     },
     pastOrders: [{
         type: mongoose.Schema.ObjectId,
@@ -48,7 +69,8 @@ const restaurant = new schema({
     }],
     reviews: [{
         type: mongoose.Types.ObjectId,
-        ref: 'Review'
+        ref: 'Review',
+        default: null
     }]
 })
 
