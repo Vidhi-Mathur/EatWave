@@ -26,7 +26,7 @@ export const PastOrders = () => {
                         'Authorization': token ? `Bearer ${token}` : ' '
                     }
                 });
-                if (!response.ok) {
+                if(!response.ok) {
                     if(response.status === 401){
                         const refreshResponse = await fetchRefreshToken()
                         if(refreshResponse){
@@ -61,12 +61,15 @@ export const PastOrders = () => {
         <div>
             <h1 className="text-2xl font-bold mb-4">Past Orders</h1>
             <ul className="space-y-4">
-                {orders && orders.map(order => (
+                {orders === null && <p>Loading...</p>}
+                {orders !== null && orders.length === 0 && <p>No orders placed yet</p>}
+                {orders !== null && orders.length > 0 && orders.map(order => (
                     <li key={order._id} className="border rounded p-4 shadow">
                         <h1 className="font-semibold">ORDER #{order._id}</h1>
-                        <p className="text-gray-700">from {order.restaurant.name}</p>
+                        <p className="text-gray-700">from {order.restaurant.restaurantName}</p>
                         <p className="text-gray-700">Ordered on {formattedDate(order.createdAt)}</p>
-                        <p className="text-gray-700">Total Paid: Rs. {order.totalCost}</p>
+                        <p className="text-gray-700">Total Paid: &#8377; {order.totalCost}</p>
+                        <button className="mt-3 bg-orange-500 text-white py-2 px-3 rounded">Add Review</button>
                     </li>
                 ))}
             </ul>
