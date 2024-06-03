@@ -39,7 +39,7 @@ export const Menu = ({menuId}) => {
                         <div>
                         <h3 className="text-lg font-semibold">{item.name}</h3>
                         <p className="text-gray-600">{item.description}</p>
-                        <p className="text-gray-800 mt-2">${item.price}</p>
+                        <p className="text-gray-800 mt-2">&#8377; {item.price}</p>
                         </div>
                         {isAuthenticated && (<div>
                             {quantity === 0? <button onClick={() => addToCart({itemId: item._id, name: item.name, price: item.price})} className="bg-orange-100 px-4 py-3 rounded-md">ADD</button>: (
