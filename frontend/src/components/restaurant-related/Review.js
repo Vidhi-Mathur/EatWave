@@ -11,7 +11,7 @@ export const Review = ({restaurantId}) => {
                 const response = await fetch(`http://localhost:3000/review/restaurant/${restaurantId}`)
                 const result = await response.json()
                  if (!response.ok) {
-                    setError(error.message)
+                    setError(result.message)
                     return;
                 }
                 setReviews(result.reviews)
@@ -21,7 +21,7 @@ export const Review = ({restaurantId}) => {
             }
         }
         fetchReviews()
-    }, [error.message, restaurantId])
+    }, [restaurantId])
     
     if (error) {
         return <p className="text-red-500 text-center m-4">{error}</p>;
