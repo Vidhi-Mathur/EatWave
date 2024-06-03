@@ -38,7 +38,7 @@ const RestaurantDetailPage = () => {
             <Content>
             {loading? <div>Loading...</div>: (
                 <div className="max-w-4xl mx-auto px-4 py-8">
-                <h1 className="text-3xl font-bold mb-4">{restaurantDetail.name}</h1>
+                <h1 className="text-3xl font-bold mb-4">{restaurantDetail.restaurantName}</h1>
                 {/* Restaurant Images */}
                 {restaurantDetail.images && restaurantDetail.images.length > 0 && (
                     <div className="mb-8">
@@ -61,9 +61,9 @@ const RestaurantDetailPage = () => {
                                 <p className="text-gray-700 mb-2"><span className="font-semibold">Address:</span> {restaurantDetail.address.street}, {restaurantDetail.address.city}, {restaurantDetail.address.state}, {restaurantDetail.address.postalCode}</p>
                                 <p className="text-gray-700 mb-2"><span className="font-semibold">Opening Hours:</span></p>
                                 <ul>
-                                    {Object.entries(restaurantDetail.openingHours).map(([day, hours]) => (
-                                        <li key={day}>{day}: {hours}</li>
-                                    ))}
+                                {restaurantDetail?.workingDays?.map((day) => (
+                                            <li key={day}>{day}: {restaurantDetail?.openingTime} - {restaurantDetail?.closingTime}</li>
+                                ))}
                                 </ul>
                             </div>
                         </div>
