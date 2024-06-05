@@ -1,5 +1,6 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useRef } from "react";
 import { AuthContext } from "../../store/Auth-Context";
+import { AddReview } from "./AddReview";
 
 const formattedDate = (dateString) => {
     const options = { 
@@ -18,6 +19,12 @@ const formattedDate = (dateString) => {
 export const PastOrders = () => {
     const { token, fetchRefreshToken } = useContext(AuthContext);
     const [orders, setOrders] = useState(null);
+    const dialog = useRef()
+
+    const openModalHandler = () => {
+        dialog.current.showModal()
+    }
+
     useEffect(() => {
         const fetchPastOrders = async () => {
             try {
@@ -69,7 +76,8 @@ export const PastOrders = () => {
                         <p className="text-gray-700">from {order.restaurant.restaurantName}</p>
                         <p className="text-gray-700">Ordered on {formattedDate(order.createdAt)}</p>
                         <p className="text-gray-700">Total Paid: &#8377; {order.totalCost}</p>
-                        <button className="mt-3 bg-orange-500 text-white py-2 px-3 rounded">Add Review</button>
+                        <button type="button" className="mt-3 bg-orange-500 text-white py-2 px-3 rounded" onClick={openModalHandler}>Add Review</button>
+                        <AddReview ref={dialog} orderId={order._id} restaurantId={order.restaurant._id}/>
                     </li>
                 ))}
             </ul>
