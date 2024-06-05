@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import Rating from '@mui/material/Rating';
 
 export const Review = ({restaurantId}) => {
     const [reviews, setReviews] = useState(null)
@@ -41,7 +42,7 @@ export const Review = ({restaurantId}) => {
                     <div key={index} className="bg-white rounded-lg shadow-md p-4 mb-4">
                         <h3 className="text-lg font-semibold"><AccountCircleIcon fontSize="large"/> {review.reviewer.name}</h3>
                         <p className="text-grey-600">{formattedDate(review.date)}</p>
-                        <p className="text-gray-600">{review.rating}</p>
+                        <Rating value={review.rating} readOnly/>
                         <p className="text-gray-800 mt-2">{review.comments}</p>
                     </div>
                 ))}
