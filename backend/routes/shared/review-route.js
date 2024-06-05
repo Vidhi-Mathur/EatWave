@@ -1,9 +1,12 @@
 const express = require('express')
 const router = express.Router()
 const reviewController = require('../../controllers/shared/review-controller')
+const {authorizationMiddleware } = require('../../controllers/user-related/authentication-controller')
 
-//POST /eatwave/reviews/:id
-router.post('/:order', reviewController.postReviews)
+//POST /eatwave/reviews/:order
+router.post('/:order', authorizationMiddleware, reviewController.postReviews)
+
+router.patch('/:order', authorizationMiddleware, reviewController.editReviews)
 
 //GET /eatwave/review/:order
 router.get('/order/:order', reviewController.getReviewByOrderId)

@@ -6,7 +6,8 @@ const User = require("../../models/user-related/user-model")
 exports.postReviews = async(req, res, next) => {
     try {
         const order  = req.params.order
-        const { restaurant, reviewer, rating, comments } = req.body  
+        const reviewer = req.user._id
+        const { restaurant, rating, comments } = req.body  
         const existingOrder = await Order.findById(order)
         if(!existingOrder) return res.status(404).json({message: 'No order found'})
         const existingRestaurant = await Restaurant.findById(restaurant)
@@ -30,6 +31,20 @@ exports.postReviews = async(req, res, next) => {
         //Save in Users, to track own reviews
         existingReviewer.reviews.push(review._id)
         await existingReviewer.save()
+        res.status(200).json({ review })
+    }
+    catch(err) {
+        next(err)
+    }
+}
+
+exports.editReviews = async(req, res, next) => {
+    try {
+        const order = req.params.order
+        const { rating, comments } = req.body
+        const existingOrder = await Order.findById(order)
+        const review = await Review.findByIdAndUpdate(existingOrder.review, {rating, comments}, {new: true})
+        await review.save()
         res.status(200).json({ review })
     }
     catch(err) {
