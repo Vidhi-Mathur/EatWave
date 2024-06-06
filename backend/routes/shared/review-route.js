@@ -6,9 +6,7 @@ const {authorizationMiddleware } = require('../../controllers/user-related/authe
 //POST /eatwave/reviews/:order
 router.post('/:order', authorizationMiddleware, reviewController.postReviews)
 
-router.patch('/:order', authorizationMiddleware, reviewController.editReviews)
-
-//GET /eatwave/review/:order
+//GET /eatwave/review/order/:order
 router.get('/order/:order', reviewController.getReviewByOrderId)
 
 //GET /eatwave/review/restaurant/:restaurant
@@ -18,7 +16,7 @@ router.get('/restaurant/:restaurant', reviewController.getReviewsByRestaurantId)
 router.get('/user/:user', reviewController.getReviewsByUserId)
 
 //PATCH /eatwave/review/:review
-router.patch('/:review', reviewController.updateReview)
+router.patch('/:review', authorizationMiddleware, reviewController.updateReview)
 
 //GET /eatwave/review/average-rating/:restaurant
 router.get('/average-rating/:restaurant', reviewController.getAverageRating)
