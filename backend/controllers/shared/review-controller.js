@@ -38,20 +38,6 @@ exports.postReviews = async(req, res, next) => {
     }
 }
 
-exports.editReviews = async(req, res, next) => {
-    try {
-        const order = req.params.order
-        const { rating, comments } = req.body
-        const existingOrder = await Order.findById(order)
-        const review = await Review.findByIdAndUpdate(existingOrder.review, {rating, comments}, {new: true})
-        await review.save()
-        res.status(200).json({ review })
-    }
-    catch(err) {
-        next(err)
-    }
-}
-
 exports.getReviewByOrderId = async(req, res, next) => {
    try {
         const id = req.params.order
@@ -92,21 +78,20 @@ exports.getReviewsByUserId = async(req, res, next) => {
     }
 }
 
-exports.updateReview = async(req, res, next) => {
+exports.updateReview = async (req, res, next) => {
     try {
-        const id = req.params.review
-        const { rating, comments } = req.body
-        const review = await Review.findById(id)
-        if(!review) return res.status(404).json({message: 'No such review posted'})
-        review.rating |= rating
-        review.comments |= comments
+        const id = req.params.review;
+        const { rating, comments } = req.body;
+        const review = await Review.findById(id);
+        if (!review) return res.status(404).json({ message: 'No such review posted' });
+        review.rating = rating;  
+        review.comments = comments;  
         await review.save();
-        res.status(200).json({message: 'Review updated successfully'})
+        res.status(200).json({ review });
+    } catch (err) {
+        next(err);
     }
-    catch(err) {
-        next(err)
-    }
-}
+};
 
 exports.getAverageRating = async(req, res, next) => {
    try {
