@@ -3,15 +3,15 @@ const express = require('express')
 const app = express()
 const mongoose = require('mongoose')
 const multer = require('multer')
+const cors = require('cors')
 const authRoutes = require('./routes/user-related/authentication-route')
 const restaurantRoute = require('./routes/restaurant-related/restaurant-route')
 const menuRoute = require('./routes/restaurant-related/menu-route')
 const orderRoute = require('./routes/shared/order-route')
 const reviewRoute = require('./routes/shared/review-route')
 const cartRoute = require('./routes/user-related/cart-route')
-const cors = require('cors')
 
-//Handling file storage
+//Handling file storages
 const fileStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         //First argument null, to deal with nodeJs error handling, second being folder saved into
