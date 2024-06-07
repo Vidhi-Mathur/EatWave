@@ -9,7 +9,7 @@ let steps = ['Restaurant Information', 'Restaurant Documents', 'Menu Setup'];
 export const AddRestaurant = () => {
   const {token, fetchRefreshToken} = useContext(AuthContext)
   const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState({ working_days: [], menuItems: [] });
+  const [formData, setFormData] = useState({ working_days: [], menuItems: [], restaurantImage: null });
   const [cuisine, setCuisine] = useState([])
   const [menuId, setMenuId] = useState()
   const dialog = useRef()
@@ -98,6 +98,18 @@ export const AddRestaurant = () => {
     }
   }
 
+  const changeImageHandler = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setFormData(prevState => ({
+        ...prevState, 
+        restaurantImage: reader.result
+      }))
+    }
+    if(file) reader.readAsDataURL(file)
+  }
+
   const changeHandler = (e) => {
     const { name, value, type, checked } = e.target;
     if (type === 'checkbox' && name === 'working_days') {
@@ -122,6 +134,7 @@ export const AddRestaurant = () => {
   };
 
   const submitHandler = async(e) => {
+    console.log(formData)
     e.preventDefault();
     const filteredData = Object.fromEntries(
       Object.entries(formData).filter(
@@ -238,6 +251,13 @@ export const AddRestaurant = () => {
                         <input type="time" name="closing_time" className="border p-2 w-full mb-4" />
                       </div>
                       <p>Opening and Closing Time remains same on all working days</p>
+                    </div>
+                    <div className='border rounded p-4 shadow mb-6'>
+                      <h1 className="text-md font-semibold mb-2">Restaurant Image</h1>
+                      <div className="mt-4">
+                        <input type='file' name="restaurantImage" accept='image/*' onChange={changeImageHandler} className="border p-2 w-full mb-4"/>
+                        {formData.restaurantImage && <img src={formData.restaurantImage} alt="Restaurant" className="mt-4" />}
+                      </div>
                     </div>
                   </>
                 )}
