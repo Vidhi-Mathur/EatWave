@@ -2,7 +2,6 @@ require('dotenv').config()
 const express = require('express')
 const app = express()
 const mongoose = require('mongoose')
-const multer = require('multer')
 const cors = require('cors')
 const authRoutes = require('./routes/user-related/authentication-route')
 const restaurantRoute = require('./routes/restaurant-related/restaurant-route')
@@ -11,30 +10,11 @@ const orderRoute = require('./routes/shared/order-route')
 const reviewRoute = require('./routes/shared/review-route')
 const cartRoute = require('./routes/user-related/cart-route')
 
-//Handling file storages
-const fileStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        //First argument null, to deal with nodeJs error handling, second being folder saved into
-        cb(null, 'images')
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + '-' + file.fieldname)
-    }
-})
-
-//File type
-const fileType = (req, file, cb) => {
-    if(file.mimeType === 'image/png' || file.mimeType === 'image/jpg' || file.mimeType === 'image/jpeg') cb(null, true)
-    else cb(null, false)
-}
-
 //Parsing JSON bodies
 app.use(express.json())
 
 //Parsing URL-encoded bodies
 app.use(express.urlencoded({extended: true}))
-
-app.use(multer({storage: fileStorage ,fileFilter: fileType}).single('image'))
 
 app.use(cors())
 
@@ -45,6 +25,8 @@ app.use('/restaurant', restaurantRoute)
 app.use('/cart', cartRoute)
 app.use('/order', orderRoute)
 app.use('/review', reviewRoute)
+
+app.use('/uploads/images', express.static('uploads/images'))
 
 //Error Handling
 app.use((err, req, res, next) => {
