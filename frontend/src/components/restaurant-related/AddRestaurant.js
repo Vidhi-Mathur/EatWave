@@ -100,15 +100,34 @@ export const AddRestaurant = () => {
 
   const changeImageHandler = (e) => {
     const file = e.target.files[0];
-    const reader = new FileReader()
-    reader.onloadend = () => {
-      setFormData(prevState => ({
-        ...prevState, 
-        restaurantImage: reader.result
-      }))
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        try {
+          const formData = new FormData();
+          formData.append('image', file);
+          const response = await fetch('http://localhost:3000/restaurant/upload-image', {
+            method: 'POST',
+            headers: {
+              'Authorization': token ? `Bearer ${token}` : ''
+            },
+            body: formData
+          });
+          if (!response.ok) {
+            throw new Error("Can't save image, try again later");
+          }
+          const result = await response.json();
+          setFormData(prevState => ({
+            ...prevState,
+            restaurantImage: result.imageUrl
+          }));
+        } catch (err) {
+          console.log(err); // Log any errors that occur during the process
+        }
+      };
+      reader.readAsDataURL(file);
     }
-    if(file) reader.readAsDataURL(file)
-  }
+  };
 
   const changeHandler = (e) => {
     const { name, value, type, checked } = e.target;
@@ -256,7 +275,6 @@ export const AddRestaurant = () => {
                       <h1 className="text-md font-semibold mb-2">Restaurant Image</h1>
                       <div className="mt-4">
                         <input type='file' name="restaurantImage" accept='image/*' onChange={changeImageHandler} className="border p-2 w-full mb-4"/>
-                        {formData.restaurantImage && <img src={formData.restaurantImage} alt="Restaurant" className="mt-4" />}
                       </div>
                     </div>
                   </>
