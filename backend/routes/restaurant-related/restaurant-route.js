@@ -1,8 +1,10 @@
 const express = require('express')
 const router = express.Router()
 const multer = require('multer')
+const fs = require("fs")
 const restaurantController = require('../../controllers/restaurant-related/restaurant-controller')
 const {authorizationMiddleware } = require('../../controllers/user-related/authentication-controller')
+const { fileUploadCloudinary } = require('../../util/cloudinary')
 
 //Handling file storages
 const fileStorage = multer.diskStorage({
@@ -33,12 +35,25 @@ router.use(authorizationMiddleware)
 router.post('/new', restaurantController.createRestaurant)
 
 //POST /eatwave/restaurant/upload-image
-router.post('/upload-image', upload.single('image'), (req, res) => {
+router.post('/upload-image', upload.single('image'), async(req, res) => {
     if (!req.file) {
         return res.status(400).json({ message: 'No file uploaded' });
     }
-    const imageUrl = `/uploads/images/${req.file.filename}`;
-    res.status(200).json({ imageUrl });
+    const localFilePath = req.file.path;
+    try {
+        const response = await fileUploadCloudinary(localFilePath)
+        fs.unlinkSync(localFilePath)
+        if(response){
+            return res.status(200).json({ imageUrl: response.secure_url });
+        }
+        else {
+            return res.status(500).json({ message: 'Cloudinary upload failed' });
+        }
+    }
+    catch(err) {
+        console.log(err)
+        res.status(500).json({ message: 'Internal Server error' });
+    }
 });
 
 //PATCH /eatwave/restaurant/:id
