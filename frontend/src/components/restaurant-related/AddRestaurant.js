@@ -106,7 +106,7 @@ export const AddRestaurant = () => {
         try {
           const formData = new FormData();
           formData.append('image', file);
-          const response = await fetch('http://localhost:3000/restaurant/upload-image', {
+          const response = await fetch('http://localhost:3000/upload-image', {
             method: 'POST',
             headers: {
               'Authorization': token ? `Bearer ${token}` : ''
