@@ -8,17 +8,15 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_SECRET_KEY
 });
 
-exports.fileUploadCloudinary = async(localStoragePath) => {
+exports.cloudinaryUpload = async(localStoragePath) => {
     try {
         if(!localStoragePath) return null;
         const response = await cloudinary.uploader.upload(localStoragePath, {
             resource_type: "auto"
         });
-        console.log(response.secure_url)
         return response
     }
     catch(err) {
-        console.log(err)
         //Remove temporary saved file as upload failed
         fs.unlinkSync(localStoragePath)
         return null
