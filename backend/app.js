@@ -9,6 +9,8 @@ const menuRoute = require('./routes/restaurant-related/menu-route')
 const orderRoute = require('./routes/shared/order-route')
 const reviewRoute = require('./routes/shared/review-route')
 const cartRoute = require('./routes/user-related/cart-route')
+const { fileUpload, upload } = require('./util/file-upload')
+const { authorizationMiddleware } = require('./controllers/user-related/authentication-controller')
 
 //Parsing JSON bodies
 app.use(express.json())
@@ -25,7 +27,9 @@ app.use('/restaurant', restaurantRoute)
 app.use('/cart', cartRoute)
 app.use('/order', orderRoute)
 app.use('/review', reviewRoute)
+app.post('/upload-image', upload.single('image'), authorizationMiddleware, fileUpload);
 
+//Serving statically
 app.use('/uploads/images', express.static('uploads/images'))
 
 //Error Handling
