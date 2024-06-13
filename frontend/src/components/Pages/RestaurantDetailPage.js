@@ -10,8 +10,7 @@ const RestaurantDetailPage = () => {
     const { restaurantId } = useParams();
     const { setRestaurantId } = useContext(MenuContext)
     const [restaurantDetail, setRestaurantDetail] = useState(null);
-    const [showMenu, setShowMenu] = useState(false)
-    const [showReviews, setShowReviews] = useState(false)
+    const [active, setActive] = useState('menu')
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -68,18 +67,20 @@ const RestaurantDetailPage = () => {
                             </div>
                         </div>
 
-                        {/* Menu */}
                         <div className="mb-8">
-                            <button onClick={() => setShowMenu(!showMenu)} className="bg-orange-600 text-white px-4 py-2 rounded-md">Show Menu</button>
-                            {showMenu && <Menu menuId={restaurantDetail.menu} />}
+                            <div className="flex space-x-4 border-b-2 border-gray-200">
+                                <button onClick={() => setActive('menu')} className={`pb-2 pt-2 px-4 text-lg font-semibold ${active === 'menu'? 'border-b-2 border-orange-600 text-orange-600': 'text-gray-600'}`}>
+                                Menu
+                                </button>
+                                <button onClick={() => setActive('reviews')} className={`pb-2 pt-2 px-4 text-lg font-semibold ${active === 'reviews'? 'border-b-2 border-orange-600 text-orange-600': 'text-gray-600'}`}>
+                                Reviews
+                                </button>
+                            </div>
+                            <div>
+                                {active === 'menu' && <Menu menuId={restaurantDetail.menu} />}
+                                {active === 'reviews' && <Review restaurantId={restaurantId} />}
+                            </div>
                         </div>
-
-                        {/* Reviews */}
-                        <div className="mb-8">
-                            <button onClick={() => setShowReviews(!showReviews)} className="bg-orange-600 text-white px-4 py-2 rounded-md">Show Reviews</button>
-                            {showReviews && <Review restaurantId={restaurantId} />}
-                        </div>
-                        
                     </div>
 
                     {/* Right Column */}
