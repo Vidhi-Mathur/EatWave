@@ -103,31 +103,38 @@ export const AddRestaurant = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = async () => {
-        try {
-          const formData = new FormData();
-          formData.append('image', file);
-          const response = await fetch('http://localhost:3000/upload-image', {
-            method: 'POST',
-            headers: {
-              'Authorization': token ? `Bearer ${token}` : ''
-            },
-            body: formData
-          });
-          if (!response.ok) {
-            throw new Error("Can't save image, try again later");
-          }
-          const result = await response.json();
           setFormData(prevState => ({
             ...prevState,
-            restaurantImage: result.imageUrl
+            restaurantImage: file
           }));
-        } catch (err) {
-          console.log(err); // Log any errors that occur during the process
-        }
       };
       reader.readAsDataURL(file);
     }
   };
+
+  const uploadImageHandler = async(file) => {
+        try {
+          const imageFormData = new FormData();
+          imageFormData.append('image', file);
+          const imageResponse = await fetch('http://localhost:3000/upload-image', {
+            method: 'POST',
+            headers: {
+              'Authorization': token ? `Bearer ${token}` : ''
+            },
+            body: imageFormData
+          });
+          if (!imageResponse.ok) {
+            throw new Error("Can't save image, try again later");
+          }
+          const imageResult = await imageResponse.json();
+          setFormData(prevState => ({
+            ...prevState,
+            restaurantImage: imageResult.imageUrl
+          }));
+        } catch (err) {
+          console.log(err); 
+        }
+  }
 
   const changeHandler = (e) => {
     const { name, value, type, checked } = e.target;
@@ -153,8 +160,11 @@ export const AddRestaurant = () => {
   };
 
   const submitHandler = async(e) => {
-    console.log(formData)
     e.preventDefault();
+    let imageUrl = formData.restaurantImage
+    if(imageUrl && typeof imageUrl !== 'string'){
+      imageUrl = await uploadImageHandler(imageUrl)
+    }
     const filteredData = Object.fromEntries(
       Object.entries(formData).filter(
         ([key]) => !key.startsWith('name-') && !key.startsWith('description-') && !key.startsWith('price-')
@@ -165,7 +175,6 @@ export const AddRestaurant = () => {
       ownerName: filteredData.owner,
       phone: filteredData.phone, 
       email: filteredData.email, 
-      //To fix later
       address: filteredData.address, 
       openingTime: filteredData.opening_time, 
       closingTime: filteredData.closing_time,
