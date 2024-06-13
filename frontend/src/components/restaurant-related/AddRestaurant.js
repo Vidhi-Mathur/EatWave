@@ -112,10 +112,11 @@ export const AddRestaurant = () => {
     }
   };
 
-  const uploadImageHandler = async(file) => {
+  const uploadImageHandler = async(file, folder) => {
         try {
           const imageFormData = new FormData();
           imageFormData.append('image', file);
+          imageFormData.append('folder', folder)
           const imageResponse = await fetch('http://localhost:3000/upload-image', {
             method: 'POST',
             headers: {
@@ -163,7 +164,8 @@ export const AddRestaurant = () => {
     e.preventDefault();
     let imageUrl = formData.restaurantImage
     if(imageUrl && typeof imageUrl !== 'string'){
-      imageUrl = await uploadImageHandler(imageUrl)
+      let folder = 'restaurant_images'
+      imageUrl = await uploadImageHandler(imageUrl, folder)
     }
     const filteredData = Object.fromEntries(
       Object.entries(formData).filter(
