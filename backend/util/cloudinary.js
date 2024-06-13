@@ -8,11 +8,12 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_SECRET_KEY
 });
 
-exports.cloudinaryUpload = async(localStoragePath) => {
+exports.cloudinaryUpload = async(localStoragePath, folder) => {
     try {
         if(!localStoragePath) return null;
         const response = await cloudinary.uploader.upload(localStoragePath, {
-            resource_type: "auto"
+            resource_type: "auto",
+            folder
         });
         return response
     }

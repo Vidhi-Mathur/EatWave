@@ -27,8 +27,9 @@ exports.fileUpload = async(req, res) => {
         return res.status(400).json({ message: 'No file uploaded' });
     }
     const localFilePath = req.file.path;
+    const folder = req.body.folder || 'default-folder'
     try {
-        const response = await cloudinaryUpload(localFilePath)
+        const response = await cloudinaryUpload(localFilePath, folder)
         fs.unlinkSync(localFilePath)
         if(response){
             return res.status(200).json({ imageUrl: response.secure_url });
