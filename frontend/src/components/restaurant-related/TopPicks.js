@@ -38,7 +38,7 @@ const TopPicks = () => {
                         <Card key={index} className="bg-white rounded-lg shadow-md p-6">
                             <Link key={index} to={`/restaurant/${restaurant.restaurant._id}`}>
                             <div className="rounded-lg overflow-hidden border border-gray-300" style={{ width: '200px', height: '200px' }}>
-                                <img src={restaurant.image} alt={restaurant.restaurant.restaurantName} className="w-full h-full object-cover" />
+                                <img src={restaurant.restaurant.imageUrl} alt={restaurant.restaurant.restaurantName} className="w-full h-full object-cover" />
                             </div>
                             <div className="flex justify-between mb-4 mt-4">
                                 <div>
