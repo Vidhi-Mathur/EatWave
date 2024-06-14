@@ -1,7 +1,5 @@
 const express = require('express')
 const router = express.Router()
-const multer = require('multer')
-const fs = require("fs")
 const restaurantController = require('../../controllers/restaurant-related/restaurant-controller')
 const {authorizationMiddleware } = require('../../controllers/user-related/authentication-controller')
 
