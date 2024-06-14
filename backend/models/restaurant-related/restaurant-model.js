@@ -71,7 +71,11 @@ const restaurant = new schema({
         type: mongoose.Types.ObjectId,
         ref: 'Review',
         default: null
-    }]
+    }],
+    imageUrl: {
+        type: String,
+        default: 'https://res.cloudinary.com/dzczgjlxt/image/upload/restaurant_images/a5tnypq7zhlmpehaebje.png'
+    }
 })
 
 module.exports = mongoose.model('Restaurant', restaurant)
