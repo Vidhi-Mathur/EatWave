@@ -27,7 +27,7 @@ app.use('/restaurant', restaurantRoute)
 app.use('/cart', cartRoute)
 app.use('/order', orderRoute)
 app.use('/review', reviewRoute)
-app.post('/upload-image', upload.single('image'), authorizationMiddleware, fileUpload);
+app.post('/upload-image',  authorizationMiddleware, upload.single('image'), fileUpload);
 
 //Serving statically
 app.use('/uploads/images', express.static('uploads/images'))
