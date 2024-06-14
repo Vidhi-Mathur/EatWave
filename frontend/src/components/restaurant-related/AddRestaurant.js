@@ -98,20 +98,6 @@ export const AddRestaurant = () => {
     }
   }
 
-  const changeImageHandler = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-          setFormData(prevState => ({
-            ...prevState,
-            restaurantImage: file
-          }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const uploadImageHandler = async(file, folder) => {
         try {
           const imageFormData = new FormData();
@@ -137,8 +123,8 @@ export const AddRestaurant = () => {
         }
   }
 
-  const changeHandler = (e) => {
-    const { name, value, type, checked } = e.target;
+  const changeHandler = async(e) => {
+    const { name, value, type, checked, files } = e.target;
     if (type === 'checkbox' && name === 'working_days') {
       setFormData(prevState => {
         if (checked) return { ...prevState, working_days: [...prevState.working_days, value] };
@@ -154,6 +140,19 @@ export const AddRestaurant = () => {
           [addressField]: value
         }
       }))
+    }
+    else if(type === 'file' && name === 'restaurantImage'){
+      const file = files[0]
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+            setFormData(prevState => ({
+              ...prevState,
+              restaurantImage: file
+            }));
+        };
+        reader.readAsDataURL(file);
+      }
     }
     else {
       setFormData({ ...formData, [name]: value });
@@ -186,7 +185,8 @@ export const AddRestaurant = () => {
       accountNumber: filteredData.account,
       fssai: filteredData.fssai, 
       foodType: filteredData.food_option,
-      cuisine
+      cuisine,
+      imageUrl
       };
     try {
       let response = await fetch('http://localhost:3000/restaurant/new', {
@@ -285,7 +285,7 @@ export const AddRestaurant = () => {
                     <div className='border rounded p-4 shadow mb-6'>
                       <h1 className="text-md font-semibold mb-2">Restaurant Image</h1>
                       <div className="mt-4">
-                        <input type='file' name="restaurantImage" accept='image/*' onChange={changeImageHandler} className="border p-2 w-full mb-4"/>
+                        <input type='file' name="restaurantImage" accept='image/*' className="border p-2 w-full mb-4"/>
                       </div>
                     </div>
                   </>
@@ -362,3 +362,4 @@ export const AddRestaurant = () => {
     </div>
   );
 };
+
