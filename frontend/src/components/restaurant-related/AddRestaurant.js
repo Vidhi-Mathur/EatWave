@@ -148,7 +148,7 @@ export const AddRestaurant = () => {
         reader.onloadend = async () => {
             setFormData(prevState => ({
               ...prevState,
-              restaurantImage: file
+              restaurantImage: reader.result
             }));
         };
         reader.readAsDataURL(file);
@@ -284,9 +284,13 @@ export const AddRestaurant = () => {
                     </div>
                     <div className='border rounded p-4 shadow mb-6'>
                       <h1 className="text-md font-semibold mb-2">Restaurant Image</h1>
-                      <div className="mt-4">
                         <input type='file' name="restaurantImage" accept='image/*' className="border p-2 w-full mb-4"/>
-                      </div>
+                        {formData.restaurantImage && (
+                          <div className="mt-4">
+                          <h2 className="text-md font-semibold mb-2">Preview</h2>
+                          <img src={formData.restaurantImage} alt={'Restaurant'} className='max-w-full h-auto'/>
+                          </div>
+                        )}
                     </div>
                   </>
                 )}
