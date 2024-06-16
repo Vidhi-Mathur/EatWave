@@ -6,6 +6,7 @@ export const AddReview = forwardRef(({orderId, restaurantId, existingReview}, re
     const { token, fetchRefreshToken } = useContext(AuthContext);
     const [ addReview, setAddReview ] = useState(existingReview || {})
     const [ editReview, setEditReview ] = useState(!existingReview)
+    const [ selectedFile, setSelectedFile ] = useState(null)
 
     useEffect(() => {
         if(existingReview) setAddReview(existingReview)
@@ -13,18 +14,45 @@ export const AddReview = forwardRef(({orderId, restaurantId, existingReview}, re
 
     const changeHandler = (e, newRating) => {
         if(e){
-            const { name, value } = e.target
-            setAddReview((prev) => ({...prev, [name]: name === 'rating'? Number(value): value}))
+            const { name, value, files } = e.target
+            if(name === 'reviewImage') setSelectedFile(files[0])
+            else setAddReview((prev) => ({...prev, [name]: name === 'rating'? Number(value): value}))
         }
         else setAddReview((prev) => ({...prev, value: newRating}))
     }
     
     const modalHandler = async(confirmed) => {
         if(confirmed){
+            let imageUrl = addReview.imageUrl
+            let folder = 'review_images'
+            if(selectedFile){
+                const imageFormData = new FormData()
+                imageFormData.append('image', selectedFile)
+                imageFormData.append('folder', folder)
+                try {
+                    const imageResponse = await fetch('http://localhost:3000/upload-image', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': token? `Bearer ${token}`: ''
+                        },
+                        body: imageFormData
+                    })
+                    if(!imageResponse.ok){
+                        throw new Error("Can't save imageFormData, try again later")
+                    }
+                    const imageResult = await imageResponse.json()
+                    imageUrl = imageResult.imageUrl
+                }
+                catch(err) {
+                    console.log(err)
+                    return
+                }
+            }
             const reviews = {
                 rating: addReview.rating,
                 comments: addReview.comments,
-                restaurant: restaurantId
+                restaurant: restaurantId,
+                imageUrl
             }
             let response;
             if(existingReview){
@@ -84,6 +112,7 @@ export const AddReview = forwardRef(({orderId, restaurantId, existingReview}, re
             <div className="bg-white rounded-lg p-8">
                 <Rating name="rating" value={addReview.rating || 0} onChange={(e, newRating) => changeHandler(e, newRating)} readOnly={!editReview}/>
                 <textarea id="comments" type="text" name="comments" className="border p-2 w-full mb-4" placeholder="comments" onChange={changeHandler} value={addReview.comments || ""} readOnly={!editReview}/>
+                {editReview? <input type="file" name="reviewImage" accept='image/*' className="border p-2 w-full mb-4" onChange={changeHandler} />: <img src={addReview.imageUrl} alt="Review" className="w-full h-auto max-h-64 object-contain rounded-lg mb-4" />}
                 <div className="flex justify-end mt-8">
                 {editReview? (
                 <button type="button" className="bg-green-500 text-white py-2 px-4 rounded mr-4" onClick={() => modalHandler(true)}>Save</button>
