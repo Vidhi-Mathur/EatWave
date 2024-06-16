@@ -7,7 +7,7 @@ exports.postReviews = async(req, res, next) => {
     try {
         const order  = req.params.order
         const reviewer = req.user._id
-        const { restaurant, rating, comments } = req.body  
+        const { restaurant, rating, comments, imageUrl } = req.body  
         const existingOrder = await Order.findById(order)
         if(!existingOrder) return res.status(404).json({message: 'No order found'})
         const existingRestaurant = await Restaurant.findById(restaurant)
@@ -19,7 +19,8 @@ exports.postReviews = async(req, res, next) => {
             restaurant,
             reviewer,
             rating,
-            comments
+            comments,
+            imageUrl
         })
         await review.save()
         //Save in Order, to later retrieve reviews for individual order
@@ -81,11 +82,12 @@ exports.getReviewsByUserId = async(req, res, next) => {
 exports.updateReview = async (req, res, next) => {
     try {
         const id = req.params.review;
-        const { rating, comments } = req.body;
+        const { rating, comments, imageUrl } = req.body;
         const review = await Review.findById(id);
         if (!review) return res.status(404).json({ message: 'No such review posted' });
         review.rating = rating;  
-        review.comments = comments;  
+        review.comments = comments;
+        review.imageUrl = imageUrl  
         await review.save();
         res.status(200).json({ review });
     } catch (err) {
