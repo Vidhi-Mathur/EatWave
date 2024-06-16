@@ -118,6 +118,7 @@ export const AddRestaurant = () => {
             ...prevState,
             restaurantImage: imageResult.imageUrl
           }));
+          return imageResult.imageUrl
         } catch (err) {
           console.log(err); 
         }
@@ -143,15 +144,15 @@ export const AddRestaurant = () => {
     }
     else if(type === 'file' && name === 'restaurantImage'){
       const file = files[0]
-      if (file) {
+      if(file) {
         const reader = new FileReader();
         reader.onloadend = async () => {
-            setFormData(prevState => ({
-              ...prevState,
-              restaurantImage: reader.result
-            }));
+          setFormData(prevState => ({
+            ...prevState,
+            restaurantImage: file
+          }));
         };
-        reader.readAsDataURL(file);
+      reader.readAsDataURL(file);
       }
     }
     else {
