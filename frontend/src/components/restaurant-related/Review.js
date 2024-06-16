@@ -44,6 +44,11 @@ export const Review = ({restaurantId}) => {
                         <p className="text-grey-600">{formattedDate(review.date)}</p>
                         <Rating value={review.rating} readOnly/>
                         <p className="text-gray-800 mt-2">{review.comments}</p>
+                        {review.imageUrl && (
+                            <div className="mt-4">
+                                <img src={review.imageUrl} alt="Review" className="w-full h-auto max-h-64 object-contain rounded-lg mb-4"/>
+                            </div>
+                        )}
                     </div>
                 ))}
         </div>
