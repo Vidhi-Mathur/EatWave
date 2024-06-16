@@ -12,13 +12,15 @@ const cartRoute = require('./routes/user-related/cart-route')
 const { fileUpload, upload } = require('./util/file-upload')
 const { authorizationMiddleware } = require('./controllers/user-related/authentication-controller')
 
+app.use(cors({
+    origin: 'http://localhost:3001'
+}))
+
 //Parsing JSON bodies
-app.use(express.json())
+app.use(express.json({limit: '50mb'}))
 
 //Parsing URL-encoded bodies
-app.use(express.urlencoded({extended: true}))
-
-app.use(cors())
+app.use(express.urlencoded({extended: true, limit: '50mb'}))
 
 //Forwarding
 app.use('/', authRoutes)
