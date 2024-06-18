@@ -3,7 +3,7 @@ export const AddMenuItems = ({item, idx, onChangeMenuItem, onRemoveMenuItem}) =>
     const tagToggler = (currTag) => {
         //If already exist, remove, otherwise add
         const updatedTags =item.tags.includes(currTag)? item.tags.filter(t => t !== currTag): [currTag, ...item.tags]
-        onChangeMenuItem({ target: { name: `tags-${idx}`, value: updatedTags }}, idx)
+        onChangeMenuItem({ target: { name: `foodTags-${idx}`, value: updatedTags }}, idx)
     }
     return (
         <div className="border rounded p-4 shadow mb-6">
