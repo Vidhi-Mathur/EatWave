@@ -2,7 +2,7 @@ import { forwardRef, useContext, useEffect, useState } from "react"
 import Rating from '@mui/material/Rating';
 import { AuthContext } from "../../store/Auth-Context";
 
-export const AddReview = forwardRef(({orderId, restaurantId, existingReview}, ref) => {
+export const AddReview = forwardRef(({orderId, restaurantId, existingReview, updateReview}, ref) => {
     const { token, fetchRefreshToken } = useContext(AuthContext);
     const [ addReview, setAddReview ] = useState(existingReview || {})
     const [ editReview, setEditReview ] = useState(!existingReview)
@@ -54,33 +54,22 @@ export const AddReview = forwardRef(({orderId, restaurantId, existingReview}, re
                 restaurant: restaurantId,
                 imageUrl
             }
-            let response;
-            if(existingReview){
-                response = await fetch(`http://localhost:3000/review/${existingReview._id}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': token? `Bearer ${token}`: ''
-                    },
-                    body: JSON.stringify(reviews)
-                })
-            }
-            else {
-                response = await fetch(`http://localhost:3000/review/${orderId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': token? `Bearer ${token}`: ''
-                    },
-                    body: JSON.stringify(reviews)
-                })
-            }
+            let url = `http://localhost:3000/review/${existingReview? existingReview._id: orderId}`
+            let method = existingReview? 'PATCH': 'POST'
+            let response = await fetch(url, {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': token? `Bearer ${token}`: ''
+                },
+                body: JSON.stringify(reviews)
+            })
             if(!response.ok){
                 if(response.status === 401){
                    const refreshResponse = await fetchRefreshToken()
                    if(refreshResponse){
-                     response = await fetch(`http://localhost:3000/review/${existingReview? existingReview._id: orderId}`, {
-                     method: existingReview? 'PATCH': 'POST',
+                     response = await fetch(url, {
+                     method,
                      headers: {
                      'Content-Type': 'application/json',
                      'Authorization': `Bearer ${refreshResponse.accessToken}`
@@ -101,8 +90,11 @@ export const AddReview = forwardRef(({orderId, restaurantId, existingReview}, re
              }
             const result = await response.json()
             setAddReview(result.review)
+            updateReview(orderId, result.review)
             setEditReview(false)
         }
+        setAddReview(existingReview || {})
+        setEditReview(!existingReview)
         ref.current.close()
     }
 
