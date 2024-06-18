@@ -103,6 +103,10 @@ export const PastOrders = () => {
         fetchPastOrders();
     }, [fetchRefreshToken, token]);
 
+    const updateReviewHandler = (orderId, updatedReview) => {
+        setReview(prev => ({ ...prev, [orderId]: updatedReview }));
+    };
+
     return (
         <div>
             <h1 className="text-2xl font-bold mb-4">Past Orders</h1>
@@ -116,7 +120,7 @@ export const PastOrders = () => {
                         <p className="text-gray-700">Ordered on {formattedDate(order.createdAt)}</p>
                         <p className="text-gray-700">Total Paid: &#8377; {order.totalCost}</p>
                         <button type="button" className="mt-3 bg-orange-500 text-white py-2 px-3 rounded" onClick={() => openModalHandler(order._id)}>{review[order._id]? "View Review": "Save Review"}</button>
-                        <AddReview ref={dialog} orderId={order._id} restaurantId={order.restaurant._id} existingReview={review[order._id]}/>
+                        <AddReview ref={dialog} orderId={order._id} restaurantId={order.restaurant._id} existingReview={review[order._id]} updateReview={updateReviewHandler}/>
                     </li>
                 ))}
             </ul>
