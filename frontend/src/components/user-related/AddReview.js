@@ -25,6 +25,7 @@ export const AddReview = forwardRef(({orderId, restaurantId, existingReview, upd
         if(confirmed){
             let imageUrl = addReview.imageUrl
             let folder = 'review_images'
+            let previousImageUrl = existingReview? existingReview.imageUrl: null
             if(selectedFile){
                 const imageFormData = new FormData()
                 imageFormData.append('image', selectedFile)
@@ -42,6 +43,22 @@ export const AddReview = forwardRef(({orderId, restaurantId, existingReview, upd
                     }
                     const imageResult = await imageResponse.json()
                     imageUrl = imageResult.imageUrl
+                    if(previousImageUrl){
+                    //Splitting along '/'
+                    const urlParts = previousImageUrl.split('/');
+                    //PublicId with file extension
+                    let publicIdWithExtension = urlParts.pop(); 
+                    //Removing file extension
+                    const publicId = publicIdWithExtension.split('.').slice(0, -1).join('.');
+                        await fetch('http://localhost:3000/delete-image', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': token? `Bearer ${token}`: ''
+                            },
+                            body: JSON.stringify({ public_id: publicId })
+                        })
+                    }
                 }
                 catch(err) {
                     console.log(err)
