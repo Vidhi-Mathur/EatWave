@@ -11,6 +11,7 @@ const reviewRoute = require('./routes/shared/review-route')
 const cartRoute = require('./routes/user-related/cart-route')
 const { fileUpload, upload } = require('./util/file-upload')
 const { authorizationMiddleware } = require('./controllers/user-related/authentication-controller')
+const { cloudinaryDelete } = require('./util/cloudinary')
 
 app.use(cors({
     origin: 'http://localhost:3001'
@@ -29,7 +30,8 @@ app.use('/restaurant', restaurantRoute)
 app.use('/cart', cartRoute)
 app.use('/order', orderRoute)
 app.use('/review', reviewRoute)
-app.post('/upload-image',  authorizationMiddleware, upload.single('image'), fileUpload);
+app.post('/upload-image', authorizationMiddleware, upload.single('image'), fileUpload);
+app.post('/delete-image', authorizationMiddleware, cloudinaryDelete)
 
 //Serving statically
 app.use('/uploads/images', express.static('uploads/images'))
