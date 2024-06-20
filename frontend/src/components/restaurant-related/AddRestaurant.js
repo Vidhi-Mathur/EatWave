@@ -10,6 +10,7 @@ export const AddRestaurant = () => {
   const {token, fetchRefreshToken} = useContext(AuthContext)
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({ working_days: [], menuItems: [], restaurantImage: null });
+  const [items, setItems] = useState([])
   const [cuisine, setCuisine] = useState([])
   const [menuId, setMenuId] = useState()
   const dialog = useRef()
@@ -66,6 +67,11 @@ export const AddRestaurant = () => {
       updatedItems[idx][field] = value
       return { ...prevState, menuItems: updatedItems }
     })
+    setItems(prevState => {
+      const updatedItems = [...prevState];
+      updatedItems[idx][field] = value;
+      return updatedItems;
+    });
   }
 
   const cuisineHandler = (receivedCuisine) => {
@@ -90,7 +96,30 @@ export const AddRestaurant = () => {
          throw new Error("Can't save menu, try again later")
       }
       const result = await response.json()
+      setItems(formData.menuItems)
       setMenuId(result.menu._id)
+      return result
+    }
+    catch(err) {
+      console.log(err)
+    }
+  }
+
+  const editMenuHandler = async() => {
+    try {
+      const response = await fetch(`http://localhost:3000/restaurant/menu/${menuId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : ''
+        },
+        body: JSON.stringify(items)
+      })
+      if(!response.ok){
+         throw new Error("Can't save menu, try again later")
+      }
+      const result = await response.json()
+      console.log(result)
       return result
     }
     catch(err) {
@@ -339,6 +368,7 @@ export const AddRestaurant = () => {
                     ))}
                     <button type="button" className="text-orange-500 mb-4 mr-4" onClick={addMenuItemHandler}>+ Add More</button>
                     {formData.menuItems.length > 0 && <button type="button" className="bg-orange-500 text-white py-2 px-4 rounded" onClick={saveMenuHandler}>Save Menu</button>}
+                    {menuId && <button type="button" className="bg-orange-500 text-white py-2 px-4 rounded" onClick={editMenuHandler}>Edit Menu</button>}
                     </div>
                     <div className="border rounded p-4 shadow mb-6">
                     <h3 className="text-md font-semibold mb-2">Packaging Charges</h3>
