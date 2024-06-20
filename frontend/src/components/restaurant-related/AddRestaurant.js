@@ -41,7 +41,7 @@ export const AddRestaurant = () => {
   };
 
   const generateMenuItems = () => {
-    return { name: '', description: '', price: 0, tags: [] }
+    return { name: '', description: '', price: 0, foodTags: [] }
   }
 
   const addMenuItemHandler = () => {
@@ -61,11 +61,11 @@ export const AddRestaurant = () => {
   const changeMenuItemHandler = (e, idx) => {
     const { name, value } = e.target;
     const field = name.split('-')[0];
-   setFormData(prevState => {
-    const updatedItems = [...prevState.menuItems]
-    updatedItems[idx][field] = value
-    return { ...prevState, menuItems: updatedItems }
-   })
+    setFormData(prevState => {
+      const updatedItems = [...prevState.menuItems]
+      updatedItems[idx][field] = value
+      return { ...prevState, menuItems: updatedItems }
+    })
   }
 
   const cuisineHandler = (receivedCuisine) => {
