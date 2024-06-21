@@ -10,7 +10,6 @@ export const AddRestaurant = () => {
   const {token, fetchRefreshToken} = useContext(AuthContext)
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({ working_days: [], menuItems: [], restaurantImage: null });
-  const [items, setItems] = useState([])
   const [cuisine, setCuisine] = useState([])
   const [menuId, setMenuId] = useState()
   const dialog = useRef()
@@ -67,11 +66,6 @@ export const AddRestaurant = () => {
       updatedItems[idx][field] = value
       return { ...prevState, menuItems: updatedItems }
     })
-    setItems(prevState => {
-      const updatedItems = [...prevState];
-      updatedItems[idx][field] = value;
-      return updatedItems;
-    });
   }
 
   const cuisineHandler = (receivedCuisine) => {
@@ -96,7 +90,11 @@ export const AddRestaurant = () => {
          throw new Error("Can't save menu, try again later")
       }
       const result = await response.json()
-      setItems(formData.menuItems)
+      //To include _id too
+      setFormData(prevState => ({
+        ...prevState,
+        menuItems: result.menu.items
+      }));
       setMenuId(result.menu._id)
       return result
     }
@@ -113,13 +111,13 @@ export const AddRestaurant = () => {
           'Content-Type': 'application/json',
           'Authorization': token ? `Bearer ${token}` : ''
         },
-        body: JSON.stringify(items)
+        body: JSON.stringify({items: formData.menuItems})
       })
       if(!response.ok){
          throw new Error("Can't save menu, try again later")
       }
       const result = await response.json()
-      console.log(result)
+      setMenuId(result.menu._id)
       return result
     }
     catch(err) {
@@ -128,29 +126,30 @@ export const AddRestaurant = () => {
   }
 
   const uploadImageHandler = async(file, folder) => {
-        try {
-          const imageFormData = new FormData();
-          imageFormData.append('image', file);
-          imageFormData.append('folder', folder)
-          const imageResponse = await fetch('http://localhost:3000/upload-image', {
-            method: 'POST',
-            headers: {
-              'Authorization': token ? `Bearer ${token}` : ''
-            },
-            body: imageFormData
-          });
-          if (!imageResponse.ok) {
-            throw new Error("Can't save image, try again later");
-          }
-          const imageResult = await imageResponse.json();
-          setFormData(prevState => ({
-            ...prevState,
-            restaurantImage: imageResult.imageUrl
-          }));
-          return imageResult.imageUrl
-        } catch (err) {
-          console.log(err); 
-        }
+    try {
+      const imageFormData = new FormData();
+      imageFormData.append('image', file);
+      imageFormData.append('folder', folder)
+      const imageResponse = await fetch('http://localhost:3000/upload-image', {
+        method: 'POST',
+        headers: {
+          'Authorization': token ? `Bearer ${token}` : ''
+        },
+        body: imageFormData
+      });
+      if (!imageResponse.ok) {
+        throw new Error("Can't save image, try again later");
+      }
+      const imageResult = await imageResponse.json();
+      setFormData(prevState => ({
+        ...prevState,
+        restaurantImage: imageResult.imageUrl
+      }));
+      return imageResult.imageUrl
+    } 
+    catch (err) {
+      console.log(err); 
+    }
   }
 
   const changeHandler = async(e) => {
@@ -367,7 +366,7 @@ export const AddRestaurant = () => {
                       <AddMenuItems key={idx} idx={idx} item={item} onChangeMenuItem={changeMenuItemHandler} onRemoveMenuItem={removeMenuItemHandler}/>
                     ))}
                     <button type="button" className="text-orange-500 mb-4 mr-4" onClick={addMenuItemHandler}>+ Add More</button>
-                    {formData.menuItems.length > 0 && <button type="button" className="bg-orange-500 text-white py-2 px-4 rounded" onClick={saveMenuHandler}>Save Menu</button>}
+                    {formData.menuItems.length > 0 && <button type="button" className="bg-orange-500 text-white py-2 px-4 rounded mr-2" onClick={saveMenuHandler}>Save Menu</button>}
                     {menuId && <button type="button" className="bg-orange-500 text-white py-2 px-4 rounded" onClick={editMenuHandler}>Edit Menu</button>}
                     </div>
                     <div className="border rounded p-4 shadow mb-6">
@@ -397,4 +396,3 @@ export const AddRestaurant = () => {
     </div>
   );
 };
-
