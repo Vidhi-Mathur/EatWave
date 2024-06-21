@@ -27,22 +27,30 @@ exports.getMenuById = async(req, res, next) => {
     }
 }
 
-exports.updateMenu = async(req, res, next) => {
+exports.updateMenu = async (req, res, next) => {
     try {
-        const { menuId } = req.params
-        const menu = await Menu.findById(menuId)
-        if(!menu) return res.status(404).json({ message: 'No associated menu found' })
-        const updatedFields = req.body
-        updatedFields.forEach(updatedItem => {
-            const itemId = updatedItem._id
-            const item = menu.items.id(itemId)
-            if(!item) return res.status(404).json({ message: 'No item found'})
-            Object.assign(item, updatedItem)
+        const { menuId } = req.params;
+        const menu = await Menu.findById(menuId);
+        if (!menu) return res.status(404).json({ message: 'No associated menu found' });
+        const { items } = req.body;
+        const notFoundItems = [];
+        items.forEach(updatedItem => {
+            const itemId = updatedItem._id;
+            const item = menu.items.id(itemId);
+            if (!item) {
+                notFoundItems.push(itemId);
+            } 
+            else {
+                Object.assign(item, updatedItem);
+            }
         });
-        await menu.save()
+        if (notFoundItems.length > 0) {
+            return res.status(404).json({ message: 'Some items not found', notFoundItems });
+        }
+        await menu.save();
         res.status(200).json({ menu });
+    } 
+    catch (err) {
+        next(err);
     }
-    catch(err) {
-        next(err)
-    }
-}
+};
