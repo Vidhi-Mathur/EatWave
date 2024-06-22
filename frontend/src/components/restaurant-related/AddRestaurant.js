@@ -12,6 +12,7 @@ export const AddRestaurant = () => {
   const [formData, setFormData] = useState({ working_days: [], menuItems: [], restaurantImage: null });
   const [cuisine, setCuisine] = useState([])
   const [menuId, setMenuId] = useState()
+  const [isEditable, setIsEditable] = useState(true)
   const dialog = useRef()
 
   const nextHandler = () => {
@@ -96,6 +97,7 @@ export const AddRestaurant = () => {
         menuItems: result.menu.items
       }));
       setMenuId(result.menu._id)
+      setIsEditable(false)
       return result
     }
     catch(err) {
@@ -117,7 +119,7 @@ export const AddRestaurant = () => {
          throw new Error("Can't save menu, try again later")
       }
       const result = await response.json()
-      setMenuId(result.menu._id)
+      setIsEditable(false)
       return result
     }
     catch(err) {
@@ -363,11 +365,19 @@ export const AddRestaurant = () => {
                     <div className="border rounded p-4 shadow mb-6">
                     <h3 className="text-md font-semibold mb-2">Add your menu</h3>
                     {formData.menuItems.map((item, idx) => (
-                      <AddMenuItems key={idx} idx={idx} item={item} onChangeMenuItem={changeMenuItemHandler} onRemoveMenuItem={removeMenuItemHandler}/>
+                      <AddMenuItems key={idx} idx={idx} item={item} onChangeMenuItem={changeMenuItemHandler} onRemoveMenuItem={removeMenuItemHandler} isEditable={isEditable}/>
                     ))}
                     <button type="button" className="text-orange-500 mb-4 mr-4" onClick={addMenuItemHandler}>+ Add More</button>
-                    {formData.menuItems.length > 0 && <button type="button" className="bg-orange-500 text-white py-2 px-4 rounded mr-2" onClick={saveMenuHandler}>Save Menu</button>}
-                    {menuId && <button type="button" className="bg-orange-500 text-white py-2 px-4 rounded" onClick={editMenuHandler}>Edit Menu</button>}
+                    {isEditable ? formData.menuItems.length > 0 && (
+                      <>
+                      <button type="button" className="bg-green-500 text-white py-2 px-4 rounded mr-4" onClick={menuId ? editMenuHandler : saveMenuHandler}>Save Menu</button>
+                      {menuId && <button type="button" className="bg-red-500 text-white py-2 px-4 rounded" onClick={() => setIsEditable(false)}>Cancel</button>}
+                      </>
+                    ): formData.menuItems.length > 0 && (
+                    <button type="button" className="bg-orange-500 text-white py-2 px-4 rounded" onClick={() => setIsEditable(true)}>
+                        Edit Menu
+                    </button>
+                    )}
                     </div>
                     <div className="border rounded p-4 shadow mb-6">
                     <h3 className="text-md font-semibold mb-2">Packaging Charges</h3>
