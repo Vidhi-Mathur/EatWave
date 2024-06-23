@@ -9,7 +9,7 @@ let steps = ['Restaurant Information', 'Restaurant Documents', 'Menu Setup'];
 export const AddRestaurant = () => {
   const {token, fetchRefreshToken} = useContext(AuthContext)
   const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState({ working_days: [], menuItems: [], restaurantImage: null });
+  const [formData, setFormData] = useState({ working_days: [], menuItems: [], restaurantImages: [] });
   const [cuisine, setCuisine] = useState([])
   const [menuId, setMenuId] = useState()
   const [isEditable, setIsEditable] = useState(true)
@@ -127,11 +127,13 @@ export const AddRestaurant = () => {
     }
   }
 
-  const uploadImageHandler = async(file, folder) => {
+  const uploadImageHandler = async(files, folder) => {
     try {
       const imageFormData = new FormData();
-      imageFormData.append('image', file);
-      imageFormData.append('folder', folder)
+      for (let i = 0; i < files.length; i++) {
+        imageFormData.append('images', files[i]);
+      }
+      imageFormData.append('folder', folder);
       const imageResponse = await fetch('http://localhost:3000/upload-image', {
         method: 'POST',
         headers: {
@@ -143,16 +145,13 @@ export const AddRestaurant = () => {
         throw new Error("Can't save image, try again later");
       }
       const imageResult = await imageResponse.json();
-      setFormData(prevState => ({
-        ...prevState,
-        restaurantImage: imageResult.imageUrl
-      }));
-      return imageResult.imageUrl
+      return imageResult.imageUrls; 
     } 
     catch (err) {
       console.log(err); 
     }
   }
+  
 
   const changeHandler = async(e) => {
     const { name, value, type, checked, files } = e.target;
@@ -172,17 +171,12 @@ export const AddRestaurant = () => {
         }
       }))
     }
-    else if(type === 'file' && name === 'restaurantImage'){
-      const file = files[0]
-      if(file) {
-        const reader = new FileReader();
-        reader.onloadend = async () => {
-          setFormData(prevState => ({
-            ...prevState,
-            restaurantImage: file
-          }));
-        };
-      reader.readAsDataURL(file);
+    else if (type === 'file' && name === 'restaurantImages') {
+      if (files.length > 0) {
+        setFormData(prevState => ({
+          ...prevState,
+          restaurantImages: [...prevState.restaurantImages, ...Array.from(files)]
+        }));
       }
     }
     else {
@@ -192,10 +186,10 @@ export const AddRestaurant = () => {
 
   const submitHandler = async(e) => {
     e.preventDefault();
-    let imageUrl = formData.restaurantImage
-    if(imageUrl && typeof imageUrl !== 'string'){
-      let folder = 'restaurant_images'
-      imageUrl = await uploadImageHandler(imageUrl, folder)
+    let imageUrls = [];
+    if (formData.restaurantImages.length > 0) {
+      let folder = 'restaurant_images';
+      imageUrls = await uploadImageHandler(formData.restaurantImages, folder);
     }
     const filteredData = Object.fromEntries(
       Object.entries(formData).filter(
@@ -217,7 +211,7 @@ export const AddRestaurant = () => {
       fssai: filteredData.fssai, 
       foodType: filteredData.food_option,
       cuisine,
-      imageUrl
+      imageUrls
       };
     try {
       let response = await fetch('http://localhost:3000/restaurant/new', {
@@ -315,13 +309,7 @@ export const AddRestaurant = () => {
                     </div>
                     <div className='border rounded p-4 shadow mb-6'>
                       <h1 className="text-md font-semibold mb-2">Restaurant Image</h1>
-                        <input type='file' name="restaurantImage" accept='image/*' className="border p-2 w-full mb-4"/>
-                        {formData.restaurantImage && (
-                          <div className="mt-4">
-                          <h2 className="text-md font-semibold mb-2">Preview</h2>
-                          <img src={formData.restaurantImage} alt={'Restaurant'} className='max-w-full h-auto'/>
-                          </div>
-                        )}
+                        <input type='file' name="restaurantImages" accept='image/*' className="border p-2 w-full mb-4" multiple/>
                     </div>
                   </>
                 )}
