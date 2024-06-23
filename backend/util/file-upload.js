@@ -22,23 +22,24 @@ const fileType = (req, file, cb) => {
 
 exports.upload = multer({storage: fileStorage, fileFilter: fileType})
 
-exports.fileUpload = async(req, res) => {
-    if (!req.file) {
-        return res.status(400).json({ message: 'No file uploaded' });
+exports.fileUpload = async (req, res) => {
+    if (!req.files || req.files.length === 0) {
+        return res.status(400).json({ message: 'No files uploaded' });
     }
-    const localFilePath = req.file.path;
-    const folder = req.body.folder || 'default-folder'
+    const folder = req.body.folder || 'default-folder'; 
+    const uploadPromises = req.files.map(file => cloudinaryUpload(file.path, folder));
     try {
-        const response = await cloudinaryUpload(localFilePath, folder)
-        fs.unlinkSync(localFilePath)
-        if(response){
-            return res.status(200).json({ imageUrl: response.secure_url });
-        }
-        else {
-            return res.status(500).json({ message: 'Cloudinary upload failed' });
-        }
+        const uploadResults = await Promise.all(uploadPromises);
+        const imageUrls = uploadResults.map(result => result.secure_url);
+        req.files.forEach(file => {
+            if(fs.existsSync(file.path)) fs.unlinkSync(file.path);
+        });
+        return res.status(200).json({ imageUrls });
+    } 
+    catch (err) {
+        req.files.forEach(file => {
+            if(fs.existsSync(file.path)) fs.unlinkSync(file.path);
+        });
+        return res.status(500).json({ message: 'Failed to upload files' });
     }
-    catch(err) {
-        res.status(500).json({ message: 'Internal Server error' });
-    }
-}
+};
