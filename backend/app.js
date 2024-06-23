@@ -30,7 +30,7 @@ app.use('/restaurant', restaurantRoute)
 app.use('/cart', cartRoute)
 app.use('/order', orderRoute)
 app.use('/review', reviewRoute)
-app.post('/upload-image', authorizationMiddleware, upload.single('image'), fileUpload);
+app.post('/upload-image', authorizationMiddleware, upload.array('images', 10), fileUpload);
 app.post('/delete-image', authorizationMiddleware, cloudinaryDelete)
 
 //Serving statically
