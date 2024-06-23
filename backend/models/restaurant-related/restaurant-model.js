@@ -1,3 +1,4 @@
+
 const mongoose = require('mongoose')
 const schema = mongoose.Schema
 
@@ -72,9 +73,9 @@ const restaurant = new schema({
         ref: 'Review',
         default: null
     }],
-    imageUrl: {
-        type: String,
-        default: 'https://res.cloudinary.com/dzczgjlxt/image/upload/restaurant_images/a5tnypq7zhlmpehaebje.png'
+    imageUrls: {
+        type: [String],
+        default: ['https://res.cloudinary.com/dzczgjlxt/image/upload/restaurant_images/a5tnypq7zhlmpehaebje.png']
     }
 })
 
