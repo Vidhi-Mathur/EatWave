@@ -5,7 +5,7 @@ import StarIcon from '@mui/icons-material/Star';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { PreviousArrow, NextArrow } from '../UI/Arrow';
+import { Arrow } from '../UI/Arrow';
 
 const ReviewStar = ({ rating }) => (
     <button className="bg-orange-600 text-white px-2 py-1 rounded-md"><StarIcon style={{color: 'ghostwhite'}} /> {rating}</button>
@@ -38,8 +38,8 @@ const TopPicks = () => {
         speed: 500,
         slidesToShow: 3,
         slidesToScroll: 1,
-        prevArrow: <PreviousArrow />,
-        nextArrow: <NextArrow />,
+        prevArrow: <Arrow direction="left"/>,
+        nextArrow: <Arrow direction="right" />,
         responsive: [{
             breakpoint: 1024,
             settings: {
