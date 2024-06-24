@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Card from '../UI/Card';
 import StarIcon from '@mui/icons-material/Star';
+import Slider from 'react-slick';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import { PreviousArrow, NextArrow } from '../UI/Arrow';
 
 const ReviewStar = ({ rating }) => (
     <button className="bg-orange-600 text-white px-2 py-1 rounded-md"><StarIcon style={{color: 'ghostwhite'}} /> {rating}</button>
@@ -28,28 +32,54 @@ const TopPicks = () => {
         fetchTopRestaurants();
     }, []);
 
+    const settings = {
+        dots: true,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 3,
+        slidesToScroll: 1,
+        prevArrow: <PreviousArrow />,
+        nextArrow: <NextArrow />,
+        responsive: [{
+            breakpoint: 1024,
+            settings: {
+                dots: true,
+                infinite: true,
+                slidesToShow: 2,
+                slidesToScroll: 1
+            }
+        }, 
+        {
+            breakpoint: 600,
+            settings: {
+                slidesToShow: 1,
+                slidesToScroll: 1
+            }
+        }]
+    }
+
     return (
         <div>
             <h1 className="text-3xl font-bold text-center mt-8 mb-4">Top Rated Restaurants</h1>
             {error && <p className="text-red-500 text-center m-4">{error}</p>}
             {topRestaurants.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {topRestaurants.map((restaurant, index) => (
-                        <Card key={index} className="bg-white rounded-lg shadow-md p-6">
-                            <Link key={index} to={`/restaurant/${restaurant.restaurant._id}`}>
-                            <div className="rounded-lg overflow-hidden border border-gray-300" style={{ width: '200px', height: '200px' }}>
-                                <img src={restaurant.restaurant.imageUrl} alt={restaurant.restaurant.restaurantName} className="w-full h-full object-cover" />
+                <Slider {...settings} className='mx-4'>
+                    {topRestaurants.map((restaurant, idx) => (
+                       <div key={idx} className='p-2'>
+                            <Card className="bg-white rounded-lg shadow-md p-4">
+                            <Link to={`/restaurant/${restaurant.restaurant._id}`}>
+                            <div className="rounded-lg overflow-hidden border border-gray-300 h-48" >
+                                <img src={restaurant.restaurant.imageUrls[0]} alt={restaurant.restaurant.restaurantName} className="w-full h-full object-cover" />
                             </div>
                             <div className="flex justify-between mb-4 mt-4">
-                                <div>
-                                    <h2 className="text-xl font-semibold">{restaurant.restaurant.restaurantName}</h2>
-                                </div>
+                                <h2 className="text-xl font-semibold">{restaurant.restaurant.restaurantName}</h2>
                                 <ReviewStar rating={restaurant.averageRating} />
                             </div>
                             </Link>
                         </Card>
+                       </div>
                     ))}
-                </div>
+                </Slider>
             )}
         </div>
     );
