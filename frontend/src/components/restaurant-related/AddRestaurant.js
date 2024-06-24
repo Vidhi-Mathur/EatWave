@@ -58,6 +58,13 @@ export const AddRestaurant = () => {
       menuItems: prevState.menuItems.filter((_,i) => i !== idx)
     }))
   }
+
+  const removeImageHandler = (idx) => {
+    setFormData(prevState => ({
+      ...prevState,
+      restaurantImages: prevState.restaurantImages.filter((_, i) => i !== idx)
+    }))
+  }
   
   const changeMenuItemHandler = (e, idx) => {
     const { name, value } = e.target;
@@ -308,8 +315,21 @@ export const AddRestaurant = () => {
                       <p>Opening and Closing Time remains same on all working days</p>
                     </div>
                     <div className='border rounded p-4 shadow mb-6'>
-                      <h1 className="text-md font-semibold mb-2">Restaurant Image</h1>
+                      <h1 className="text-md font-semibold mb-2">Restaurant Images</h1>
                         <input type='file' name="restaurantImages" accept='image/*' className="border p-2 w-full mb-4" multiple/>
+                          {formData.restaurantImages.length > 0 && (
+                            <div className="mt-4">
+                              <h2 className="text-md font-semibold mb-2">Preview</h2>
+                              <div className="flex flex-wrap gap-2">
+                                {formData.restaurantImages.map((image, idx) => (
+                                  <div key={idx} className='relative w-32 h-32'>
+                                    <img src={URL.createObjectURL(image)} alt={`Restaurant ${idx + 1}`} className="w-full h-full object-cover rounded border" />
+                                    <button className='absolute right-1 top-1 w-6 h-6 flex items-center justify-center rounded-md bg-red-500 text-white font-bold text-sm cursor-pointer' onClick={() => removeImageHandler(idx)}>x</button>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                     </div>
                   </>
                 )}
