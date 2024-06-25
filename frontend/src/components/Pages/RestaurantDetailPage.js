@@ -5,6 +5,7 @@ import Content from "../UI/Content";
 import { Menu } from "../restaurant-related/Menu";
 import { Review } from "../restaurant-related/Review";
 import { MenuContext } from "../../store/Menu-Context";
+import { Photos } from "../restaurant-related/Photos";
 
 const RestaurantDetailPage = () => {
     const { restaurantId } = useParams();
@@ -75,10 +76,14 @@ const RestaurantDetailPage = () => {
                                 <button onClick={() => setActive('reviews')} className={`pb-2 pt-2 px-4 text-lg font-semibold ${active === 'reviews'? 'border-b-2 border-orange-600 text-orange-600': 'text-gray-600'}`}>
                                 Reviews
                                 </button>
+                                <button onClick={() => setActive('photos')} className={`pb-2 pt-2 px-4 text-lg font-semibold ${active === 'photos'? 'border-b-2 border-orange-600 text-orange-600': 'text-gray-600'}`}>
+                                Photos
+                                </button>
                             </div>
                             <div>
                                 {active === 'menu' && <Menu menuId={restaurantDetail.menu} />}
                                 {active === 'reviews' && <Review restaurantId={restaurantId} />}
+                                {active === 'photos' && <Photos images={restaurantDetail.imageUrls}/>}
                             </div>
                         </div>
                     </div>
