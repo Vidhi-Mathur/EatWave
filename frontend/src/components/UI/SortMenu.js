@@ -45,6 +45,7 @@ export const SortMenu = () => {
     const result = await response.json()
     console.log(result.restaurants)
     setRestaurants(result.restaurants)
+    setShowSort(false)
     return result
   }
   catch(err) {
