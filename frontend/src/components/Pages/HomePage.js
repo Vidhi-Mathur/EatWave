@@ -10,10 +10,12 @@ const HomePage = () => {
       <Suspense fallback="Loading">
         <TopPicks />
       </Suspense>
-      <div className="inline-flex items-center space-x-4">
-      <h1>Choose what you want </h1>
-      <button className="mr-2 mb-2 px-2 py-1 border rounded bg-white shadow-md">Filter <TuneIcon /></button>
-      {<SortMenu />}
+      <div>
+        <div className="inline-flex items-center space-x-4">
+          <h1>Choose what you want </h1>
+          <button className="mr-2 mb-2 px-3 py-1 border rounded bg-white shadow-md mt-3">Filter <TuneIcon /></button>
+        </div>
+        {<SortMenu />}
       </div>
     </Layout>
   );
