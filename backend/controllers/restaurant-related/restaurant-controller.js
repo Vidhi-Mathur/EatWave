@@ -1,4 +1,4 @@
-
+const Review = require("../../models/shared/review-model")
 const Menu = require('../../models/restaurant-related/menu-model')
 const Restaurant = require('../../models/restaurant-related/restaurant-model')
 
@@ -43,6 +43,44 @@ exports.getRestaurantById = async(req, res, next) => {
         const restaurant = await Restaurant.findById(id)
         if(!restaurant) return res.status(404).json({message: 'No associated restaurant found'})
         res.status(200).json({ restaurant })
+    }
+    catch(err) {
+        next(err)
+    }
+}
+
+exports.sortRestaurantsByDefault = async (req, res, next) => {
+    try {
+        //Fetch all restaurants
+        const restaurants = await Restaurant.find({})
+        const restaurantRating = []
+        for(const restaurant of restaurants){
+            const reviews = await Review.find({ restaurant: restaurant._id })
+            const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0)
+            const averageRating = reviews.length > 0? totalRating/reviews.length: 0
+            restaurantRating.push({ restaurant, averageRating })
+        }
+        res.status(200).json({ restaurants: restaurantRating })
+    }
+    catch(err) {
+        next(err)
+    }
+};
+
+exports.sortRestaurantsByRatings = async(req, res, next) => {
+    try {
+        //Fetch all restaurants
+        const restaurants = await Restaurant.find({})
+        const restaurantRating = []
+        for(const restaurant of restaurants){
+            const reviews = await Review.find({ restaurant: restaurant._id })
+            const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0)
+            const averageRating = reviews.length > 0? totalRating/reviews.length: 0
+            restaurantRating.push({ restaurant, averageRating })
+        }
+        //Sort
+        restaurantRating.sort((a, b) => b.averageRating - a.averageRating)
+        res.status(200).json({ restaurants: restaurantRating })
     }
     catch(err) {
         next(err)
