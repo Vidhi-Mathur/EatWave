@@ -55,7 +55,7 @@ const TopPicks = () => {
 
     return (
         <div>
-            <h1 className="text-3xl font-bold text-center mt-8 mb-4">Top Rated Restaurants</h1>
+             <h1 className="text-3xl font-bold text-center mt-8 mb-4 text-black bg-white bg-opacity-75 px-4 py-2 rounded-lg shadow-lg inline-block ml-[600px]">Top Rated Restaurants</h1>
             {error && <p className="text-red-500 text-center m-4">{error}</p>}
             {topRestaurants.length > 0 && (
                 <Slider {...settings} className='mx-4'>
