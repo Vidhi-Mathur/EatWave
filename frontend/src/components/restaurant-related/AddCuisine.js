@@ -1,6 +1,6 @@
 import { forwardRef, useState } from "react"
 
-let cuisine = ["Afghan", "Central Asian", "Egyptian", "French", "German", "Indonesian", "Iranian", "Japanese", "Jordanian", "Korean", "Lebanese", "Lithuanian", "Malaysian", "Mauritian", "Moroccan", "Spanish", "Sri Lankan", "Swedish", "Thai", "Vietnamese", "Cafe", "Burgers", "Fast Food", "Keto", "Healthy Food", "North Eastern", "Oriental", "Home Food", "Barbecue", "Pastas", "Pizzas", "Snacks", "Bihari", "Thalis", "Mediterranean", "Mughlai", "Chaat", "Mexican", "Rajasthani", "Turkish", "European", "Pan-Asian", "Bengali", "South Indian", "Italian", "Punjabi", "Continental", "Desserts", "Lucknowi", "Kerala", "Tibetan", "Biryani", "Andhra", "Goan", "Chinese", "North Indian"
+export let cuisine = ["Afghan", "Central Asian", "Egyptian", "French", "German", "Indonesian", "Iranian", "Japanese", "Jordanian", "Korean", "Lebanese", "Lithuanian", "Malaysian", "Mauritian", "Moroccan", "Spanish", "Sri Lankan", "Swedish", "Thai", "Vietnamese", "Cafe", "Burgers", "Fast Food", "Keto", "Healthy Food", "North Eastern", "Oriental", "Home Food", "Barbecue", "Pastas", "Pizzas", "Snacks", "Bihari", "Thalis", "Mediterranean", "Mughlai", "Chaat", "Mexican", "Rajasthani", "Turkish", "European", "Pan-Asian", "Bengali", "South Indian", "Italian", "Punjabi", "Continental", "Desserts", "Lucknowi", "Kerala", "Tibetan", "Biryani", "Andhra", "Goan", "Chinese", "North Indian"
 ]
 
 export const AddCuisine = forwardRef(({onSelectCuisine}, ref) => {
