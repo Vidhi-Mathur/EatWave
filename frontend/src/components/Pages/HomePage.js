@@ -1,4 +1,4 @@
-import React, { Suspense, useRef } from "react";
+import React, { Suspense } from "react";
 import Layout from "../UI/Layout";
 import { SortMenu } from "../UI/SortMenu";
 import { FilterDialog } from "../UI/FilterDialog";
