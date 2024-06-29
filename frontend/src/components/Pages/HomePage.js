@@ -1,7 +1,7 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useRef } from "react";
 import Layout from "../UI/Layout";
-import TuneIcon from '@mui/icons-material/Tune';
 import { SortMenu } from "../UI/SortMenu";
+import { FilterDialog } from "../UI/FilterDialog";
 let TopPicks = React.lazy(() => import("../restaurant-related/TopPicks"))
 
 const HomePage = () => {
@@ -12,10 +12,10 @@ const HomePage = () => {
       </Suspense>
       <div>
         <div className="inline-flex items-center space-x-4">
-          <h1>Choose what you want </h1>
-          <button className="mr-2 mb-2 px-3 py-1 border rounded bg-white shadow-md mt-3">Filter <TuneIcon /></button>
+          <h1 className="ml-10 text-3xl font-bold text-white bg-gray-800 bg-opacity-75 px-4 py-2 rounded-lg shadow-lg">Choose what you want </h1>
+          <FilterDialog/>
         </div>
-        {<SortMenu />}
+        <SortMenu />
       </div>
     </Layout>
   );
