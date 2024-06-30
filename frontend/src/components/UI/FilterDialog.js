@@ -118,6 +118,10 @@ export const FilterDialog = () => {
                                 </label>
                                 </>
                             )}
+                            <div className='absolute bottom-4 right-4'>
+                            <button className="bg-orange-500 text-white py-2 px-3 rounded mr-2">Clear All</button>
+                            <button className="bg-orange-500 text-white py-2 px-3 rounded">Apply</button>
+                            </div>
                         </div>
                     </div>
                 </div>
