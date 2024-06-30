@@ -18,9 +18,6 @@ router.get('/user/:user', reviewController.getReviewsByUserId)
 //PATCH /eatwave/review/:review
 router.patch('/:review', authorizationMiddleware, reviewController.updateReview)
 
-//GET /eatwave/review/average-rating/:restaurant
-router.get('/average-rating/:restaurant', reviewController.getAverageRating)
-
 //GET /eatwave/review/top-rated-restaurants
 router.get('/top-rated-restaurants', reviewController.getTopRatedRestaurants)
 
