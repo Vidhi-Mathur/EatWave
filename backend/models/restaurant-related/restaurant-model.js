@@ -77,6 +77,10 @@ const restaurant = new schema({
         type: [String],
         default: ['https://res.cloudinary.com/dzczgjlxt/image/upload/v1719128397/restaurant_images/a5tnypq7zhlmpehaebje.png']
         
+    },
+    averageRating: {
+        type: Number,
+        default: 0
     }
 })
 
