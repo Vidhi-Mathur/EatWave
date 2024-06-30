@@ -3,6 +3,19 @@ const Order = require("../../models/shared/order-model")
 const Review = require("../../models/shared/review-model")
 const User = require("../../models/user-related/user-model")
 
+
+const calculateAndUpdateAverageRating = async(restaurantId) => {
+    try {
+        const reviews = await Review.find({ restaurant: restaurantId })
+        const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0)
+        const averageRating = reviews.length > 0? totalRating/reviews.length: 0
+        await Restaurant.findByIdAndUpdate(restaurantId, { averageRating })
+    }
+    catch(err) {
+        console.log(`Error at restaurant ${restaurantId}`)
+    }
+ }
+
 exports.postReviews = async(req, res, next) => {
     try {
         const order  = req.params.order
@@ -32,6 +45,7 @@ exports.postReviews = async(req, res, next) => {
         //Save in Users, to track own reviews
         existingReviewer.reviews.push(review._id)
         await existingReviewer.save()
+        await calculateAndUpdateAverageRating(restaurant)
         res.status(200).json({ review })
     }
     catch(err) {
@@ -89,42 +103,17 @@ exports.updateReview = async (req, res, next) => {
         review.comments = comments;
         review.imageUrl = imageUrl  
         await review.save();
+        await calculateAndUpdateAverageRating(review.restaurant)
         res.status(200).json({ review });
     } catch (err) {
         next(err);
     }
 };
 
-exports.getAverageRating = async(req, res, next) => {
-   try {
-        const id = req.params.restaurant
-        const restaurant = await Restaurant.findById(id)
-        if(restaurant) return res.status(404).json({message: 'Restaurant not found'})
-        const reviews = await Review.find({ restaurant: id })
-        if(reviews.length === 0) return res.status(404).json({message: 'No ratings found for given restaurant'})
-        const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0)
-        const averageRating = totalRating/reviews.length
-        res.status(200).json({ averageRating })
-   }
-   catch(err) {
-        next(err)
-   }
-}
-
 exports.getTopRatedRestaurants = async(req, res, next) => {
     try {
         //Fetch all restaurants
-        const restaurants = await Restaurant.find({})
-        const restaurantRating = []
-        for(const restaurant of restaurants){
-            const reviews = await Review.find({ restaurant: restaurant._id })
-            const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0)
-            const averageRating = reviews.length > 0? totalRating/reviews.length: 0
-            restaurantRating.push({ restaurant, averageRating })
-        }
-        //Sort
-        restaurantRating.sort((a, b) => b.averageRating - a.averageRating)
-        const topRestaurants = restaurantRating.slice(0, 10)
+        const topRestaurants = await Restaurant.find({}).sort({ averageRating: -1}).limit(10)
         res.status(200).json({ topRestaurants })
     }
     catch(err) {
