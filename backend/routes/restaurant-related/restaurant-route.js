@@ -15,8 +15,11 @@ router.get('/sort/ratings', restaurantController.sortRestaurantsByRatings)
 //GET /eatwave/restaurant/sort/cost-low-to-high
 // router.get('/sort/cost-low-to-high', restaurantController.sortRestaurantsByLowToHighCost)
 
-// //GET /eatwave/restaurant/sort/cost-high-to-low
+//GET /eatwave/restaurant/sort/cost-high-to-low
 // router.get('/sort/cost-high-to-low', restaurantController.sortRestaurantsByHighToLowCost)
+
+//GET /eatwave/restaurant/filter/preference
+router.get('/filter/preference', restaurantController.filterRestaurantsByPreference)
 
 router.use(authorizationMiddleware)
 
