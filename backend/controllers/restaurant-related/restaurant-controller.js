@@ -116,6 +116,8 @@ exports.deleteRestaurant = async(req, res, next) => {
         await Restaurant.findByIdAndDelete(id)
         //Delete associated menu with that restaurant
         await Menu.deleteMany({ restaurant: restaurant._id })
+        //Delete reviews associated with that restaurant
+        await Review.deleteMany({ restaurant: restaurant._id})
         res.status(200).json({message: 'Deleted successfully'})
     }
     catch(err){
