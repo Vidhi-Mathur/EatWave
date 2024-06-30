@@ -62,12 +62,12 @@ const TopPicks = () => {
                     {topRestaurants.map((restaurant, idx) => (
                        <div key={idx} className='p-2'>
                             <Card className="bg-white rounded-lg shadow-md p-4">
-                            <Link to={`/restaurant/${restaurant.restaurant._id}`}>
+                            <Link to={`/restaurant/${restaurant._id}`}>
                             <div className="rounded-lg overflow-hidden border border-gray-300 h-48" >
-                                <img src={restaurant.restaurant.imageUrls[0]} alt={restaurant.restaurant.restaurantName} className="w-full h-full object-cover" />
+                                <img src={restaurant.imageUrls[0]} alt={restaurant.restaurantName} className="w-full h-full object-cover" />
                             </div>
                             <div className="flex justify-between mb-4 mt-4">
-                                <h2 className="text-xl font-semibold">{restaurant.restaurant.restaurantName}</h2>
+                                <h2 className="text-xl font-semibold">{restaurant.restaurantName}</h2>
                                 <ReviewStar rating={restaurant.averageRating} />
                             </div>
                             </Link>
