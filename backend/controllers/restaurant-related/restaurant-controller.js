@@ -53,14 +53,7 @@ exports.sortRestaurantsByDefault = async (req, res, next) => {
     try {
         //Fetch all restaurants
         const restaurants = await Restaurant.find({})
-        const restaurantRating = []
-        for(const restaurant of restaurants){
-            const reviews = await Review.find({ restaurant: restaurant._id })
-            const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0)
-            const averageRating = reviews.length > 0? totalRating/reviews.length: 0
-            restaurantRating.push({ restaurant, averageRating })
-        }
-        res.status(200).json({ restaurants: restaurantRating })
+        res.status(200).json({ restaurants })
     }
     catch(err) {
         next(err)
@@ -70,17 +63,19 @@ exports.sortRestaurantsByDefault = async (req, res, next) => {
 exports.sortRestaurantsByRatings = async(req, res, next) => {
     try {
         //Fetch all restaurants
-        const restaurants = await Restaurant.find({})
-        const restaurantRating = []
-        for(const restaurant of restaurants){
-            const reviews = await Review.find({ restaurant: restaurant._id })
-            const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0)
-            const averageRating = reviews.length > 0? totalRating/reviews.length: 0
-            restaurantRating.push({ restaurant, averageRating })
-        }
-        //Sort
-        restaurantRating.sort((a, b) => b.averageRating - a.averageRating)
-        res.status(200).json({ restaurants: restaurantRating })
+        const restaurants = await Restaurant.find({}).sort({averageRating: -1})
+        res.status(200).json({ restaurants })
+    }
+    catch(err) {
+        next(err)
+    }
+}
+
+exports.filterRestaurantsByPreference = async(req, res, next) => {
+    try {
+        const { preference } = req.body
+        const restaurants = await Restaurant.find({ foodType: preference })
+        res.status(200).json({ restaurants })
     }
     catch(err) {
         next(err)
