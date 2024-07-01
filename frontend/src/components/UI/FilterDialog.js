@@ -1,17 +1,29 @@
-import { useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import TuneIcon from '@mui/icons-material/Tune';
 import { cuisine } from '../restaurant-related/AddCuisine';
+import { AuthContext } from '../../store/Auth-Context';
+import { SortedRestaurants } from '../restaurant-related/SortedRestaurants';
 
 export const FilterDialog = () => { 
-  const [selected, setSelected] = useState("Relevance (default)");
-  const [activeFilter, setActiveFilter] = useState("sort")
-
+  const { token } = useContext(AuthContext)
+  const [selectedSort, setselectedSort] = useState("Relevance (default)");
+  const [activeFilter, setActiveFilter] = useState("Sort")
+  const [cuisines, setCuisines] = useState([])
+  const [restaurants, setRestaurants] = useState([])
+ 
   const sortChangeHandler = (e) => {
-    setSelected(e.target.value);
+    setselectedSort(e.target.value);
   };
 
   const filterChangeHandler = (section) => {
     setActiveFilter(section)
+  }
+
+  const cuisinesHandler = (e) => {
+    setCuisines(prevState => ([
+        ...prevState,
+        e.target.value
+    ]))
   }
 
   const checkedRadio = "peer-checked:bg-orange-500 peer-checked:border-transparent mr-2 w-3 h-3 inline-block rounded-full border border-gray-300";
@@ -26,6 +38,60 @@ export const FilterDialog = () => {
 
     const closeModalHandler = () => {
         dialog.current.close()
+    }
+
+    const applyHandler = async() => {
+        let url, body;
+        if(activeFilter === 'Sort'){
+            if(selectedSort === "Relevance (default)") {
+                url = "http://localhost:3000/restaurant/sort/default"
+              }
+              else if(selectedSort === "Ratings"){
+                url = "http://localhost:3000/restaurant/sort/ratings"
+              } 
+              else if(selectedSort === "Cost: Low to High"){
+                url = "http://localhost:3000/restaurant/sort/cost-low-to-high"
+              } 
+              else {
+                url = "http://localhost:3000/restaurant/sort/cost-high-to-low"
+              }
+        }
+        else if(activeFilter === "Cuisines"){
+            url =  "http://localhost:3000/restaurant/filter/cuisines"
+            body = JSON.stringify({cuisines})
+        }
+        else if(activeFilter === "Ratings"){
+            url = "http://localhost:3000/restaurant/filter/ratings"
+        }
+        else if(url === "Food Preference"){
+            url = "http://localhost:3000/restaurant/filter/preference"
+        }
+        else{
+            url = "http://localhost:3000/restaurant/filter/cost-for-two"
+        }
+        try {
+            const options = {
+                method: body? 'POST':  'GET',
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token ? `Bearer ${token}` : ''
+                }
+            }
+            if(body){
+                options.body = body
+            }
+            const response = await fetch(url, options)
+            if(!response.ok){
+               throw new Error("Can't save menu, try again later")
+            }
+            const result = await response.json()
+            console.log(result.restaurants)
+            setRestaurants(result.restaurants)
+            return result
+          }
+          catch(err) {
+            console.log(err)
+          }
     }
 
     return (
@@ -54,8 +120,8 @@ export const FilterDialog = () => {
                             <>
                             <h2>SORT BY</h2>
                             {["Relevance (default)", "Ratings", "Cost: Low To High", "Cost: High To Low"].map((sortOption) => (
-                                <label className={`flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ${selected === sortOption ? selectedLabel : ''}`}>
-                                    <input type="radio" className="peer hidden" value={sortOption} checked={selected === sortOption} onChange={sortChangeHandler}/>
+                                <label className={`flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ${selectedSort === sortOption ? selectedLabel : ''}`}>
+                                    <input type="radio" className="peer hidden" value={sortOption} checked={selectedSort === sortOption} onChange={sortChangeHandler}/>
                                     <span className={checkedRadio}></span>
                                     {sortOption}
                                 </label>
@@ -67,7 +133,7 @@ export const FilterDialog = () => {
                                 <h2>FILTER BY CUISINE</h2>
                                 {cuisine.map((item, idx) => (
                                 <label key={idx} className='flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
-                                    <input type="checkbox" className="peer hidden" value={item}/>
+                                    <input type="checkbox" className="peer hidden" value={item} onClick={cuisinesHandler}/>
                                     <span className={checkedBox}></span>
                                     {item}
                                 </label>
@@ -120,13 +186,14 @@ export const FilterDialog = () => {
                             )}
                             <div className='absolute bottom-4 right-4'>
                             <button className="bg-orange-500 text-white py-2 px-3 rounded mr-2">Clear All</button>
-                            <button className="bg-orange-500 text-white py-2 px-3 rounded">Apply</button>
+                            <button className="bg-orange-500 text-white py-2 px-3 rounded" onClick={applyHandler}>Apply</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </dialog>
         </div>
+        <SortedRestaurants restaurants={restaurants}/>
         </>
     )
 }
