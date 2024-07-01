@@ -82,6 +82,17 @@ exports.filterRestaurantsByPreference = async(req, res, next) => {
     }
 }
 
+exports.filterRestaurantsByCuisines = async(req, res, next) => {
+    try {
+        const { cuisines } = req.body
+        const restaurants = await Restaurant.find({ cuisine: { $in: cuisines } });
+        res.status(200).json({ restaurants })
+    }
+    catch(err){
+        next(err)
+    }
+}
+
 exports.updateRestaurant = async(req, res, next) => {
     try {
         const { id } = req.params
