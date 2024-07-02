@@ -11,7 +11,7 @@ router.use(authorizationMiddleware)
 //POST /eatwave/restaurant/menu/new
 router.post('/new', menuController.createMenu)
 
-//PATCH  /eatwave/restaurant/menu/:menuId/items/:itemId
+//PATCH  /eatwave/restaurant/menu/:menuId
 router.patch('/:menuId', menuController.updateMenu)
 
 module.exports = router
