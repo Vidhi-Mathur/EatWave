@@ -1,13 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import SortIcon from '@mui/icons-material/Sort';
 import { AuthContext } from "../../store/Auth-Context";
-import { SortedRestaurants } from "../restaurant-related/SortedRestaurants";
 
-export const SortMenu = () => {
+export const SortMenu = ({ setRestaurants }) => {
   const { token } = useContext(AuthContext)
   const [showSort, setShowSort] = useState(false);
   const [selected, setSelected] = useState("Relevance (default)");
-  const [restaurants, setRestaurants] = useState([])
 
   useEffect(() => {
     fetchSortedRestaurants("Relevance (default)")
@@ -87,7 +85,6 @@ export const SortMenu = () => {
           </div>
         )}
       </div>
-      <SortedRestaurants restaurants={restaurants}/>
     </>
   );
 };

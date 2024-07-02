@@ -2,14 +2,12 @@ import { useContext, useRef, useState } from 'react';
 import TuneIcon from '@mui/icons-material/Tune';
 import { cuisine } from '../restaurant-related/AddCuisine';
 import { AuthContext } from '../../store/Auth-Context';
-import { SortedRestaurants } from '../restaurant-related/SortedRestaurants';
 
-export const FilterDialog = () => { 
+export const FilterDialog = ({ setRestaurants }) => { 
   const { token } = useContext(AuthContext)
   const [selectedSort, setselectedSort] = useState("Relevance (default)");
   const [activeFilter, setActiveFilter] = useState("Sort")
   const [cuisines, setCuisines] = useState([])
-  const [restaurants, setRestaurants] = useState([])
  
   const sortChangeHandler = (e) => {
     setselectedSort(e.target.value);
@@ -20,10 +18,9 @@ export const FilterDialog = () => {
   }
 
   const cuisinesHandler = (e) => {
-    setCuisines(prevState => ([
-        ...prevState,
-        e.target.value
-    ]))
+    setCuisines(prevState => (
+        prevState.includes(e.target.value)? prevState.filter(cuisine => cuisine !== e.target.value): [...prevState, e.target.value]
+    ))
   }
 
   const checkedRadio = "peer-checked:bg-orange-500 peer-checked:border-transparent mr-2 w-3 h-3 inline-block rounded-full border border-gray-300";
@@ -87,6 +84,7 @@ export const FilterDialog = () => {
             const result = await response.json()
             console.log(result.restaurants)
             setRestaurants(result.restaurants)
+            closeModalHandler()
             return result
           }
           catch(err) {
@@ -125,7 +123,7 @@ export const FilterDialog = () => {
                                     <span className={checkedRadio}></span>
                                     {sortOption}
                                 </label>
-                            ))}
+                            ))} 
                             </>
                             )}
                             {activeFilter === 'Cuisines' && (
@@ -184,16 +182,15 @@ export const FilterDialog = () => {
                                 </label>
                                 </>
                             )}
-                            <div className='absolute bottom-4 right-4'>
-                            <button className="bg-orange-500 text-white py-2 px-3 rounded mr-2">Clear All</button>
-                            <button className="bg-orange-500 text-white py-2 px-3 rounded" onClick={applyHandler}>Apply</button>
-                            </div>
                         </div>
                     </div>
                 </div>
+                <div className='flex justify-end items-center border-t p-4 space-x-2 sticky bottom-0 bg-white'>
+                    <button className="bg-orange-500 text-white py-2 px-4 rounded">Clear Filters</button>
+                    <button className="bg-orange-500 text-white py-2 px-4 rounded" onClick={applyHandler}>Apply</button>
+                </div>
             </dialog>
         </div>
-        <SortedRestaurants restaurants={restaurants}/>
         </>
     )
 }
