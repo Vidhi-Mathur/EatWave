@@ -81,6 +81,10 @@ const restaurant = new schema({
     averageRating: {
         type: Number,
         default: 0
+    },
+    costFortwo: {
+        type: Number,
+        required: true
     }
 })
 
