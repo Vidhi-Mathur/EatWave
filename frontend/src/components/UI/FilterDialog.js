@@ -8,6 +8,9 @@ export const FilterDialog = ({ setRestaurants }) => {
   const [selectedSort, setselectedSort] = useState("Relevance (default)");
   const [activeFilter, setActiveFilter] = useState("Sort")
   const [cuisines, setCuisines] = useState([])
+  const [ratings, setRatings] = useState([])
+  const [preference, setPreference] = useState()
+  const [costForTwo, setCostForTwo] = useState([])
  
   const sortChangeHandler = (e) => {
     setselectedSort(e.target.value);
@@ -21,6 +24,31 @@ export const FilterDialog = ({ setRestaurants }) => {
     setCuisines(prevState => (
         prevState.includes(e.target.value)? prevState.filter(cuisine => cuisine !== e.target.value): [...prevState, e.target.value]
     ))
+  }
+
+  const ratingsHandler = (e) => {
+    const value = parseInt(e.target.value, 10);
+    setRatings(prevState => (
+        prevState.includes(value)? prevState.filter(rating => rating !== value): [...prevState, value]
+    ))
+    console.log(ratings)
+  }
+
+  const preferenceHandler = (e) => {
+    setPreference(e.target.value)
+  }
+
+  const costForTwoHandler = (e) => {
+    setCostForTwo(prevState => (
+        prevState.includes(e.target.value)? prevState.filter(cost => cost !== e.target.value): [...prevState, e.target.value]
+    ))
+  }
+
+  const clearFiltersHandler = () => {
+    setselectedSort("Relevance (default)");
+    setCuisines([])
+    setRatings([])
+    costForTwo([])
   }
 
   const checkedRadio = "peer-checked:bg-orange-500 peer-checked:border-transparent mr-2 w-3 h-3 inline-block rounded-full border border-gray-300";
@@ -55,16 +83,19 @@ export const FilterDialog = ({ setRestaurants }) => {
         }
         else if(activeFilter === "Cuisines"){
             url =  "http://localhost:3000/restaurant/filter/cuisines"
-            body = JSON.stringify({cuisines})
+            body = JSON.stringify({ cuisines })
         }
         else if(activeFilter === "Ratings"){
             url = "http://localhost:3000/restaurant/filter/ratings"
+            body = JSON.stringify({ ratings })
         }
         else if(url === "Food Preference"){
             url = "http://localhost:3000/restaurant/filter/preference"
+            body = JSON.stringify({ preference })
         }
         else{
             url = "http://localhost:3000/restaurant/filter/cost-for-two"
+            body = JSON.stringify({ costForTwo })
         }
         try {
             const options = {
@@ -79,7 +110,7 @@ export const FilterDialog = ({ setRestaurants }) => {
             }
             const response = await fetch(url, options)
             if(!response.ok){
-               throw new Error("Can't save menu, try again later")
+               throw new Error("Can't apply filter, try again later")
             }
             const result = await response.json()
             console.log(result.restaurants)
@@ -131,7 +162,7 @@ export const FilterDialog = ({ setRestaurants }) => {
                                 <h2>FILTER BY CUISINE</h2>
                                 {cuisine.map((item, idx) => (
                                 <label key={idx} className='flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
-                                    <input type="checkbox" className="peer hidden" value={item} onClick={cuisinesHandler}/>
+                                    <input type="checkbox" className="peer hidden" value={item} checked={cuisines.includes(item)} onClick={cuisinesHandler}/>
                                     <span className={checkedBox}></span>
                                     {item}
                                 </label>
@@ -142,8 +173,8 @@ export const FilterDialog = ({ setRestaurants }) => {
                                 <>
                                 <h2>FILTER BY RATINGS</h2>
                                 {[4, 3, 2].map((i) => (
-                                <label className='flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
-                                <input type="checkbox" className="peer hidden" />
+                                <label key={i} className='flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
+                                <input type="checkbox" className="peer hidden" value={i} onClick={ratingsHandler} checked={ratings.includes(i)}/>
                                 <span className={checkedBox}></span>
                                 {`Rating ${i}+`}
                                 </label>
@@ -155,7 +186,7 @@ export const FilterDialog = ({ setRestaurants }) => {
                                 <h2>FILTER BY FOOD PREFERENCE</h2>
                                 {['Veg', 'Non-Veg'].map((item, idx) => (
                                 <label key={idx} className='flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
-                                    <input type="checkbox" className="peer hidden" value={item}/>
+                                    <input type="checkbox" className="peer hidden" value={item} onClick={preferenceHandler}/>
                                     <span className={checkedBox}></span>
                                     {item}
                                 </label>
@@ -166,19 +197,19 @@ export const FilterDialog = ({ setRestaurants }) => {
                                 <>
                                 <h2>FILTER BY COST FOR TWO</h2>
                                 <label className='flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
-                                    <input type="checkbox" className="peer hidden" value="Less than 300"/>
+                                    <input type="checkbox" className="peer hidden" onClick={costForTwoHandler} checked={costForTwo.includes("Less than 300")} value="Less than 300"/>
                                     <span className={checkedBox}></span>
-                                    Less than &#8377; 300
+                                    Less than &#8377;300
                                 </label>
                                 <label className='flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
-                                    <input type="checkbox" className="peer hidden" value="300-600"/>
+                                    <input type="checkbox" className="peer hidden" onClick={costForTwoHandler} checked={costForTwo.includes("Between 300-600")} value="Between 300-600"/>
                                     <span className={checkedBox}></span>
-                                    &#8377; 300 - 600
+                                    Between &#8377;300 - 600
                                 </label>
                                 <label className='flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
-                                    <input type="checkbox" className="peer hidden" value="Greater than 600"/>
+                                    <input type="checkbox" className="peer hidden" onClick={costForTwoHandler} checked={costForTwo.includes("Greater than 600")} value="Greater than 600"/>
                                     <span className={checkedBox}></span>
-                                    Greater than &#8377; 600
+                                    Greater than &#8377;600
                                 </label>
                                 </>
                             )}
@@ -186,7 +217,7 @@ export const FilterDialog = ({ setRestaurants }) => {
                     </div>
                 </div>
                 <div className='flex justify-end items-center border-t p-4 space-x-2 sticky bottom-0 bg-white'>
-                    <button className="bg-orange-500 text-white py-2 px-4 rounded">Clear Filters</button>
+                    <button className="bg-orange-500 text-white py-2 px-4 rounded" onClick={clearFiltersHandler}>Clear All</button>
                     <button className="bg-orange-500 text-white py-2 px-4 rounded" onClick={applyHandler}>Apply</button>
                 </div>
             </dialog>
