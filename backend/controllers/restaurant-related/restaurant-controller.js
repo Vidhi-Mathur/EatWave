@@ -4,7 +4,7 @@ const Restaurant = require('../../models/restaurant-related/restaurant-model')
 
 exports.createRestaurant = async(req, res, next) => {
     try {
-        const { restaurantName, ownerName, phone, email, address, openingTime, closingTime, workingDays, menu, packagingCharges, accountNumber, fssai, foodType, cuisine, imageUrls } = req.body
+        const { restaurantName, ownerName, phone, email, address, openingTime, closingTime, workingDays, menu, packagingCharges, accountNumber, fssai, foodType, cuisine, imageUrls, costForTwo } = req.body
         const menuCard = await Menu.findById(menu)
         if(!menuCard) return res.status(404).json({message: 'No associated menu found'})
         const newRestaurant = await Restaurant.create({
@@ -23,7 +23,8 @@ exports.createRestaurant = async(req, res, next) => {
             fssai, 
             foodType,
             cuisine,
-            imageUrls
+            imageUrls,
+            costFortwo
         })
         await newRestaurant.save()
         //Associated id of restaurant to menu
@@ -89,6 +90,29 @@ exports.filterRestaurantsByCuisines = async(req, res, next) => {
         res.status(200).json({ restaurants })
     }
     catch(err){
+        next(err)
+    }
+}
+
+exports.filterRestaurantsByCostForTwo = async(req, res, next) => {
+    try {
+        const { costForTwo } = req.body
+        let range = []
+        if(costForTwo.includes("Less than 300")){
+            range.push({ costForTwo: { $lt: 300 }})
+        }
+        if(costForTwo.includes("Between 300-600")){
+            range.push({ costForTwo: { $gte: 300, $lte: 600 }})
+        }
+        if(costForTwo.includes("Greater than 600")){
+            range.push({ costForTwo: { $gt: 600 }})
+        }
+        const query = range.length ? { $or: range } : {};
+        const restaurants = await Restaurant.find(query)
+        res.status(200).json({ restaurants })
+    }
+    catch(err){
+        console.log(err)
         next(err)
     }
 }
