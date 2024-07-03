@@ -13,13 +13,19 @@ router.get('/sort/default', restaurantController.sortRestaurantsByDefault)
 router.get('/sort/ratings', restaurantController.sortRestaurantsByRatings)
 
 //GET /eatwave/restaurant/sort/cost-low-to-high
-// router.get('/sort/cost-low-to-high', restaurantController.sortRestaurantsByLowToHighCost)
+router.get('/sort/cost-low-to-high', restaurantController.sortRestaurantsByLowToHighCost)
 
 //GET /eatwave/restaurant/sort/cost-high-to-low
-// router.get('/sort/cost-high-to-low', restaurantController.sortRestaurantsByHighToLowCost)
+router.get('/sort/cost-high-to-low', restaurantController.sortRestaurantsByHighToLowCost)
 
 //POST /eatwave/restaurant/filter/cuisines
 router.post('/filter/cuisines', restaurantController.filterRestaurantsByCuisines)
+
+//POST /eatwave/restaurant/filter/ratings
+router.post('/filter/ratings', restaurantController.filterRestaurantsByRatings)
+
+//POST /eatwave/restaurant/filter/preference
+router.post('/filter/preference', restaurantController.filterRestaurantsByPreference)
 
 //POST /eatwave/restaurant/filter/cost-for-two
 router.post('/filter/cost-for-two', restaurantController.filterRestaurantsByCostForTwo)
