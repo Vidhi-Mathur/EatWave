@@ -24,7 +24,7 @@ exports.createRestaurant = async(req, res, next) => {
             foodType,
             cuisine,
             imageUrls,
-            costFortwo
+            costForTwo
         })
         await newRestaurant.save()
         //Associated id of restaurant to menu

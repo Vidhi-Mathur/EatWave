@@ -82,7 +82,7 @@ const restaurant = new schema({
         type: Number,
         default: 0
     },
-    costFortwo: {
+    costForTwo: {
         type: Number,
         required: true
     }
