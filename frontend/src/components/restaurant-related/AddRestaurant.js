@@ -353,12 +353,12 @@ export const AddRestaurant = () => {
                     <div className="border rounded p-4 shadow mb-6">
                       <h1 className="text-md font-semibold mb-2">What Kind of food is on your menu?</h1>
                       <div className="flex items-center mb-4">
-                        <input type="radio" id="veg" name="food_option" value="veg" className="mr-2" />
-                        <label htmlFor="veg">Veg only</label>
+                        <input type="radio" id="Veg" name="food_option" value="Veg" className="mr-2" />
+                        <label htmlFor="Veg">Veg only</label>
                       </div>
                       <div className="flex items-center">
-                        <input type="radio" id="both_food" name="food_option" value="both_food" className="mr-2" />
-                        <label htmlFor="both_food">Both Veg & Non-veg</label>
+                        <input type="radio" id="Both" name="food_option" value="Both" className="mr-2" />
+                        <label htmlFor="Both">Both Veg & Non-veg</label>
                       </div>
                       <hr className="my-4" />
                       <div>
