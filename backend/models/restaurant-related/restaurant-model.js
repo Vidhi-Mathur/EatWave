@@ -51,7 +51,7 @@ const restaurant = new schema({
     },
     foodType: {
         type: String,
-        enum: ['veg', 'both'],
+        enum: ['Veg', 'Both'],
         required: true
     },
     cuisine: {
