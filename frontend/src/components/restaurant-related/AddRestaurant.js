@@ -217,6 +217,7 @@ export const AddRestaurant = () => {
       accountNumber: filteredData.account,
       fssai: filteredData.fssai, 
       foodType: filteredData.food_option,
+      costForTwo: filteredData.cost_for_two,
       cuisine,
       imageUrls
       };
@@ -371,6 +372,10 @@ export const AddRestaurant = () => {
                       </div>
                     </div>
                     <div className="border rounded p-4 shadow mb-6">
+                      <h3 className="text-md font-semibold mb-2">Cost For Two</h3>
+                      <input type="number" id="cost_for_two" name="cost_for_two" placeholder=" &#8377;" className="border p-2 w-full mb-4" />
+                    </div>
+                    <div className="border rounded p-4 shadow mb-6">
                     <h3 className="text-md font-semibold mb-2">Add your menu</h3>
                     {formData.menuItems.map((item, idx) => (
                       <AddMenuItems key={idx} idx={idx} item={item} onChangeMenuItem={changeMenuItemHandler} onRemoveMenuItem={removeMenuItemHandler} isEditable={isEditable}/>
@@ -390,7 +395,7 @@ export const AddRestaurant = () => {
                     <div className="border rounded p-4 shadow mb-6">
                     <h3 className="text-md font-semibold mb-2">Packaging Charges</h3>
                     <p className="mb-4">Not applicable on Indian Breads, packaged items, and beverages</p>
-                    <input type="number" id="packaging_cost" name="packaging_cost" placeholder="Rs." className="border p-2 w-full mb-4" />
+                    <input type="number" id="packaging_cost" name="packaging_cost" placeholder=" &#8377;" className="border p-2 w-full mb-4" />
                     </div>
                   </>
                 )}
