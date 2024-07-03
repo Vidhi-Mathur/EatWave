@@ -31,7 +31,6 @@ export const FilterDialog = ({ setRestaurants }) => {
     setRatings(prevState => (
         prevState.includes(value)? prevState.filter(rating => rating !== value): [...prevState, value]
     ))
-    console.log(ratings)
   }
 
   const preferenceHandler = (e) => {
@@ -48,6 +47,7 @@ export const FilterDialog = ({ setRestaurants }) => {
     setselectedSort("Relevance (default)");
     setCuisines([])
     setRatings([])
+    setPreference()
     costForTwo([])
   }
 
@@ -74,11 +74,14 @@ export const FilterDialog = ({ setRestaurants }) => {
               else if(selectedSort === "Ratings"){
                 url = "http://localhost:3000/restaurant/sort/ratings"
               } 
-              else if(selectedSort === "Cost: Low to High"){
+              else if(selectedSort === "Cost: Low To High"){
                 url = "http://localhost:3000/restaurant/sort/cost-low-to-high"
               } 
-              else {
+              else if(selectedSort === "Cost: High To Low"){
                 url = "http://localhost:3000/restaurant/sort/cost-high-to-low"
+              }
+              else {
+                throw new Error("Failed sorting, try again later")
               }
         }
         else if(activeFilter === "Cuisines"){
@@ -89,13 +92,16 @@ export const FilterDialog = ({ setRestaurants }) => {
             url = "http://localhost:3000/restaurant/filter/ratings"
             body = JSON.stringify({ ratings })
         }
-        else if(url === "Food Preference"){
+        else if(activeFilter === "Food Preference"){
             url = "http://localhost:3000/restaurant/filter/preference"
             body = JSON.stringify({ preference })
         }
-        else{
+        else if(activeFilter === "Cost For Two"){
             url = "http://localhost:3000/restaurant/filter/cost-for-two"
             body = JSON.stringify({ costForTwo })
+        }
+        else {
+            throw new Error("Failed filtering, try again later")
         }
         try {
             const options = {
@@ -139,7 +145,7 @@ export const FilterDialog = ({ setRestaurants }) => {
                     <nav className='w-1/4 border-r'>
                         <ul>
                             {['Sort', 'Cuisines', 'Ratings', 'Food Preference', 'Cost For Two'].map((section) => (
-                                <button className='text-left p-2 py-2 w-full' onClick={() => filterChangeHandler(section)}><li>{section}</li></button>
+                                <button key={section} className='text-left p-2 py-2 w-full' onClick={() => filterChangeHandler(section)}><li>{section}</li></button>
                             ))}
                         </ul>
                     </nav>
@@ -149,7 +155,7 @@ export const FilterDialog = ({ setRestaurants }) => {
                             <>
                             <h2>SORT BY</h2>
                             {["Relevance (default)", "Ratings", "Cost: Low To High", "Cost: High To Low"].map((sortOption) => (
-                                <label className={`flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ${selectedSort === sortOption ? selectedLabel : ''}`}>
+                                <label key={sortOption} className={`flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ${selectedSort === sortOption ? selectedLabel : ''}`}>
                                     <input type="radio" className="peer hidden" value={sortOption} checked={selectedSort === sortOption} onChange={sortChangeHandler}/>
                                     <span className={checkedRadio}></span>
                                     {sortOption}
@@ -186,8 +192,8 @@ export const FilterDialog = ({ setRestaurants }) => {
                                 <h2>FILTER BY FOOD PREFERENCE</h2>
                                 {['Veg', 'Non-Veg'].map((item, idx) => (
                                 <label key={idx} className='flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
-                                    <input type="checkbox" className="peer hidden" value={item} onClick={preferenceHandler}/>
-                                    <span className={checkedBox}></span>
+                                    <input type="radio" className="peer hidden" value={item} onChange={preferenceHandler} checked={preference=== item} />
+                                    <span className={checkedRadio}></span>
                                     {item}
                                 </label>
                                 ))}
