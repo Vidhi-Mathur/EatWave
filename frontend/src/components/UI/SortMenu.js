@@ -31,11 +31,14 @@ export const SortMenu = ({ setRestaurants }) => {
   else if(sortedType === "Ratings"){
     url = "http://localhost:3000/restaurant/sort/ratings"
   } 
-  else if(sortedType === "Cost: Low to High"){
+  else if(sortedType === "Cost: Low To High"){
     url = "http://localhost:3000/restaurant/sort/cost-low-to-high"
   } 
-  else {
+  else if(sortedType === "Cost: High To Low"){
     url = "http://localhost:3000/restaurant/sort/cost-high-to-low"
+  }
+  else {
+    throw new Error("Failed sorting, try again later")
   }
   try {
     const response = await fetch(url, {
@@ -46,7 +49,7 @@ export const SortMenu = ({ setRestaurants }) => {
       },
     })
     if(!response.ok){
-       throw new Error("Can't save menu, try again later")
+      throw new Error("Can't sort, try again later")
     }
     const result = await response.json()
     console.log(result.restaurants)
@@ -72,7 +75,7 @@ export const SortMenu = ({ setRestaurants }) => {
           <div className="z-10 absolute bg-white divide-y divide-gray-100 rounded-lg shadow w-48 dark:bg-gray-700">
             <nav className="py-2 text-sm text-gray-700 dark:text-gray-200">
               {["Relevance (default)", "Ratings", "Cost: Low To High", "Cost: High To Low"].map((sortOption) => (
-                <label className={`flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ${selected === sortOption ? selectedLabel : ''}`}>
+                <label key={sortOption} className={`flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ${selected === sortOption ? selectedLabel : ''}`}>
                   <input type="radio" className="peer hidden" value={sortOption} checked={selected === sortOption} onChange={changeHandler}/>
                   <span className={checkedRadio}></span>
                   {sortOption}
