@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from "react"
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
-import { MenuContext } from "../../store/Menu-Context";
+import { CartContext } from "../../store/Cart-Context";
 import { AuthContext } from "../../store/Auth-Context";
 
 export const Menu = ({menuId}) => {
     const { isAuthenticated } = useContext(AuthContext)
-    const { items, addToCart, removeFromCart } = useContext(MenuContext)
+    const { items, addToCart, removeFromCart } = useContext(CartContext)
     const [menu, setMenu] = useState(null)
     const [error, setError] = useState(null)
     useEffect(() => {
