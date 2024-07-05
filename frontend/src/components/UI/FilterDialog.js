@@ -1,10 +1,8 @@
-import { useContext, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import TuneIcon from '@mui/icons-material/Tune';
 import { cuisine } from '../restaurant-related/AddCuisine';
-import { AuthContext } from '../../store/Auth-Context';
 
 export const FilterDialog = ({ setRestaurants }) => { 
-  const { token } = useContext(AuthContext)
   const [selectedSort, setselectedSort] = useState("Relevance (default)");
   const [activeFilter, setActiveFilter] = useState("Sort")
   const [cuisines, setCuisines] = useState([])
@@ -107,8 +105,7 @@ export const FilterDialog = ({ setRestaurants }) => {
             const options = {
                 method: body? 'POST':  'GET',
                 headers: {
-                'Content-Type': 'application/json',
-                'Authorization': token ? `Bearer ${token}` : ''
+                'Content-Type': 'application/json'
                 }
             }
             if(body){

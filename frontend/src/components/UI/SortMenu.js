@@ -1,9 +1,7 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import SortIcon from '@mui/icons-material/Sort';
-import { AuthContext } from "../../store/Auth-Context";
 
 export const SortMenu = ({ setRestaurants }) => {
-  const { token } = useContext(AuthContext)
   const [showSort, setShowSort] = useState(false);
   const [selected, setSelected] = useState("Relevance (default)");
 
@@ -44,8 +42,7 @@ export const SortMenu = ({ setRestaurants }) => {
     const response = await fetch(url, {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': token ? `Bearer ${token}` : ''
+        'Content-Type': 'application/json'
       },
     })
     if(!response.ok){
