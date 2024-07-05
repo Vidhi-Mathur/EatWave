@@ -119,7 +119,6 @@ export const FilterDialog = ({ setRestaurants }) => {
                throw new Error("Can't apply filter, try again later")
             }
             const result = await response.json()
-            console.log(result.restaurants)
             setRestaurants(result.restaurants)
             closeModalHandler()
             return result
