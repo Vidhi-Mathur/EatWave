@@ -52,7 +52,6 @@ export const SortMenu = ({ setRestaurants }) => {
       throw new Error("Can't sort, try again later")
     }
     const result = await response.json()
-    console.log(result.restaurants)
     setRestaurants(result.restaurants)
     setShowSort(false)
     return result
