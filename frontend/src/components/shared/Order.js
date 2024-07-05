@@ -1,11 +1,11 @@
 import { useContext, useState } from "react";
-import { MenuContext } from "../../store/Menu-Context"
+import { CartContext } from "../../store/Cart-Context"
 import Card from "../UI/Card"
 import { AuthContext } from "../../store/Auth-Context";
 import Layout from "../UI/Layout";
 
 export const Order = () => {
-    const { restaurant, items } = useContext(MenuContext);
+    const { restaurant, items } = useContext(CartContext);
     const { token, setToken } = useContext(AuthContext)
     const [error, setError] = useState(null)
     const orderHandler = async (e) => {
