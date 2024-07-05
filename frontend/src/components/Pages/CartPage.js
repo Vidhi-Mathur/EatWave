@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { MenuContext } from "../../store/Menu-Context";
+import { CartContext } from "../../store/Cart-Context";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import Layout from "../UI/Layout";
@@ -7,7 +7,7 @@ import Content from "../UI/Content";
 import { NavLink } from "react-router-dom";
 
 export const CartPage = () => {
-  const { items, addToCart, removeFromCart } = useContext(MenuContext);
+  const { items, addToCart, removeFromCart } = useContext(CartContext);
   const totalPrice = items.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
@@ -21,7 +21,6 @@ export const CartPage = () => {
             <div key={item.id} className="flex items-center justify-between bg-white rounded-lg shadow-md p-4 mb-4">
               <div>
                 <h3 className="text-lg font-semibold">{item.name}</h3>
-                <p className="text-gray-600">Quantity: {item.quantity}</p>
                 <p className="text-gray-800 mt-2">&#8377; {item.price}</p>
               </div>
               <div>
