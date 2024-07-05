@@ -10,7 +10,6 @@ export const getCartAPI = async (token) => {
         throw new Error("Failed to get cart");
     }
     const result = await response.json();
-    console.log(result)
     return result;
 };
 
