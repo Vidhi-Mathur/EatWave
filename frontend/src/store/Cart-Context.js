@@ -14,15 +14,16 @@ export const CartCtxProvider = ({ children }) => {
     const [cart, setCart] = useState({ items: [] });
     const [restaurantId, setRestaurantId] = useState(null);
     let batchedCartUpdatesRef = useRef([]);
-    let counter = 0;
-
+    
     useEffect(() => {
         const fetchCart = async () => {
             const loadedCart = await getCartAPI(token);
             setCart({ items: loadedCart.items || [] });
             setRestaurantId( loadedCart.restaurant || null );
         };
-        fetchCart();
+        if(token){
+            fetchCart();
+        }
     }, [token]);
 
     //Function and wait as arguments to limit calling function if case no activity within "wait"
@@ -39,8 +40,6 @@ export const CartCtxProvider = ({ children }) => {
 
     const processBatchedUpdates = useCallback(debounce(async () => {
         if (batchedCartUpdatesRef.current.length > 0) {
-            counter++;
-            console.log(counter)
             try {
                 await updateCartAPI(token, { updates: batchedCartUpdatesRef.current, restaurant: restaurantId });
                 batchedCartUpdatesRef.current = [];
