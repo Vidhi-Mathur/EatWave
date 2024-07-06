@@ -6,7 +6,8 @@ export const CartContext = createContext({
     items: [],
     addToCart: () => {},
     removeFromCart: () => {},
-    restaurant: null
+    restaurant: null,
+    setRestaurantId: null
 });
 
 export const CartCtxProvider = ({ children }) => {
@@ -101,7 +102,8 @@ export const CartCtxProvider = ({ children }) => {
         items: cart.items,
         addToCart,
         removeFromCart,
-        restaurant: restaurantId
+        restaurant: restaurantId,
+        setRestaurantId
     };
 
     return <CartContext.Provider value={ctxValue}>{children}</CartContext.Provider>;
