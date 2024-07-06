@@ -1,7 +1,6 @@
 const Cart = require("../../models/user-related/Cart-model");
 const Menu = require("../../models/restaurant-related/menu-model")
-const Restaurant = require('../..//models/restaurant-related/restaurant-model');
-
+const Restaurant = require('../../models/restaurant-related/restaurant-model');
 
 exports.getCart = async (req, res, next) => {
     try {
