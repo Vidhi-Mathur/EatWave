@@ -5,7 +5,7 @@ import { Link } from "react-router-dom"
 export const ErrorPage = () => {
     return (
         <Layout>
-            <Card>
+            <Card className="p-6">
             <div className="flex flex-col items-center justify-center h-full">
                 <h1 className="text-4xl font-bold text-center text-gray-900 mb-4">Oops!</h1>
                 <p className="text-lg text-center text-gray-700 mb-4">Looks Like You Took a Wrong Turn</p>

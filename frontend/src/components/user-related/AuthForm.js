@@ -43,7 +43,7 @@ const AuthForm = ({ signupMode, toggleHandler }) => {
 
 
     return (
-        <Card>
+        <Card className="p-6">
             <h2 className="text-2xl font-semibold mb-4 text-center">{signupMode ? 'Sign Up' : 'Login'}</h2>
             {<p className="mt-2 text-center">{signupMode ? (
                 <span onClick={toggleHandler}>

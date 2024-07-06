@@ -74,7 +74,7 @@ export const Order = () => {
 
     return (
         <Layout>
-            <Card>
+            <Card className="p-6">
                 {error && <p className="text-red-500 text-center m-4">{error}</p>}
                 <form className="space-y-4" onSubmit={orderHandler}>
                     <div>
