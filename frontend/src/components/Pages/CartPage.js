@@ -5,7 +5,7 @@ import AddIcon from "@mui/icons-material/Add";
 import Layout from "../UI/Layout";
 import Content from "../UI/Content";
 import { NavLink, Link } from "react-router-dom";
-import EmptyPlate from '../../assets/pexels-enginakyurt-1907642.jpg'
+import EmptyPlate from '../../assets/EmptyPlate.jpg'
 import Card from "../UI/Card";
 
 export const CartPage = () => {
