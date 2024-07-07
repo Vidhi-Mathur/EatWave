@@ -13,6 +13,7 @@ import { SuccessPage } from './components/Pages/SuccessPage.js';
 import { AccountPage } from './components/Pages/AccountPage.js';
 import { PastOrders } from './components/user-related/PastOrders.js';
 import { AddRestaurantPage } from './components/Pages/AddRestaurantPage.js';
+import { SearchPage } from './components/Pages/SearchPage.js';
 
 function App() {
   const { isAuthenticated } = useContext(AuthContext);
@@ -26,6 +27,7 @@ function App() {
               <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
               <Route path="/restaurant/:restaurantId" element={<RestaurantDetailPage />} />
               <Route path='/restaurant/add-restaurant' element={<AddRestaurantPage />} />
+              <Route path ="/search" element={<SearchPage />}/>
               {isAuthenticated && (
                 <>
                   <Route path='/cart' element={<CartPage />} />
