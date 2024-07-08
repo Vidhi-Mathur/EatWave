@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const searchController = require('../../controllers/user-related/search-contoller')
+const searchController = require('../../controllers/user-related/search-controller')
 
 //GET eatwave/search/suggestions?query=${query}
 router.get('/suggestions', searchController.getSuggestions)
