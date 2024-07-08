@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchSharpIcon from '@mui/icons-material/SearchTwoTone';
 import Layout from "../UI/Layout"
 import SearchFood from "../../assets/SearchFood.jpg"
@@ -9,23 +9,51 @@ export const SearchPage = () => {
     const [query, setQuery] = useState('')
     const [suggestions, setSuggestions] = useState([])
     const [searchResults, setSearchResults] = useState([])
+    const [triggerSearch, setTriggerSearch] = useState(false)
+
+    useEffect(() => {
+        const fetchSuggestions = async() => {
+            if(query.trim() === ''){
+                setSuggestions([])
+                return;
+            }
+            const response = await fetch(`http://localhost:3000/search/suggestions?query=${query}`)
+            const result = await response.json()
+            setSuggestions(result)
+            console.log(result)
+            return result
+        }
+        if(!triggerSearch) fetchSuggestions()
+    }, [query, triggerSearch])
+
+    useEffect(() => {
+        const fetchSearchResults = async() => {
+            if(query.trim() === ''){
+                setSearchResults([])
+                return;
+            }
+            const response = await fetch(`http://localhost:3000/search/results?query=${query}`)
+            const result = await response.json()
+            setSearchResults(result)
+            console.log(result)
+            return result
+        }
+        if(triggerSearch) fetchSearchResults()
+    }, [query, triggerSearch])
+
 
     const inputChangeHandler = async(e) => {
         const searched = e.target.value
         setQuery(searched)
-        const response = await fetch(`http://localhost:3000/search/suggestions?query=${searched}`)
-        const result = await response.json()
-        setSuggestions(result)
-        console.log(result)
-        return result
+        setTriggerSearch(false)
     }
 
     const searchHandler = async() => {
-        const response = await fetch(`http://localhost:3000/search/results?query=${query}`)
-        const result = await response.json()
-        setSearchResults(result)
-        console.log(result)
-        return result
+        setTriggerSearch(true)
+    }
+
+    const isFeasible = (state) => {
+        return ((state.restaurants && state.restaurants.length > 0) || (state.dishes && state.dishes.length > 0))
     }
 
     return (
@@ -37,8 +65,11 @@ export const SearchPage = () => {
                 <SearchSharpIcon color="disabled"/>
             </button>
         </div>
-        {suggestions.length > 0 && <SuggestionList suggestions={suggestions} onSearch={searchHandler} query={query}/>}
-        {searchResults.length > 0 && <SearchList />}
+        {triggerSearch? (
+            isFeasible(searchResults) && <SearchList searchResults={searchResults}/>
+        ): (
+            (isFeasible(suggestions) || query.length > 0) && <SuggestionList suggestions={suggestions} onSearch={searchHandler} query={query}/>
+        )}
         </Layout>
         </>
     )
