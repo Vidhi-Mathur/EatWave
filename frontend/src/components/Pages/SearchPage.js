@@ -20,7 +20,6 @@ export const SearchPage = () => {
             const response = await fetch(`http://localhost:3000/search/suggestions?query=${query}`)
             const result = await response.json()
             setSuggestions(result)
-            console.log(result)
             return result
         }
         if(!triggerSearch) fetchSuggestions()
@@ -35,7 +34,6 @@ export const SearchPage = () => {
             const response = await fetch(`http://localhost:3000/search/results?query=${query}`)
             const result = await response.json()
             setSearchResults(result)
-            console.log(result)
             return result
         }
         if(triggerSearch) fetchSearchResults()
@@ -53,13 +51,13 @@ export const SearchPage = () => {
     }
 
     const isFeasible = (state) => {
-        return ((state.restaurants && state.restaurants.length > 0) || (state.dishes && state.dishes.length > 0))
+        return (state.restaurants && state.restaurants.length > 0) || (state.dishes && state.dishes.length > 0)
     }
 
     return (
         <>
         <Layout customisedImageUrl={SearchFood}>
-        <div className="flex w-full max-w-2xl mx-auto my-5 border border-gray-300 rounded-md overflow-hidden">
+        <div className="flex w-full max-w-4xl mx-auto my-5 border border-gray-300 rounded-md overflow-hidden">
             <input type="search" placeholder="Search for restaurants and food" className="flex-grow px-4 py-3 text-base outline-none" value={query} onChange={inputChangeHandler}/>
             <button className="px-4 py-3 bg-white hover:bg-gray-100 transition-colors" onClick={searchHandler}>
                 <SearchSharpIcon color="disabled"/>
