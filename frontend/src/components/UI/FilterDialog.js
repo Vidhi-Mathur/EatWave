@@ -151,7 +151,7 @@ export const FilterDialog = ({ setRestaurants }) => {
                             <>
                             <h2>SORT BY</h2>
                             {["Relevance (default)", "Ratings", "Cost: Low To High", "Cost: High To Low"].map((sortOption) => (
-                                <label key={sortOption} className={`flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ${selectedSort === sortOption ? selectedLabel : ''}`}>
+                                <label key={sortOption} className={`flex items-center px-4 py-2 hover:bg-gray-100 ${selectedSort === sortOption ? selectedLabel : ''}`}>
                                     <input type="radio" className="peer hidden" value={sortOption} checked={selectedSort === sortOption} onChange={sortChangeHandler}/>
                                     <span className={checkedRadio}></span>
                                     {sortOption}
@@ -163,7 +163,7 @@ export const FilterDialog = ({ setRestaurants }) => {
                                 <>
                                 <h2>FILTER BY CUISINE</h2>
                                 {cuisine.map((item, idx) => (
-                                <label key={idx} className='flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
+                                <label key={idx} className='flex items-center px-4 py-2 hover:bg-gray-100'>
                                     <input type="checkbox" className="peer hidden" value={item} checked={cuisines.includes(item)} onClick={cuisinesHandler}/>
                                     <span className={checkedBox}></span>
                                     {item}
@@ -175,7 +175,7 @@ export const FilterDialog = ({ setRestaurants }) => {
                                 <>
                                 <h2>FILTER BY RATINGS</h2>
                                 {[4, 3, 2].map((i) => (
-                                <label key={i} className='flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
+                                <label key={i} className='flex items-center px-4 py-2 hover:bg-gray-100'>
                                 <input type="checkbox" className="peer hidden" value={i} onClick={ratingsHandler} checked={ratings.includes(i)}/>
                                 <span className={checkedBox}></span>
                                 {`Rating ${i}+`}
@@ -187,7 +187,7 @@ export const FilterDialog = ({ setRestaurants }) => {
                                 <>
                                 <h2>FILTER BY FOOD PREFERENCE</h2>
                                 {['Veg', 'Non-Veg'].map((item, idx) => (
-                                <label key={idx} className='flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
+                                <label key={idx} className='flex items-center px-4 py-2 hover:bg-gray-100'>
                                     <input type="radio" className="peer hidden" value={item} onChange={preferenceHandler} checked={preference=== item} />
                                     <span className={checkedRadio}></span>
                                     {item}
@@ -198,17 +198,17 @@ export const FilterDialog = ({ setRestaurants }) => {
                             {activeFilter === 'Cost For Two' && (
                                 <>
                                 <h2>FILTER BY COST FOR TWO</h2>
-                                <label className='flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
+                                <label className='flex items-center px-4 py-2 hover:bg-gray-100'>
                                     <input type="checkbox" className="peer hidden" onClick={costForTwoHandler} checked={costForTwo.includes("Less than 300")} value="Less than 300"/>
                                     <span className={checkedBox}></span>
                                     Less than &#8377;300
                                 </label>
-                                <label className='flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
+                                <label className='flex items-center px-4 py-2 hover:bg-gray-100'>
                                     <input type="checkbox" className="peer hidden" onClick={costForTwoHandler} checked={costForTwo.includes("Between 300-600")} value="Between 300-600"/>
                                     <span className={checkedBox}></span>
                                     Between &#8377;300 - 600
                                 </label>
-                                <label className='flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
+                                <label className='flex items-center px-4 py-2 hover:bg-gray-100'>
                                     <input type="checkbox" className="peer hidden" onClick={costForTwoHandler} checked={costForTwo.includes("Greater than 600")} value="Greater than 600"/>
                                     <span className={checkedBox}></span>
                                     Greater than &#8377;600

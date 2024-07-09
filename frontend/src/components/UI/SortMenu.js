@@ -68,16 +68,16 @@ export const SortMenu = ({ setRestaurants }) => {
           Sort By <SortIcon />
         </button>
         {showSort && (
-          <div className="z-10 absolute bg-white divide-y divide-gray-100 rounded-lg shadow w-48 dark:bg-gray-700">
-            <nav className="py-2 text-sm text-gray-700 dark:text-gray-200">
+          <div className="z-10 absolute bg-white divide-y divide-gray-100 rounded-lg shadow w-48">
+            <nav className="py-2 text-sm text-gray-700">
               {["Relevance (default)", "Ratings", "Cost: Low To High", "Cost: High To Low"].map((sortOption) => (
-                <label key={sortOption} className={`flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white ${selected === sortOption ? selectedLabel : ''}`}>
+                <label key={sortOption} className={`flex items-center px-4 py-2 hover:bg-gray-100 ${selected === sortOption ? selectedLabel : ''}`}>
                   <input type="radio" className="peer hidden" value={sortOption} checked={selected === sortOption} onChange={changeHandler}/>
                   <span className={checkedRadio}></span>
                   {sortOption}
                 </label>
               ))}
-              <button className={`w-full text-left px-4 py-2 ${selected ? 'bg-orange-500 text-white hover:bg-orange-600' : 'hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'}`} onClick={sortingHandler} >
+              <button className={`w-full text-left px-4 py-2 ${selected ? 'bg-orange-500 text-white hover:bg-orange-600' : 'hover:bg-gray-100'}`} onClick={sortingHandler} >
                 Apply
               </button>
             </nav>
