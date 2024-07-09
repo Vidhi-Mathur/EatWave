@@ -2,7 +2,7 @@ import SearchSharpIcon from '@mui/icons-material/SearchTwoTone';
 
 export const SuggestionList = ({suggestions, onSearch, query}) => {
     return (
-        <div className="w-full max-w-2xl mx-auto bg-white shadow-lg rounded-md">
+        <div className="w-full max-w-4xl mx-auto bg-white shadow-lg rounded-md">
             {suggestions.restaurants && suggestions.restaurants.map(restaurant => (
                 <div key={restaurant._id} className="px-4 py-3 hover:bg-gray-100 cursor-pointer items-center">
                   <div className='flex items-center'>
