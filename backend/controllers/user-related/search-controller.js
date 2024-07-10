@@ -32,6 +32,7 @@ const performSearch = async({query, limit = null}) => {
                 _id: item._id, 
                 name: item.name, 
                 price: item.price, 
+                restaurantId: menu.restaurant._id,
                 restaurantName: menu.restaurant.restaurantName, 
                 restaurantRating: menu.restaurant.averageRating
         })))
