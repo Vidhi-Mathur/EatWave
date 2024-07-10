@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, useCallback, useRef } from "react";
 import { getCartAPI, updateCartAPI } from "../services/CartService";
 import { AuthContext } from "./Auth-Context";
+import { debounce } from "../util/debounce";
 
 export const CartContext = createContext({
     items: [],
@@ -26,18 +27,6 @@ export const CartCtxProvider = ({ children }) => {
             fetchCart();
         }
     }, [token]);
-
-    //Function and wait as arguments to limit calling function if case no activity within "wait"
-    const debounce = (func, wait) => {
-        let timeout;
-        return function (...args) {
-            const context = this;
-            //Reset if activity happns
-            clearTimeout(timeout);
-            //Wait to call
-            timeout = setTimeout(() => func.apply(context, args), wait);
-        };
-    };
 
     const processBatchedUpdates = useCallback(debounce(async () => {
         if (batchedCartUpdatesRef.current.length > 0) {
