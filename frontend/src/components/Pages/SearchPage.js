@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import SearchSharpIcon from '@mui/icons-material/SearchTwoTone';
 import Layout from "../UI/Layout"
 import SearchFood from "../../assets/SearchFood.jpg"
 import { SuggestionList } from "../user-related/SuggestionList";
 import { SearchList } from "../user-related/SearchList";
+import { debounce } from "../../util/debounce";
 
 export const SearchPage = () => {
     const [query, setQuery] = useState('')
@@ -11,42 +12,46 @@ export const SearchPage = () => {
     const [searchResults, setSearchResults] = useState([])
     const [triggerSearch, setTriggerSearch] = useState(false)
 
-    useEffect(() => {
-        const fetchSuggestions = async() => {
-            if(query.trim() === ''){
-                setSuggestions([])
-                return;
-            }
-            const response = await fetch(`http://localhost:3000/search/suggestions?query=${query}`)
-            const result = await response.json()
-            setSuggestions(result)
-            return result
+    const fetchSuggestions = async() => {
+        if(query.trim() === ''){
+            setSuggestions([])
+            return;
         }
-        if(!triggerSearch) fetchSuggestions()
-    }, [query, triggerSearch])
+        const response = await fetch(`http://localhost:3000/search/suggestions?query=${query}`)
+        const result = await response.json()
+        setSuggestions(result)
+        return result
+    }
+
+    const fetchSearchResults = async() => {
+        if(query.trim() === ''){
+            setSearchResults([])
+            return;
+        }
+        const response = await fetch(`http://localhost:3000/search/results?query=${query}`)
+        const result = await response.json()
+        setSearchResults(result)
+        return result
+    }
+
+    const debouncedFetchedSuggestions = useCallback(debounce(fetchSuggestions, 300), [fetchSuggestions])
+    const debouncedFetchedSearchResults = useCallback(debounce(fetchSearchResults, 300), [fetchSuggestions])
 
     useEffect(() => {
-        const fetchSearchResults = async() => {
-            if(query.trim() === ''){
-                setSearchResults([])
-                return;
-            }
-            const response = await fetch(`http://localhost:3000/search/results?query=${query}`)
-            const result = await response.json()
-            setSearchResults(result)
-            return result
-        }
-        if(triggerSearch) fetchSearchResults()
-    }, [query, triggerSearch])
+        if(!triggerSearch) debouncedFetchedSuggestions(query)
+    }, [query, triggerSearch, debouncedFetchedSuggestions])
 
+    useEffect(() => {
+        if(triggerSearch) debouncedFetchedSearchResults(query)
+    }, [query, triggerSearch, debouncedFetchedSearchResults])
 
-    const inputChangeHandler = async(e) => {
+    const inputChangeHandler = (e) => {
         const searched = e.target.value
         setQuery(searched)
         setTriggerSearch(false)
     }
 
-    const searchHandler = async() => {
+    const searchHandler = () => {
         setTriggerSearch(true)
     }
 
