@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import SearchSharpIcon from '@mui/icons-material/SearchTwoTone';
 import Layout from "../UI/Layout"
 import SearchFood from "../../assets/SearchFood.jpg"
@@ -12,38 +12,35 @@ export const SearchPage = () => {
     const [searchResults, setSearchResults] = useState([])
     const [triggerSearch, setTriggerSearch] = useState(false)
 
-    const fetchSuggestions = async() => {
-        if(query.trim() === ''){
+    const fetchSuggestions = useCallback(async(q) => {
+        if(q.trim() === ''){
             setSuggestions([])
             return;
         }
-        const response = await fetch(`http://localhost:3000/search/suggestions?query=${query}`)
+        const response = await fetch(`http://localhost:3000/search/suggestions?query=${q}`)
         const result = await response.json()
         setSuggestions(result)
         return result
-    }
+    }, [])
 
-    const fetchSearchResults = async() => {
-        if(query.trim() === ''){
+    const fetchSearchResults = useCallback(async(q) => {
+        if(q.trim() === ''){
             setSearchResults([])
             return;
         }
-        const response = await fetch(`http://localhost:3000/search/results?query=${query}`)
+        const response = await fetch(`http://localhost:3000/search/results?query=${q}`)
         const result = await response.json()
         setSearchResults(result)
         return result
-    }
+    }, [])
 
-    const debouncedFetchedSuggestions = useCallback(debounce(fetchSuggestions, 300), [fetchSuggestions])
-    const debouncedFetchedSearchResults = useCallback(debounce(fetchSearchResults, 300), [fetchSuggestions])
+    const debouncedFetchedSuggestions = useMemo(() => debounce(fetchSuggestions, 300), [fetchSuggestions])
+    const debouncedFetchedSearchResults = useMemo(() => debounce(fetchSearchResults, 300), [fetchSearchResults])
 
     useEffect(() => {
         if(!triggerSearch) debouncedFetchedSuggestions(query)
-    }, [query, triggerSearch, debouncedFetchedSuggestions])
-
-    useEffect(() => {
-        if(triggerSearch) debouncedFetchedSearchResults(query)
-    }, [query, triggerSearch, debouncedFetchedSearchResults])
+        else debouncedFetchedSearchResults(query)
+    }, [query, triggerSearch, debouncedFetchedSuggestions, debouncedFetchedSearchResults])
 
     const inputChangeHandler = (e) => {
         const searched = e.target.value
@@ -55,8 +52,8 @@ export const SearchPage = () => {
         setTriggerSearch(true)
     }
 
-    const isFeasible = (state) => {
-        return (state.restaurants && state.restaurants.length > 0) || (state.dishes && state.dishes.length > 0)
+    const isFeasible = () => {
+        return (suggestions.restaurants && suggestions.restaurants.length > 0) || (suggestions.dishes && suggestions.dishes.length > 0)
     }
 
     return (
@@ -69,9 +66,9 @@ export const SearchPage = () => {
             </button>
         </div>
         {triggerSearch? (
-            isFeasible(searchResults) && <SearchList searchResults={searchResults}/>
+            <SearchList searchResults={searchResults} query={query}/>
         ): (
-            (isFeasible(suggestions) || query.length > 0) && <SuggestionList suggestions={suggestions} onSearch={searchHandler} query={query}/>
+            (isFeasible() || query.length > 0) && <SuggestionList suggestions={suggestions} onSearch={searchHandler} query={query}/>
         )}
         </Layout>
         </>
