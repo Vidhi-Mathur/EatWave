@@ -7,11 +7,21 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 import { CartContext } from "../../store/Cart-Context";
 import { AuthContext } from "../../store/Auth-Context";
+import { DishDetailsDialog } from "../restaurant-related/DishDetailsDialog";
 
 export const SearchList = ({searchResults, query}) => {
     const { isAuthenticated } = useContext(AuthContext)
     const { items, addToCart, removeFromCart } = useContext(CartContext)
-    const [active, setActive] = useState('dishes')
+    const [ active, setActive ] = useState('dishes')
+    const [ selectedDish, setSelectedDish ] = useState(null)
+    
+    const dishDetailsHandler = (dish) => {
+        setSelectedDish(dish)
+    }
+
+    const closeDetailsHandler = () => {
+        setSelectedDish(null)
+    }
     
     return (
         <div className="w-full max-w-4xl mx-auto bg-white shadow-lg rounded-md">
@@ -43,7 +53,7 @@ export const SearchList = ({searchResults, query}) => {
                                             <button onClick={() => addToCart({itemId: dish._id, name: dish.name, price: dish.price})} className="py-2 px-4 bg-orange-500 text-white border rounded hover:bg-white hover:text-orange-600">ADD</button>
                                         ): (
                                          <div className="flex items-center">
-                                            <button onClick={() => removeFromCart({itemId: dish._id})} className="bg-orange-100 px-3 py-2 rounded-l-md"><RemoveIcon /></button>
+                                            <button onClick={() => removeFromCart({itemId: dish._id})} className="bg-orange-100 px-3 py-2 rounded-md"><RemoveIcon /></button>
                                             <span className="px-4">{quantity}</span>
                                             <button onClick={() => addToCart({itemId: dish._id, name: dish.name, price: dish.price})} className="bg-orange-100 px-3 py-2 rounded-md"><AddIcon /></button>
                                         </div>
@@ -54,14 +64,15 @@ export const SearchList = ({searchResults, query}) => {
                                 <div className="flex justify-between items-center mt-5 mb-2">
                                     {/* Empty div to push More Details to the right */}
                                     <div></div> 
-                                    <button className="py-1 px-4 bg-transparent text-orange-400 border border-orange-400 rounded hover:bg-orange-400 hover:text-white">More Details</button>
+                                    <button className="py-1 px-4 bg-transparent text-orange-400 border border-orange-400 rounded hover:bg-orange-400 hover:text-white" onClick={() => dishDetailsHandler(dish)}>More Details</button>
+                                    {selectedDish && <DishDetailsDialog dish={selectedDish} onClose={closeDetailsHandler}/>}
                                 </div>
                                 <Link to={`/restaurant/${dish.restaurantId}`}><ArrowForwardIcon className="absolute top-8 right-2 text-gray-600" /></Link>
                             </div>
                             )
                         })
                     ): (
-                        <p className="col-span-2 text-center font-semibold">No match found for "{query}</p>
+                        <p className="col-span-2 text-center font-semibold">No match found for "{query}"</p>
                     )
                 )}
                 {active === 'restaurants' && (
