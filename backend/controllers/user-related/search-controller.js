@@ -20,7 +20,7 @@ const performSearch = async({query, limit = null}) => {
             cuisine: restaurant.cuisine
         }));
         // Fetch menu items matching query
-        let menuQuery = Menu.find({'items.name': { $regex: query, $options: 'i' }}).select('items.name items._id items.price').populate('restaurant', 'restaurantName averageRating').lean()
+        let menuQuery = Menu.find({'items.name': { $regex: query, $options: 'i' }}).select('items.name items._id items.price items.description').populate('restaurant', 'restaurantName averageRating').lean()
         if(limit){
             menuQuery = menuQuery.limit(limit)
         }
@@ -32,6 +32,7 @@ const performSearch = async({query, limit = null}) => {
                 _id: item._id, 
                 name: item.name, 
                 price: item.price, 
+                description: item.description,
                 restaurantId: menu.restaurant._id,
                 restaurantName: menu.restaurant.restaurantName, 
                 restaurantRating: menu.restaurant.averageRating
