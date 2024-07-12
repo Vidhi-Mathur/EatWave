@@ -40,8 +40,21 @@ export const CartCtxProvider = ({ children }) => {
         }
     }, 300), [token, restaurantId])
 
-    const addToCart = ({ itemId, name, price }) => {
-        setCart((prevCart) => {
+    const addToCart = ({ itemId, name, price, currentRestaurantId }) => {
+        if(restaurantId && restaurantId !== currentRestaurantId){
+            const userConfirmation = window.confirm(
+                "Your cart already contains items from a different restaurant. Do you want to clear the cart to add items from the new restaurant?"
+            );
+            if (userConfirmation) {
+                setCart({ items: [{ id: itemId, name, quantity: 1, price }] });
+                //Clear previous and add current
+                setRestaurantId(currentRestaurantId);
+                batchedCartUpdatesRef.current = [{ type: 'clear'}, { type: 'add', itemId, name, price }];
+                processBatchedUpdates();
+            }
+        }
+        else {
+            setCart((prevCart) => {
             let newCart = [...prevCart.items];
             let currentItemIdx = newCart.findIndex((item) => item.id === itemId);
             let newItem;
@@ -66,6 +79,7 @@ export const CartCtxProvider = ({ children }) => {
         });
         batchedCartUpdatesRef.current.push({ type: 'add', itemId, name, price });
         processBatchedUpdates();
+        }
     };
 
     const removeFromCart = ({ itemId }) => {
