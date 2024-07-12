@@ -27,7 +27,7 @@ export const DishDetailsDialog = ({dish, onClose}) => {
 
     return (
         <div className="flex justify-center items-center">
-            <dialog ref={dialog} className='max-w-xl w-full overflow-y-auto p-1 rounded-lg'>
+            <dialog ref={dialog} className='max-w-xl w-full max-h-[60vh] overflow-y-auto p-1 rounded-lg'>
                 <div className="relative bg-white rounded-lg p-6">
                     <button className="absolute top-0 right-0 rounded-full shadow-md bg-white text-gray-800 text-4xl" onClick={closeModalHandler}> 
                     &times;
@@ -40,19 +40,18 @@ export const DishDetailsDialog = ({dish, onClose}) => {
                         {isAuthenticated && (
                             <div className="mr-4">
                                 {quantity === 0? (
-                                    <button onClick={() => addToCart({itemId: dish._id, name: dish.name, price: dish.price})} className="py-2 px-4 bg-orange-500 text-white border rounded hover:bg-white hover:text-orange-600">ADD</button>
+                                    <button onClick={() => addToCart({itemId: dish._id, name: dish.name, price: dish.price, currentRestaurantId: dish.restaurantId})} className="py-2 px-4 bg-orange-500 text-white border rounded hover:bg-white hover:text-orange-600">ADD</button>
                                 ): (
                                  <div className="flex items-center">
                                     <button onClick={() => removeFromCart({itemId: dish._id})} className="bg-orange-100 px-3 py-2 rounded-md"><RemoveIcon /></button>
                                     <span className="px-4">{quantity}</span>
-                                    <button onClick={() => addToCart({itemId: dish._id, name: dish.name, price: dish.price})} className="bg-orange-100 px-3 py-2 rounded-md"><AddIcon /></button>
+                                    <button onClick={() => addToCart({itemId: dish._id, name: dish.name, price: dish.price, currentRestaurantId: dish.restaurantId})} className="bg-orange-100 px-3 py-2 rounded-md"><AddIcon /></button>
                                 </div>
                                 )}
                             </div>
                         )}
                     </div>
-                    {/* Adjust scroll later*/}
-                    <p className="text-[16px] text-gray-600 mb-4 mt-2">{dish.description}</p>
+                    <p className="text-[16px] text-gray-600 mb-4 mt-2 break-words">{dish.description}</p>
                 </div>
             </dialog>
         </div>
