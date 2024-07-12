@@ -53,22 +53,28 @@ exports.updateCart = async (req, res, next) => {
         }
         updates.forEach(update => {
             const { type, itemId } = update;
-            const itemIdx = cart.items.findIndex(cartItem => cartItem.item.toString() === itemId);
-            if (type === 'add') {
-                if (itemIdx !== -1) {
-                    cart.items[itemIdx].quantity += 1;
-                } 
-                else {
-                    cart.items.push({ item: itemId, quantity: 1 });
-                }
-            } 
-            else if (type === 'remove') {
-                if (itemIdx !== -1) {
-                    if (cart.items[itemIdx].quantity > 1) {
-                        cart.items[itemIdx].quantity -= 1;
+            if(type === 'clear'){
+                cart.items = []
+                cart.restaurant = restaurant
+            }
+            else {
+                const itemIdx = cart.items.findIndex(cartItem => cartItem.item.toString() === itemId);
+                if (type === 'add') {
+                    if (itemIdx !== -1) {
+                        cart.items[itemIdx].quantity += 1;
                     } 
                     else {
-                        cart.items.splice(itemIdx, 1);
+                        cart.items.push({ item: itemId, quantity: 1 });
+                    }
+                } 
+                else if (type === 'remove') {
+                    if (itemIdx !== -1) {
+                        if (cart.items[itemIdx].quantity > 1) {
+                            cart.items[itemIdx].quantity -= 1;
+                        } 
+                        else {
+                            cart.items.splice(itemIdx, 1);
+                        }
                     }
                 }
             }
