@@ -55,7 +55,7 @@ export const CartCtxProvider = ({ children }) => {
         setAlert(null)
     }
 
-    const addItemToCart = ({itemId, name, price}) => {
+    const addItemToCart = ({itemId, name, price, currentRestaurantId }) => {
         setCart((prevCart) => {
             let newCart = [...prevCart.items];
             let currentItemIdx = newCart.findIndex((item) => item.id === itemId);
@@ -79,16 +79,19 @@ export const CartCtxProvider = ({ children }) => {
                 items: newCart
             };
         });
+        if(restaurantId !== currentRestaurantId){
+            setRestaurantId(currentRestaurantId)
+        }
         batchedCartUpdatesRef.current.push({ type: 'add', itemId, name, price });
         processBatchedUpdates();
     }
 
     const addToCart = ({ itemId, name, price, currentRestaurantId }) => {
-        if(restaurantId && restaurantId !== currentRestaurantId){
+        if(cart.items.length > 0 && restaurantId && restaurantId !== currentRestaurantId){
             setAlert({ itemId, name, price, currentRestaurantId })
         }
         else {
-            addItemToCart({ itemId, name, price })
+            addItemToCart({ itemId, name, price, currentRestaurantId })
         }
     };
 
