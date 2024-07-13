@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, useCallback, useRef } f
 import { getCartAPI, updateCartAPI } from "../services/CartService";
 import { AuthContext } from "./Auth-Context";
 import { debounce } from "../util/debounce";
+import { Alert } from "../components/UI/Alert";
 
 export const CartContext = createContext({
     items: [],
@@ -15,6 +16,7 @@ export const CartCtxProvider = ({ children }) => {
     const { token } = useContext(AuthContext);
     const [cart, setCart] = useState({ items: [] });
     const [restaurantId, setRestaurantId] = useState(null);
+    const [alert, setAlert] = useState(null)
     let batchedCartUpdatesRef = useRef([]);
     
     useEffect(() => {
@@ -40,21 +42,21 @@ export const CartCtxProvider = ({ children }) => {
         }
     }, 300), [token, restaurantId])
 
-    const addToCart = ({ itemId, name, price, currentRestaurantId }) => {
-        if(restaurantId && restaurantId !== currentRestaurantId){
-            const userConfirmation = window.confirm(
-                "Your cart already contains items from a different restaurant. Do you want to clear the cart to add items from the new restaurant?"
-            );
-            if (userConfirmation) {
-                setCart({ items: [{ id: itemId, name, quantity: 1, price }] });
-                //Clear previous and add current
-                setRestaurantId(currentRestaurantId);
-                batchedCartUpdatesRef.current = [{ type: 'clear'}, { type: 'add', itemId, name, price }];
-                processBatchedUpdates();
-            }
-        }
-        else {
-            setCart((prevCart) => {
+    const confirmHandler = () => {
+        setCart({ items: [{ id: alert.itemId, name: alert.name, quantity: 1, price: alert.price }] });
+        //Clear previous and add current
+        setRestaurantId(alert.currentRestaurantId);
+        batchedCartUpdatesRef.current = [{ type: 'clear'}, { type: 'add', itemId: alert.itemId, name: alert.name, price: alert.price }];
+        processBatchedUpdates();
+        setAlert(null)
+    }
+
+    const cancelHandler = () => {
+        setAlert(null)
+    }
+
+    const addItemToCart = ({itemId, name, price}) => {
+        setCart((prevCart) => {
             let newCart = [...prevCart.items];
             let currentItemIdx = newCart.findIndex((item) => item.id === itemId);
             let newItem;
@@ -79,6 +81,14 @@ export const CartCtxProvider = ({ children }) => {
         });
         batchedCartUpdatesRef.current.push({ type: 'add', itemId, name, price });
         processBatchedUpdates();
+    }
+
+    const addToCart = ({ itemId, name, price, currentRestaurantId }) => {
+        if(restaurantId && restaurantId !== currentRestaurantId){
+            setAlert({ itemId, name, price, currentRestaurantId })
+        }
+        else {
+            addItemToCart({ itemId, name, price })
         }
     };
 
@@ -109,5 +119,10 @@ export const CartCtxProvider = ({ children }) => {
         setRestaurantId
     };
 
-    return <CartContext.Provider value={ctxValue}>{children}</CartContext.Provider>;
+    return <CartContext.Provider value={ctxValue}>
+        {children}
+        {alert && (
+            <Alert onConfirm={confirmHandler} onCancel={cancelHandler}/>
+        )}
+    </CartContext.Provider>;
 };
