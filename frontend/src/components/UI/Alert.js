@@ -1,7 +1,7 @@
 export const Alert = ({onConfirm, onCancel}) => {
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+            <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
                 <p className="mb-4 text-lg font-semibold">Items already in cart</p>
                 <p className="mb-6">Your cart contains items from other restaurant. Would you like to reset your cart for adding items from this restaurant?</p>
                 <div className="flex justify-end">
