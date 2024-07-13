@@ -39,13 +39,13 @@ export const CartPage = () => {
               </div>
               <div>
                 {item.quantity === 0 ? (
-                  <button onClick={() => addToCart({ itemId: item.id, name: item.name, price: item.price})} className="bg-orange-100 px-4 py-3 rounded-md">ADD</button>) : (
+                  <button onClick={() => addToCart({ itemId: item.id, name: item.name, price: item.price, currentRestaurantId: item.restaurant})} className="bg-orange-100 px-4 py-3 rounded-md">ADD</button>) : (
                   <div className="flex items-center">
                     <button onClick={() => removeFromCart({ itemId: item.id })} className="bg-orange-100 px-3 py-2 rounded-md">
                       <RemoveIcon />
                     </button>
                     <span className="px-4">{item.quantity}</span>
-                    <button onClick={() => addToCart({ itemId: item.id, name: item.name, price: item.price })} className="bg-orange-100 px-3 py-2 rounded-md">
+                    <button onClick={() => addToCart({ itemId: item.id, name: item.name, price: item.price, currentRestaurantId: item.restaurant })} className="bg-orange-100 px-3 py-2 rounded-md">
                       <AddIcon />
                     </button>
                   </div>

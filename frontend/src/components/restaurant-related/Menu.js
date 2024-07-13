@@ -42,11 +42,11 @@ export const Menu = ({menuId}) => {
                         <p className="text-gray-800 mt-2">&#8377; {item.price}</p>
                         </div>
                         {isAuthenticated && (<div>
-                            {quantity === 0? <button onClick={() => addToCart({itemId: item._id, name: item.name, price: item.price})} className="bg-orange-100 px-4 py-3 rounded-md">ADD</button>: (
+                            {quantity === 0? <button onClick={() => addToCart({itemId: item._id, name: item.name, price: item.price, currentRestaurantId: item.restaurant})} className="bg-orange-100 px-4 py-3 rounded-md">ADD</button>: (
                                  <div className="flex items-center">
                                  <button onClick={() => removeFromCart({itemId: item._id})} className="bg-orange-100 px-3 py-2 rounded-md"><RemoveIcon /></button>
                                  <span className="px-4">{quantity}</span>
-                                 <button onClick={() => addToCart({itemId: item._id, name: item.name, price: item.price})} className="bg-orange-100 px-3 py-2 rounded-md"><AddIcon /></button>
+                                 <button onClick={() => addToCart({itemId: item._id, name: item.name, price: item.price, currentRestaurantId: item.restaurant})} className="bg-orange-100 px-3 py-2 rounded-md"><AddIcon /></button>
                              </div>
                             )}
                         </div>)}

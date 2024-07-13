@@ -50,12 +50,12 @@ export const SearchList = ({searchResults, query}) => {
                                     {isAuthenticated && (
                                     <div>
                                         {quantity === 0? (
-                                            <button onClick={() => addToCart({itemId: dish._id, name: dish.name, price: dish.price})} className="py-2 px-4 bg-orange-500 text-white border rounded hover:bg-white hover:text-orange-600">ADD</button>
+                                            <button onClick={() => addToCart({itemId: dish._id, name: dish.name, price: dish.price, currentRestaurantId: dish.restaurantId})} className="py-2 px-4 bg-orange-500 text-white border rounded hover:bg-white hover:text-orange-600">ADD</button>
                                         ): (
                                          <div className="flex items-center">
                                             <button onClick={() => removeFromCart({itemId: dish._id})} className="bg-orange-100 px-3 py-2 rounded-md"><RemoveIcon /></button>
                                             <span className="px-4">{quantity}</span>
-                                            <button onClick={() => addToCart({itemId: dish._id, name: dish.name, price: dish.price})} className="bg-orange-100 px-3 py-2 rounded-md"><AddIcon /></button>
+                                            <button onClick={() => addToCart({itemId: dish._id, name: dish.name, price: dish.price, currentRestaurantId: dish.restaurantId})} className="bg-orange-100 px-3 py-2 rounded-md"><AddIcon /></button>
                                         </div>
                                         )}
                                     </div>
