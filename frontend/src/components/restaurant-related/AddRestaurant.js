@@ -3,6 +3,7 @@ import { StepIndicator } from '../UI/StepIndicator';
 import { AddMenuItems } from './AddMenuItems';
 import { AddCuisine } from './AddCuisine';
 import { AuthContext } from '../../store/Auth-Context';
+import { ErrorDialog } from '../UI/ErrorDialog';
 
 let weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 let steps = ['Restaurant Information', 'Restaurant Documents', 'Menu Setup'];
@@ -13,6 +14,7 @@ export const AddRestaurant = () => {
   const [cuisine, setCuisine] = useState([])
   const [menuId, setMenuId] = useState()
   const [isEditable, setIsEditable] = useState(true)
+  const [error, setError] = useState(null)
   const dialog = useRef()
 
   const nextHandler = () => {
@@ -94,10 +96,11 @@ export const AddRestaurant = () => {
         },
         body: JSON.stringify({items: formData.menuItems})
       })
-      if(!response.ok){
-         throw new Error("Can't save menu, try again later")
-      }
       const result = await response.json()
+      if(!response.ok){
+        setError(result.message)
+        return
+      }
       //To include _id too
       setFormData(prevState => ({
         ...prevState,
@@ -108,7 +111,7 @@ export const AddRestaurant = () => {
       return result
     }
     catch(err) {
-      console.log(err)
+      setError("Can't save menu, try again later")
     }
   }
 
@@ -122,15 +125,16 @@ export const AddRestaurant = () => {
         },
         body: JSON.stringify({items: formData.menuItems})
       })
-      if(!response.ok){
-         throw new Error("Can't save menu, try again later")
-      }
       const result = await response.json()
+      if(!response.ok){
+        setError(result.message)
+        return
+      }
       setIsEditable(false)
       return result
     }
     catch(err) {
-      console.log(err)
+      setError("Can't edit menu, try again later")
     }
   }
 
@@ -262,6 +266,10 @@ export const AddRestaurant = () => {
     }
   };
 
+  const closeErrorDialogHandler = () => {
+    setError(null)
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center mt-4 mb-4">
       <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-4xl">
@@ -269,138 +277,143 @@ export const AddRestaurant = () => {
           <StepIndicator steps={steps} currentStep={currentStep} />
           <div className="w-3/4 p-4">
             <form onChange={changeHandler} onSubmit={submitHandler} className="space-y-4">
-            {[...Array(steps.length)].map((_, index) => (
-              <div key={index} className={currentStep === index ? '' : 'hidden'}>
-                {index === 0 && (
+            {[...Array(steps.length)].map((_, index) => {
+                return (
                   <>
-                    <h1 className='text-2xl font-bold'>Restaurant Information</h1>
-                    <div className="border rounded p-4 shadow mb-6">
-                      <h1 className="text-md font-semibold mb-2">Basic Details</h1>
-                      <input type="text" name="owner" className="border p-2 w-full mb-4" placeholder="Owner's Full Name" />
-                      <input type="text" name="restaurant" className="border p-2 w-full mb-4" placeholder="Restaurant's Name"  />
-                      {/* Later - ToDo add location*/}
-                      <h1 className="text-md font-semibold mb-2">Address</h1>
-                      <input type="text" name="address.street" className="border p-2 w-full mb-2" placeholder="Street" />
-                      <input type="text" name="address.city" className="border p-2 w-full mb-2" placeholder="City" />
-                      <input type="text" name="address.state" className="border p-2 w-full mb-2" placeholder="State" />
-                      <input type="number" name="address.postalCode" className="border p-2 w-full mb-2" placeholder="Postal Code" />
-                    </div>
-                    <div className="border rounded p-4 shadow mb-6">
-                      <h1 className="text-md font-semibold mb-2">Owner Contact Details</h1>
-                      <input type="email" name="email" className="border p-2 w-full mb-4" placeholder="Email Address" />
-                      <input type="text" name="phone" className="border p-2 w-full mb-4" placeholder="Phone Number" />
-                    </div>
-                    <div className="border rounded p-4 shadow mb-6">
-                      <div className='flex items-center justify-between mb-2'>
-                        <h1 className="text-md font-semibold">Working Days</h1>
-                        <button type="button" className="text-orange-500" onClick={selectAllHandler}>Select All</button>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        {weekdays.map(day => (
-                          <div key={day} className="flex items-center">
-                            <input type="checkbox" id={day.toLowerCase()} checked={formData.working_days.includes(day)} name="working_days" value={day} className="mr-2" />
-                            <label htmlFor={day.toLowerCase()}>{day}</label>
+                    {error && <ErrorDialog error={error} onClose={closeErrorDialogHandler}/>}
+                    <div key={index} className={currentStep === index ? '' : 'hidden'}>
+                      {index === 0 && (
+                        <>
+                          <h1 className='text-2xl font-bold'>Restaurant Information</h1>
+                          <div className="border rounded p-4 shadow mb-6">
+                            <h1 className="text-md font-semibold mb-2">Basic Details</h1>
+                            <input type="text" name="owner" className="border p-2 w-full mb-4" placeholder="Owner's Full Name" />
+                            <input type="text" name="restaurant" className="border p-2 w-full mb-4" placeholder="Restaurant's Name"  />
+                            {/* Later - ToDo add location*/}
+                            <h1 className="text-md font-semibold mb-2">Address</h1>
+                            <input type="text" name="address.street" className="border p-2 w-full mb-2" placeholder="Street" />
+                            <input type="text" name="address.city" className="border p-2 w-full mb-2" placeholder="City" />
+                            <input type="text" name="address.state" className="border p-2 w-full mb-2" placeholder="State" />
+                            <input type="number" name="address.postalCode" className="border p-2 w-full mb-2" placeholder="Postal Code" />
                           </div>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="border rounded p-4 shadow mb-6">
-                      <h1 className="text-md font-semibold mb-2">Opening and Closing Time</h1>
-                      <div className="mt-4">
-                        {/* Later - ToDo make additional slots available*/}
-                        <label className="block mb-2">Opening Time</label>
-                        <input type="time" name="opening_time" className="border p-2 w-full mb-4" />
-                        <label className="block mb-2">Closing Time</label>
-                        <input type="time" name="closing_time" className="border p-2 w-full mb-4" />
-                      </div>
-                      <p>Opening and Closing Time remains same on all working days</p>
-                    </div>
-                    <div className='border rounded p-4 shadow mb-6'>
-                      <h1 className="text-md font-semibold mb-2">Restaurant Images</h1>
-                        <input type='file' name="restaurantImages" accept='image/*' className="border p-2 w-full mb-4" multiple/>
-                          {formData.restaurantImages.length > 0 && (
-                            <div className="mt-4">
-                              <h2 className="text-md font-semibold mb-2">Preview</h2>
-                              <div className="flex flex-wrap gap-2">
-                                {formData.restaurantImages.map((image, idx) => (
-                                  <div key={idx} className='relative w-32 h-32'>
-                                    <img src={URL.createObjectURL(image)} alt={`Restaurant ${idx + 1}`} className="w-full h-full object-cover rounded border" />
-                                    <button className='absolute right-1 top-1 w-6 h-6 flex items-center justify-center rounded-md bg-red-500 text-white font-bold text-sm cursor-pointer' onClick={() => removeImageHandler(idx)}>x</button>
-                                  </div>
-                                ))}
-                              </div>
+                          <div className="border rounded p-4 shadow mb-6">
+                            <h1 className="text-md font-semibold mb-2">Owner Contact Details</h1>
+                            <input type="email" name="email" className="border p-2 w-full mb-4" placeholder="Email Address" />
+                            <input type="text" name="phone" className="border p-2 w-full mb-4" placeholder="Phone Number" />
+                          </div>
+                          <div className="border rounded p-4 shadow mb-6">
+                            <div className='flex items-center justify-between mb-2'>
+                              <h1 className="text-md font-semibold">Working Days</h1>
+                              <button type="button" className="text-orange-500" onClick={selectAllHandler}>Select All</button>
                             </div>
+                            <div className="grid grid-cols-2 gap-2">
+                              {weekdays.map(day => (
+                                <div key={day} className="flex items-center">
+                                  <input type="checkbox" id={day.toLowerCase()} checked={formData.working_days.includes(day)} name="working_days" value={day} className="mr-2" />
+                                  <label htmlFor={day.toLowerCase()}>{day}</label>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="border rounded p-4 shadow mb-6">
+                            <h1 className="text-md font-semibold mb-2">Opening and Closing Time</h1>
+                            <div className="mt-4">
+                              {/* Later - ToDo make additional slots available*/}
+                              <label className="block mb-2">Opening Time</label>
+                              <input type="time" name="opening_time" className="border p-2 w-full mb-4" />
+                              <label className="block mb-2">Closing Time</label>
+                              <input type="time" name="closing_time" className="border p-2 w-full mb-4" />
+                            </div>
+                            <p>Opening and Closing Time remains same on all working days</p>
+                          </div>
+                          <div className='border rounded p-4 shadow mb-6'>
+                            <h1 className="text-md font-semibold mb-2">Restaurant Images</h1>
+                              <input type='file' name="restaurantImages" accept='image/*' className="border p-2 w-full mb-4" multiple/>
+                                {formData.restaurantImages.length > 0 && (
+                                  <div className="mt-4">
+                                    <h2 className="text-md font-semibold mb-2">Preview</h2>
+                                    <div className="flex flex-wrap gap-2">
+                                      {formData.restaurantImages.map((image, idx) => (
+                                        <div key={idx} className='relative w-32 h-32'>
+                                          <img src={URL.createObjectURL(image)} alt={`Restaurant ${idx + 1}`} className="w-full h-full object-cover rounded border" />
+                                          <button className='absolute right-1 top-1 w-6 h-6 flex items-center justify-center rounded-md bg-red-500 text-white font-bold text-sm cursor-pointer' onClick={() => removeImageHandler(idx)}>x</button>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                          </div>
+                        </>
+                      )}  
+                      {index === 1 && (
+                        <>
+                          <h1 className='text-2xl font-bold'>Restaurant Documents</h1>
+                          <div className="border rounded p-4 shadow mb-6">
+                            <h1 className="text-md font-semibold mb-2">Official Bank Details</h1>
+                            <p className='mb-2'>Payments from EatWave will be credited here</p>
+                            <input type="text" name="account" className="border p-2 w-full mb-4" placeholder="Bank Account number" />
+                          </div>
+                          <div className="border rounded p-4 shadow">
+                            <h1 className="text-md font-semibold">FSSAI certificate</h1>
+                            <input type="number" name="fssai" className="border p-2 w-full mb-4" placeholder="FSSAI certificate number" />
+                          </div>
+                        </>
+                      )}
+                      {index === 2 && (
+                        <>
+                          <h1 className='text-2xl font-bold'>Menu Setup</h1>
+                          <div className="border rounded p-4 shadow mb-6">
+                            <h1 className="text-md font-semibold mb-2">What Kind of food is on your menu?</h1>
+                            <div className="flex items-center mb-4">
+                              <input type="radio" id="Veg" name="food_option" value="Veg" className="mr-2" />
+                              <label htmlFor="Veg">Veg only</label>
+                            </div>
+                            <div className="flex items-center">
+                              <input type="radio" id="Both" name="food_option" value="Both" className="mr-2" />
+                              <label htmlFor="Both">Both Veg & Non-veg</label>
+                            </div>
+                            <hr className="my-4" />
+                            <div>
+                              <h2 className="text-md font-semibold mb-2">Add cuisines that you serve</h2>
+                              {cuisine.map((cuisineItem, idx) => (
+                                <button key={idx} type="button"  className='mr-2 mb-2 px-2 py-1 border rounded bg-green-500 text-white' onClick={() => removeCuisineHandler(cuisineItem)}>{cuisineItem} <span>&times;</span></button>
+                              ))}
+                              <AddCuisine ref={dialog} onSelectCuisine={cuisineHandler}/>
+                              <button type="button" className="text-orange-500 mb-4" onClick={openModalHandler}>+ Add More</button>
+                            </div>
+                          </div>
+                          <div className="border rounded p-4 shadow mb-6">
+                            <h3 className="text-md font-semibold mb-2">Cost For Two</h3>
+                            <input type="number" id="cost_for_two" name="cost_for_two" placeholder=" &#8377;" className="border p-2 w-full mb-4" />
+                          </div>
+                          <div className="border rounded p-4 shadow mb-6">
+                          <h3 className="text-md font-semibold mb-2">Add your menu</h3>
+                          {formData.menuItems.map((item, idx) => (
+                            <AddMenuItems key={idx} idx={idx} item={item} onChangeMenuItem={changeMenuItemHandler} onRemoveMenuItem={removeMenuItemHandler} isEditable={isEditable}/>
+                          ))}
+                          <button type="button" className="text-orange-500 mb-4 mr-4" onClick={addMenuItemHandler}>+ Add More</button>
+                          {isEditable ? formData.menuItems.length > 0 && (
+                            <>
+                            <button type="button" className="bg-green-500 text-white py-2 px-4 rounded mr-4" onClick={menuId ? editMenuHandler : saveMenuHandler}>Save Menu</button>
+                            {menuId && <button type="button" className="bg-red-500 text-white py-2 px-4 rounded" onClick={() => setIsEditable(false)}>Cancel</button>}
+                            </>
+                          ): formData.menuItems.length > 0 && (
+                          <button type="button" className="bg-orange-500 text-white py-2 px-4 rounded" onClick={() => setIsEditable(true)}>
+                              Edit Menu
+                          </button>
                           )}
+                          </div>
+                          <div className="border rounded p-4 shadow mb-6">
+                          <h3 className="text-md font-semibold mb-2">Packaging Charges</h3>
+                          <p className="mb-4">Not applicable on Indian Breads, packaged items, and beverages</p>
+                          <input type="number" id="packaging_cost" name="packaging_cost" placeholder=" &#8377;" className="border p-2 w-full mb-4" />
+                          </div>
+                        </>
+                      )}
                     </div>
                   </>
-                )}
-                {index === 1 && (
-                  <>
-                    <h1 className='text-2xl font-bold'>Restaurant Documents</h1>
-                    <div className="border rounded p-4 shadow mb-6">
-                      <h1 className="text-md font-semibold mb-2">Official Bank Details</h1>
-                      <p className='mb-2'>Payments from EatWave will be credited here</p>
-                      <input type="text" name="account" className="border p-2 w-full mb-4" placeholder="Bank Account number" />
-                    </div>
-                    <div className="border rounded p-4 shadow">
-                      <h1 className="text-md font-semibold">FSSAI certificate</h1>
-                      <input type="number" name="fssai" className="border p-2 w-full mb-4" placeholder="FSSAI certificate number" />
-                    </div>
-                  </>
-                )}
-                {index === 2 && (
-                  <>
-                    <h1 className='text-2xl font-bold'>Menu Setup</h1>
-                    <div className="border rounded p-4 shadow mb-6">
-                      <h1 className="text-md font-semibold mb-2">What Kind of food is on your menu?</h1>
-                      <div className="flex items-center mb-4">
-                        <input type="radio" id="Veg" name="food_option" value="Veg" className="mr-2" />
-                        <label htmlFor="Veg">Veg only</label>
-                      </div>
-                      <div className="flex items-center">
-                        <input type="radio" id="Both" name="food_option" value="Both" className="mr-2" />
-                        <label htmlFor="Both">Both Veg & Non-veg</label>
-                      </div>
-                      <hr className="my-4" />
-                      <div>
-                        <h2 className="text-md font-semibold mb-2">Add cuisines that you serve</h2>
-                        {cuisine.map((cuisineItem, idx) => (
-                            <button key={idx} type="button"  className='mr-2 mb-2 px-2 py-1 border rounded bg-green-500 text-white' onClick={() => removeCuisineHandler(cuisineItem)}>{cuisineItem} <span>&times;</span></button>
-                        ))}
-                        <AddCuisine ref={dialog} onSelectCuisine={cuisineHandler}/>
-                        <button type="button" className="text-orange-500 mb-4" onClick={openModalHandler}>+ Add More</button>
-                      </div>
-                    </div>
-                    <div className="border rounded p-4 shadow mb-6">
-                      <h3 className="text-md font-semibold mb-2">Cost For Two</h3>
-                      <input type="number" id="cost_for_two" name="cost_for_two" placeholder=" &#8377;" className="border p-2 w-full mb-4" />
-                    </div>
-                    <div className="border rounded p-4 shadow mb-6">
-                    <h3 className="text-md font-semibold mb-2">Add your menu</h3>
-                    {formData.menuItems.map((item, idx) => (
-                      <AddMenuItems key={idx} idx={idx} item={item} onChangeMenuItem={changeMenuItemHandler} onRemoveMenuItem={removeMenuItemHandler} isEditable={isEditable}/>
-                    ))}
-                    <button type="button" className="text-orange-500 mb-4 mr-4" onClick={addMenuItemHandler}>+ Add More</button>
-                    {isEditable ? formData.menuItems.length > 0 && (
-                      <>
-                      <button type="button" className="bg-green-500 text-white py-2 px-4 rounded mr-4" onClick={menuId ? editMenuHandler : saveMenuHandler}>Save Menu</button>
-                      {menuId && <button type="button" className="bg-red-500 text-white py-2 px-4 rounded" onClick={() => setIsEditable(false)}>Cancel</button>}
-                      </>
-                    ): formData.menuItems.length > 0 && (
-                    <button type="button" className="bg-orange-500 text-white py-2 px-4 rounded" onClick={() => setIsEditable(true)}>
-                        Edit Menu
-                    </button>
-                    )}
-                    </div>
-                    <div className="border rounded p-4 shadow mb-6">
-                    <h3 className="text-md font-semibold mb-2">Packaging Charges</h3>
-                    <p className="mb-4">Not applicable on Indian Breads, packaged items, and beverages</p>
-                    <input type="number" id="packaging_cost" name="packaging_cost" placeholder=" &#8377;" className="border p-2 w-full mb-4" />
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
+                )
+              })}
             <div className="flex justify-between">
               {currentStep > 0 && (
                 <button type="button" onClick={backHandler} className="bg-gray-500 text-white py-2 px-4 rounded">Back</button>
