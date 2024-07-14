@@ -2,9 +2,10 @@ const express = require('express')
 const router = express.Router()
 const restaurantController = require('../../controllers/restaurant-related/restaurant-controller')
 const {authorizationMiddleware } = require('../../controllers/user-related/authentication-controller')
+const { restaurantIdValidation, createRestaurantValidation, updateRestaurantValidation, filterRestaurantsByCuisinesValidation, filterRestaurantsByCostForTwoValidation, filterRestaurantsByPreferenceValidation, filterRestaurantsByRatingsValidation } = require("../../validators/restaurant-related/restaurant-validator")
 
-//GET /eatwave/restaurant/:id
-router.get('/:id', restaurantController.getRestaurantById)
+//GET /eatwave/restaurant/:restaurantId
+router.get('/:restaurantId', restaurantIdValidation, restaurantController.getRestaurantById)
 
 //GET /eatwave/restaurant/sort/default
 router.get('/sort/default', restaurantController.sortRestaurantsByDefault)
@@ -19,26 +20,26 @@ router.get('/sort/cost-low-to-high', restaurantController.sortRestaurantsByLowTo
 router.get('/sort/cost-high-to-low', restaurantController.sortRestaurantsByHighToLowCost)
 
 //POST /eatwave/restaurant/filter/cuisines
-router.post('/filter/cuisines', restaurantController.filterRestaurantsByCuisines)
+router.post('/filter/cuisines', filterRestaurantsByCuisinesValidation, restaurantController.filterRestaurantsByCuisines)
 
 //POST /eatwave/restaurant/filter/ratings
-router.post('/filter/ratings', restaurantController.filterRestaurantsByRatings)
+router.post('/filter/ratings', filterRestaurantsByRatingsValidation, restaurantController.filterRestaurantsByRatings)
 
 //POST /eatwave/restaurant/filter/preference
-router.post('/filter/preference', restaurantController.filterRestaurantsByPreference)
+router.post('/filter/preference', filterRestaurantsByPreferenceValidation, restaurantController.filterRestaurantsByPreference)
 
 //POST /eatwave/restaurant/filter/cost-for-two
-router.post('/filter/cost-for-two', restaurantController.filterRestaurantsByCostForTwo)
+router.post('/filter/cost-for-two', filterRestaurantsByCostForTwoValidation, restaurantController.filterRestaurantsByCostForTwo)
 
 router.use(authorizationMiddleware)
 
 //POST /eatwave/restaurant/new
-router.post('/new', restaurantController.createRestaurant)
+router.post('/new', createRestaurantValidation, restaurantController.createRestaurant)
 
-//PATCH /eatwave/restaurant/:id
-router.patch('/:id', restaurantController.updateRestaurant)
+//PATCH /eatwave/restaurant/:restaurantId
+router.patch('/:restaurantId', updateRestaurantValidation, restaurantController.updateRestaurant)
 
-//DELETE /eatwave/restaurant/:id
-router.delete('/:id', restaurantController.deleteRestaurant)
+//DELETE /eatwave/restaurant/:restaurantId
+router.delete('/:restaurantId', restaurantIdValidation, restaurantController.deleteRestaurant)
 
 module.exports = router
