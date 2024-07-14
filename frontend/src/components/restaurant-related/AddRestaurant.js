@@ -98,10 +98,14 @@ export const AddRestaurant = () => {
       })
       const result = await response.json()
       if(!response.ok){
-        setError(result.message)
-        return
+        if (result.errors) {
+          const errorMessage = result.errors.map(err => err.msg).join('. ');
+          setError(errorMessage);
+        } else {
+          setError(result.message);
+        }
+        return;
       }
-      //To include _id too
       setFormData(prevState => ({
         ...prevState,
         menuItems: result.menu.items
@@ -127,8 +131,13 @@ export const AddRestaurant = () => {
       })
       const result = await response.json()
       if(!response.ok){
-        setError(result.message)
-        return
+        if (result.errors) {
+          const errorMessage = result.errors.map(err => err.msg).join('. ');
+          setError(errorMessage);
+        } else {
+          setError(result.message);
+        }
+        return;
       }
       setIsEditable(false)
       return result
