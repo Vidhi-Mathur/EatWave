@@ -9,12 +9,12 @@ const handleValidationErrors = (req, res, next) => {
 }
 
 exports.createMenuValidation = [
-    body("items").isArray().notEmpty().withMessage("Menu can't be empty"),
+    body("items").notEmpty().withMessage("Menu can't be empty").bail().isArray().withMessage("Empty Menu can't be saved"),
     body("items.*.name").notEmpty().withMessage("Item name can't be empty"),
-    body("items.*.description").notEmpty().withMessage("Item description can't' be empty"),
-    body("items.*.price").notEmpty().withMessage("Item price can't be empty").isNumeric().withMessage("Item price must be a numeric value"),
-    body("items.*.foodTags").isArray().isEmpty().withMessage("Food tags must be selected"),
-    body("items.*.foodTags.*").isIn(['Vegan', 'Vegetarian', 'Non-Vegetarian', 'Spicy', 'Non-Spicy', 'Mild-Spicy']).withMessage("Invalid FoodTag"), 
+    body("items.*.description").notEmpty().withMessage("Item description can't be empty"),
+    body("items.*.price").notEmpty().withMessage("Item price can't be empty").bail().isNumeric().withMessage("Invalid item price"),
+    body("items.*.foodTags").isEmpty().withMessage("Food tags must be selected"),
+    body("items.*.foodTags.*").isIn(['Vegan', 'Vegetarian', 'Non-Vegetarian', 'Spicy', 'Non-Spicy', 'Mild-Spicy']).withMessage("Invalid Food Tag"), 
     handleValidationErrors
 ]
 
@@ -25,11 +25,11 @@ exports.getMenuByIdValidation = [
 
 exports.updateMenuValidation = [
     param("menuId").isMongoId().withMessage("Valid MenuId is required"),
-    body("items").isArray().notEmpty().withMessage("Menu can't be empty"),
+    body("items").notEmpty().withMessage("Menu can't be empty").bail().isArray().withMessage("Empty Menu can't be saved"),
     body("items.*.name").notEmpty().withMessage("Item name can't be empty"),
-    body("items.*.description").notEmpty().withMessage("Item description can't' be empty"),
-    body("items.*.price").notEmpty().withMessage("Item price can't be empty").isNumeric().withMessage("Item price must be a numeric value"),
-    body("items.*.foodTags").isArray().isEmpty().withMessage("Food tags must be selected"),
-    body("items.*.foodTags.*").isIn(['Vegan', 'Vegetarian', 'Non-Vegetarian', 'Spicy', 'Non-Spicy', 'Mild-Spicy']).withMessage("Invalid FoodTag"), 
+    body("items.*.description").notEmpty().withMessage("Item description can't be empty"),
+    body("items.*.price").notEmpty().withMessage("Item price can't be empty").bail().isNumeric().withMessage("Invalid item price"),
+    body("items.*.foodTags").isEmpty().withMessage("Food tags must be selected"),
+    body("items.*.foodTags.*").isIn(['Vegan', 'Vegetarian', 'Non-Vegetarian', 'Spicy', 'Non-Spicy', 'Mild-Spicy']).withMessage("Invalid Food Tag"), 
     handleValidationErrors
 ]
