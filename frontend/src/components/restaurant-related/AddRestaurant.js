@@ -14,7 +14,7 @@ export const AddRestaurant = () => {
   const [cuisine, setCuisine] = useState([])
   const [menuId, setMenuId] = useState()
   const [isEditable, setIsEditable] = useState(true)
-  const [error, setError] = useState(null)
+  const [errors, setErrors] = useState(null)
   const dialog = useRef()
 
   const nextHandler = () => {
@@ -99,10 +99,10 @@ export const AddRestaurant = () => {
       const result = await response.json()
       if(!response.ok){
         if (result.errors) {
-          const errorMessage = result.errors.map(err => err.msg).join('. ');
-          setError(errorMessage);
+          const errorMessages = result.errors.map(err => err.msg);
+          setErrors(errorMessages);
         } else {
-          setError(result.message);
+          setErrors([result.message]);
         }
         return;
       }
@@ -115,7 +115,7 @@ export const AddRestaurant = () => {
       return result
     }
     catch(err) {
-      setError("Can't save menu, try again later")
+      setErrors(["Can't save menu, try again later"])
     }
   }
 
@@ -132,10 +132,10 @@ export const AddRestaurant = () => {
       const result = await response.json()
       if(!response.ok){
         if (result.errors) {
-          const errorMessage = result.errors.map(err => err.msg).join('. ');
-          setError(errorMessage);
+          const errorMessages = result.errors.map(err => err.msg)
+          setErrors(errorMessages);
         } else {
-          setError(result.message);
+          setErrors([result.message]);
         }
         return;
       }
@@ -143,7 +143,7 @@ export const AddRestaurant = () => {
       return result
     }
     catch(err) {
-      setError("Can't edit menu, try again later")
+      setErrors(["Can't edit menu, try again later"])
     }
   }
 
@@ -206,6 +206,7 @@ export const AddRestaurant = () => {
 
   const submitHandler = async(e) => {
     e.preventDefault();
+    setErrors(null)
     let imageUrls = [];
     if (formData.restaurantImages.length > 0) {
       let folder = 'restaurant_images';
@@ -243,6 +244,7 @@ export const AddRestaurant = () => {
         },
         body: JSON.stringify(restaurantData)
       })
+      const result = await response.json()
       if(!response.ok){
         if(response.status === 401) {
             const refreshResponse = await fetchRefreshToken()
@@ -256,27 +258,30 @@ export const AddRestaurant = () => {
                   body: JSON.stringify(restaurantData)
                 });
                 if(!response.ok) {
-                    throw new Error("Can't save restaurant, try again later")
+                    setErrors(["Can't save restaurant, try again later"])
                 }
             }
             else {
-                throw new Error("Session expired, try again later")
+                setErrors(["Session expired, try again later"])
             }
         }
+        else if(result.errors){
+          const errorMessages = result.errors.map((err) => err.msg)
+          setErrors(errorMessages);
+        }
         else {
-            throw new Error("Can't save restaurant, try again later")
+            setErrors(["Can't save restaurant, try again later"])
         }
      }
-     const result = await response.json()
      return result
     }
     catch(err) {
-      console.log(err)
+      setErrors([err.message])
     }
   };
 
   const closeErrorDialogHandler = () => {
-    setError(null)
+    setErrors(null)
   }
 
   return (
@@ -289,7 +294,7 @@ export const AddRestaurant = () => {
             {[...Array(steps.length)].map((_, index) => {
                 return (
                   <>
-                    {error && <ErrorDialog error={error} onClose={closeErrorDialogHandler}/>}
+                    {errors && <ErrorDialog errors={errors} onClose={closeErrorDialogHandler}/>}
                     <div key={index} className={currentStep === index ? '' : 'hidden'}>
                       {index === 0 && (
                         <>
