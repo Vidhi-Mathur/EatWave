@@ -1,29 +1,30 @@
 const express = require('express')
 const router = express.Router()
-const orderController = require('../../controllers/shared/order-controller')
+const { initiatePayment, placeOrder, getUserOrderHistory, getOrderByOrderId, updateOrderStatus, getRestaurantOrderHistory, cancelOrder} = require('../../controllers/shared/order-controller')
+const { initiatePaymentValidation, placeOrderValidation, getOrderByOrderIdValidation, getRestaurantOrderHistoryValidation} = require("../../validators/shared/order-validator")
 const {authorizationMiddleware } = require('../../controllers/user-related/authentication-controller')
 
 router.use(authorizationMiddleware)
 
 //POST /eatwave/order/checkout
-router.post('/checkout', orderController.initiatePayment)
+router.post('/checkout', initiatePaymentValidation, initiatePayment)
 
 //POST /eatwave/order/place
-router.post('/place', orderController.placeOrder)
+router.post('/place', placeOrderValidation, placeOrder)
 
 //GET /eatwave/order/user_history
-router.get('/user_history', orderController.getUserOrderHistory)
+router.get('/user_history', getUserOrderHistory)
 
-//GET /eatwave/order/:id
-router.get('/:id', orderController.getOrderByOrderId)
+//GET /eatwave/order/:orderId
+router.get('/:orderId', getOrderByOrderIdValidation, getOrderByOrderId)
 
-//PATCH /eatwave/order/status/:id
-router.patch('/status/:id', orderController.updateOrderStatus)
+//PATCH /eatwave/order/status/:orderId
+router.patch('/status/:orderId', updateOrderStatus)
 
-//GET /eavwave/order/restaurant_history/:id
-router.get('/restaurant_history/:id', orderController.getRestaurantOrderHistory)
+//GET /eavwave/order/restaurant_history/:restaurantId
+router.get('/restaurant_history/:restaurantId', getRestaurantOrderHistoryValidation, getRestaurantOrderHistory)
 
 //DELETE /eatwave/cancel/:id
-router.delete('/cancel/:id', orderController.cancelOrder)
+router.delete('/cancel/:orderId', cancelOrder)
 
 module.exports = router
