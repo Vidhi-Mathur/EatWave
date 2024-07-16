@@ -68,8 +68,8 @@ exports.placeOrder = async (req, res, next) => {
 
 exports.getOrderByOrderId = async(req, res, next) => {
     try {
-        const { id } = req.params
-        const order = await Order.findById(id)
+        const { orderId } = req.params
+        const order = await Order.findById(orderId)
         if(!order) return res.status(404).json({message: 'Order not found'})
         res.status(200).json({ order })
     }
@@ -80,12 +80,12 @@ exports.getOrderByOrderId = async(req, res, next) => {
 
 exports.updateOrderStatus = async(req, res, next) => {
     try {
-        const { id } = req.params
+        const { orderId } = req.params
         const { status } = req.body
         // Validate status)
         const valid = ['Placed', 'Confirmed', 'Preparing', 'On the way', 'Delivered', 'Cancelled'];
         if (!valid.includes(status)) return res.status(400).json({ message: 'Invalid order status' });
-        const order = await Order.findById(id)
+        const order = await Order.findById(orderId)
         if(!order) return res.status(404).json({message: 'Order not found'})
         order.status = status
         await order.save()
@@ -111,8 +111,8 @@ exports.getUserOrderHistory = async(req, res, next) => {
 
 exports.getRestaurantOrderHistory = async(req, res, next) => {
     try {
-        const { id } = req.params
-        const restaurant = await Restaurant.findById(id)
+        const { restaurantId } = req.params
+        const restaurant = await Restaurant.findById(restaurantId)
         if(!restaurant) return res.status(404).json({message: 'No restaurant found, try sign up.'})
         //Only returns id
         const orders = await Order.find({ restaurant: id }).select('_id')
@@ -126,8 +126,8 @@ exports.getRestaurantOrderHistory = async(req, res, next) => {
 
 exports.cancelOrder = async(req, res, next) => {
     try {
-        const { id } = req.params
-        const order = await Order.findById(id)
+        const { orderId } = req.params
+        const order = await Order.findById(orderId)
         if(!order) return res.status(404).json({message: 'Order not found'})
         order.status = 'Cancelled'
         return res.status(200).json({ message: 'Order cancelled successfully' })
