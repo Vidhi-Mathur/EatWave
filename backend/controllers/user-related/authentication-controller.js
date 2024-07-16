@@ -80,7 +80,7 @@ exports.postLogout = async(req, res, next) => {
     }
 }
 
-exports.refreshToken = async(req, res, next) => {
+exports.postRefreshToken = async(req, res, next) => {
     try {
         const { refreshToken } = req.body
         if(!refreshToken) return res.status(401).json({ message: 'Unauthorized' })
