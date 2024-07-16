@@ -44,7 +44,7 @@ const performSearch = async({query, limit = null}) => {
 }
 
 exports.getSuggestions = async(req, res, next) => {
-    const query = req.query.query
+    const { query } = req.query
     try {
         const suggestions = await performSearch({query, limit: 5})
         res.status(200).json(suggestions);
@@ -55,7 +55,7 @@ exports.getSuggestions = async(req, res, next) => {
 }
 
 exports.getResults = async(req, res, next) => {
-    const query = req.query.query;
+    const { query } = req.query
     try {
         const searchResults = await performSearch({query})
         res.status(200).json(searchResults);
