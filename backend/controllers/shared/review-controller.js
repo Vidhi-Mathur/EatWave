@@ -18,10 +18,10 @@ const calculateAndUpdateAverageRating = async(restaurantId) => {
 
 exports.postReviews = async(req, res, next) => {
     try {
-        const order  = req.params.order
+        const { orderId } = req.params
         const reviewer = req.user._id
         const { restaurant, rating, comments, imageUrl } = req.body  
-        const existingOrder = await Order.findById(order)
+        const existingOrder = await Order.findById(orderId)
         if(!existingOrder) return res.status(404).json({message: 'No order found'})
         const existingRestaurant = await Restaurant.findById(restaurant)
         if(!existingRestaurant) return res.status(404).json({message: 'No restaurant found'})
@@ -55,8 +55,8 @@ exports.postReviews = async(req, res, next) => {
 
 exports.getReviewByOrderId = async(req, res, next) => {
    try {
-        const id = req.params.order
-        const order = await Order.findById(id)
+        const { orderId } = req.params
+        const order = await Order.findById(orderId)
         if(!order) return res.status(404).json({message: 'Order not found'})
         const review = await Review.find({ order: id })
         res.status(200).json({ review })
@@ -68,8 +68,8 @@ exports.getReviewByOrderId = async(req, res, next) => {
 
 exports.getReviewsByRestaurantId = async(req, res, next) => {
     try {
-        const id = req.params.restaurant
-        const restaurant = await Restaurant.findById(id)
+        const { restaurantId } = req.params
+        const restaurant = await Restaurant.findById(restaurantId)
         if(!restaurant) return res.status(404).json({message: 'Restaurant not found'})
         //To populate reviewer field with corresponding user's name
         const reviews = await Review.find({ restaurant: id }).populate('reviewer', 'name')
@@ -80,24 +80,11 @@ exports.getReviewsByRestaurantId = async(req, res, next) => {
     }
 }
 
-exports.getReviewsByUserId = async(req, res, next) => {
-    try {
-        const id = req.params.user
-        const user = await User.findById(id)
-        if(!user) return res.status(404).json({message: 'User not found'})
-        const reviews = await Review.find({ reviewer: id }).select('_id')
-        res.status(200).json({ reviews })
-    }
-    catch(err) {
-        next(err)
-    }
-}
-
 exports.updateReview = async (req, res, next) => {
     try {
-        const id = req.params.review;
+        const { reviewId } = req.params;
         const { rating, comments, imageUrl } = req.body;
-        const review = await Review.findById(id);
+        const review = await Review.findById(reviewId);
         if (!review) return res.status(404).json({ message: 'No such review posted' });
         review.rating = rating;  
         review.comments = comments;
