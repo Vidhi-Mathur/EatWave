@@ -2,7 +2,7 @@ const { body, param } = require("express-validator")
 const { handleValidationErrors } = require("../common/handleValidationErrors")
 
 exports.createMenuValidation = [
-    body("items").notEmpty().withMessage("Menu can't be empty").bail().isArray().withMessage("Empty Menu can't be saved"),
+    body("items").notEmpty().withMessage("Menu can't be empty").bail().isArray().withMessage("Invalid Menu format"),
     body("items.*.name").notEmpty().withMessage("Item name can't be empty"),
     body("items.*.description").notEmpty().withMessage("Item description can't be empty"),
     body("items.*.price").notEmpty().withMessage("Item price can't be empty").bail().isNumeric().withMessage("Invalid item price"),
