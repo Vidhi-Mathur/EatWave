@@ -1,17 +1,18 @@
 const express = require('express')
 const router = express.Router()
-const authController = require('../../controllers/user-related/authentication-controller')
+const { postLogin, postSignup, postLogout, postRefreshToken } = require('../../controllers/user-related/authentication-controller')
+const { loginValidation, signupValidation, refreshTokenValidation } = require("../../validators/user-related/authentication-validator")
 
 //POST /eatwave/signup
-router.post('/signup', authController.postSignup)
+router.post('/signup', signupValidation, postSignup)
 
 //POST /eatwave/login
-router.post('/login', authController.postLogin)
+router.post('/login', loginValidation, postLogin)
 
 //POST /eatwave/logout
-router.post('/logout', authController.postLogout)
+router.post('/logout', postLogout)
 
 //POST /eatwave/refresh-token
-router.post('/refresh-token', authController.refreshToken)
+router.post('/refresh-token', refreshTokenValidation, postRefreshToken)
 
 module.exports = router

@@ -1,24 +1,24 @@
 const express = require('express')
 const router = express.Router()
-const reviewController = require('../../controllers/shared/review-controller')
-const {authorizationMiddleware } = require('../../controllers/user-related/authentication-controller')
+const { getReviewsByRestaurantId, getTopRatedRestaurants, postReviews, getReviewByOrderId, updateReview}= require('../../controllers/shared/review-controller')
+const { authorizationMiddleware } = require('../../controllers/user-related/authentication-controller')
+const { createReviewValidation, updateReviewValidation, getReviewsByRestaurantIdValidation, getReviewByOrderIdValidation } = require('../../validators/shared/review-validator')
 
-//POST /eatwave/reviews/:order
-router.post('/:order', authorizationMiddleware, reviewController.postReviews)
-
-//GET /eatwave/review/order/:order
-router.get('/order/:order', reviewController.getReviewByOrderId)
-
-//GET /eatwave/review/restaurant/:restaurant
-router.get('/restaurant/:restaurant', reviewController.getReviewsByRestaurantId)
-
-//GET /eatwave/review/user/:user
-router.get('/user/:user', reviewController.getReviewsByUserId)
-
-//PATCH /eatwave/review/:review
-router.patch('/:review', authorizationMiddleware, reviewController.updateReview)
+//GET /eatwave/review/restaurant/:restaurantId
+router.get('/restaurant/:restaurantId', getReviewsByRestaurantIdValidation, getReviewsByRestaurantId)
 
 //GET /eatwave/review/top-rated-restaurants
-router.get('/top-rated-restaurants', reviewController.getTopRatedRestaurants)
+router.get('/top-rated-restaurants', getTopRatedRestaurants)
+
+router.use(authorizationMiddleware)
+
+//POST /eatwave/reviews/:orderId
+router.post('/:orderId', createReviewValidation, postReviews)
+
+//GET /eatwave/review/order/:orderId
+router.get('/order/:orderId', getReviewByOrderIdValidation, getReviewByOrderId)
+
+//PATCH /eatwave/review/:reviewId
+router.patch('/:reviewId', updateReviewValidation, updateReview)
 
 module.exports = router
