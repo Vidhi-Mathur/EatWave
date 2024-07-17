@@ -3,34 +3,47 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 import { CartContext } from "../../store/Cart-Context";
 import { AuthContext } from "../../store/Auth-Context";
+import { ErrorDialog } from "../UI/ErrorDialog";
 
 export const Menu = ({menuId}) => {
     const { isAuthenticated } = useContext(AuthContext)
     const { items, addToCart, removeFromCart } = useContext(CartContext)
     const [menu, setMenu] = useState(null)
-    const [error, setError] = useState(null)
+    const [errors, setErrors] = useState(null)
+    const [loading, setLoading] = useState(true)
+
     useEffect(() => {
         const fetchMenu = async() => {
             try {
                 const response = await fetch(`http://localhost:3000/restaurant/menu/${menuId}`)
                 const result = await response.json();
                 if (!response.ok) {
-                    setError(result.message)
+                    const errorMessages = result.errors ? result.errors.map(err => err.msg) : [result.message];
+                    setErrors(errorMessages);
+                    setLoading(false)
+                    return;
                 }
                 setMenu(result.menu);
+                setLoading(false)
             }
             catch(err) {
-                setError("Fetching Menu failed, try again later")
+                setErrors(err.message || "Fetching Menu failed, try again later")
+                setLoading(false)
             }
         }
         fetchMenu()
     }, [menuId])
 
-    if(!menu) return <div>Loading...</div>
+    const closeErrorDialogHandler = () => {
+        setErrors(null);
+    };
+
+    if(loading) return <div>Loading...</div>
+
     return (
         <div className="max-w-4xl mx-auto px-4 py-8">
-            {error && <p className="text-red-500 text-center m-4">{error}</p>}
-                {menu.map((item) => {
+            {errors && <ErrorDialog errors={errors} onClose={closeErrorDialogHandler}/>}
+                {menu && menu.map((item) => {
                     const cartItem = items.find(cartItem => cartItem.id === item._id)
                     const quantity = cartItem? cartItem.quantity: 0;
                     return (

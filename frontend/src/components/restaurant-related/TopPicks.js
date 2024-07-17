@@ -6,10 +6,12 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Arrow } from '../UI/Arrow';
 import { ReviewStar } from '../UI/ReviewStar';
+import { ErrorDialog } from '../UI/ErrorDialog';
 
 const TopPicks = () => {
     const [topRestaurants, setTopRestaurants] = useState([]);
-    const [error, setError] = useState(null)
+    const [errors, setErrors] = useState(null)
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         const fetchTopRestaurants = async () => {
@@ -17,12 +19,16 @@ const TopPicks = () => {
                 const response = await fetch('http://localhost:3000/review/top-rated-restaurants');
                 const result = await response.json();
                 if (!response.ok) {
-                    setError(result.message)
+                    setErrors(result.message)
+                    setLoading(false)
                     return;
                 }
                 setTopRestaurants(result.topRestaurants);
-            } catch (err) {
-                setError("Fetching best restaurants failed, try again later")
+                setLoading(false)
+            } 
+            catch (err) {
+                setErrors(err.message || "Fetching best restaurants failed, try again later")
+                setLoading(false)
             }
         };
         fetchTopRestaurants();
@@ -53,10 +59,15 @@ const TopPicks = () => {
         }]
     }
 
+    const closeErrorDialogHandler = () => {
+        setErrors(null)
+    }
+
     return (
         <div>
              <h1 className="text-3xl font-bold text-center mt-8 mb-4 text-black bg-white bg-opacity-75 px-4 py-2 rounded-lg shadow-lg inline-block ml-[600px]">Top Rated Restaurants</h1>
-            {error && <p className="text-red-500 text-center m-4">{error}</p>}
+            {loading && <div>Loading...</div>}
+            {errors && <ErrorDialog errors={errors} onClose={closeErrorDialogHandler}/>}
             {topRestaurants.length > 0 && (
                 <Slider {...settings} className='mx-4'>
                     {topRestaurants.map((restaurant, idx) => (
