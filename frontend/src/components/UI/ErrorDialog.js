@@ -1,6 +1,6 @@
 export const ErrorDialog = ({errors, onClose}) => {
     return (
-        <div className="fixed inset-0  flex items-center justify-center bg-black bg-opacity-30">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
             <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 overflow-hidden">
                 <div className="bg-red-500 px-4 py-2">
                     <h2 className="text-white text-xl font-bold">Error</h2>
