@@ -5,22 +5,34 @@ import SearchFood from "../../assets/SearchFood.jpg"
 import { SuggestionList } from "../user-related/SuggestionList";
 import { SearchList } from "../user-related/SearchList";
 import { debounce } from "../../util/debounce";
+import { ErrorDialog } from '../UI/ErrorDialog';
 
 export const SearchPage = () => {
     const [query, setQuery] = useState('')
     const [suggestions, setSuggestions] = useState([])
     const [searchResults, setSearchResults] = useState([])
     const [triggerSearch, setTriggerSearch] = useState(false)
+    const [errors, setErrors] = useState(null)
 
     const fetchSuggestions = useCallback(async(q) => {
         if(q.trim() === ''){
             setSuggestions([])
             return;
         }
-        const response = await fetch(`http://localhost:3000/search/suggestions?query=${q}`)
-        const result = await response.json()
-        setSuggestions(result)
-        return result
+        try {
+            const response = await fetch(`http://localhost:3000/search/suggestions?query=${q}`)
+            const result = await response.json()
+            if(!response.ok) {
+                const errorMessages = result.errors ? result.errors.map(err => err.msg) : [result.message];
+                setErrors(errorMessages);
+                return;
+            }
+            setSuggestions(result)
+            return result
+        }
+        catch(err){
+            setErrors([err.message || "Failed fetching suggestions try again later"])
+        }
     }, [])
 
     const fetchSearchResults = useCallback(async(q) => {
@@ -28,10 +40,20 @@ export const SearchPage = () => {
             setSearchResults([])
             return;
         }
-        const response = await fetch(`http://localhost:3000/search/results?query=${q}`)
-        const result = await response.json()
-        setSearchResults(result)
-        return result
+        try {
+            const response = await fetch(`http://localhost:3000/search/results?query=${q}`)
+            const result = await response.json()
+            if(!response.ok) {
+                const errorMessages = result.errors ? result.errors.map(err => err.msg) : [result.message];
+                setErrors(errorMessages);
+                return;
+            }
+            setSearchResults(result)
+            return result
+        }
+        catch(err) {
+            setErrors([err.message || "Failed fetching search results try again later"]);
+        }
     }, [])
 
     const debouncedFetchedSuggestions = useMemo(() => debounce(fetchSuggestions, 300), [fetchSuggestions])
@@ -51,15 +73,21 @@ export const SearchPage = () => {
     const searchHandler = () => {
         setTriggerSearch(true)
     }
+    
 
     const isFeasible = () => {
         return (suggestions.restaurants && suggestions.restaurants.length > 0) || (suggestions.dishes && suggestions.dishes.length > 0)
+    }
+
+    const closeErrorDialogHandler = () => {
+        setErrors(null)
     }
 
     return (
         <>
         <Layout customisedImageUrl={SearchFood}>
         <div className="flex w-full max-w-4xl mx-auto my-5 border border-gray-300 rounded-md overflow-hidden">
+            {errors && <ErrorDialog errors={errors} onClose={closeErrorDialogHandler}/>}
             <input type="search" placeholder="Search for restaurants and food" className="flex-grow px-4 py-3 text-base outline-none" value={query} onChange={inputChangeHandler}/>
             <button className="px-4 py-3 bg-white hover:bg-gray-100 transition-colors" onClick={searchHandler}>
                 <SearchSharpIcon color="disabled"/>
