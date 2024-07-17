@@ -1,13 +1,14 @@
 import { useContext, useState } from "react";
 import { CartContext } from "../../store/Cart-Context"
-import Card from "../UI/Card"
 import { AuthContext } from "../../store/Auth-Context";
+import Card from "../UI/Card"
 import Layout from "../UI/Layout";
+import { ErrorDialog } from "../UI/ErrorDialog"
 
 export const Order = () => {
     const { restaurant, items } = useContext(CartContext);
     const { token, setToken } = useContext(AuthContext)
-    const [error, setError] = useState(null)
+    const [errors, setErrors] = useState(null)
     const orderHandler = async (e) => {
         e.preventDefault();
         const form = new FormData(e.target);
@@ -29,7 +30,8 @@ export const Order = () => {
             });
             const checkoutResult = await checkoutResponse.json();
             if (!checkoutResponse.ok){
-                setError(checkoutResult.message)
+                const errorMessages = checkoutResult.errors? checkoutResult.errors.map(err => err.msg): [checkoutResult.message];
+                setErrors(errorMessages);
                 return;
             }
             setToken(checkoutResult.token);      
@@ -58,7 +60,9 @@ export const Order = () => {
                         })
                     });
                     if (!orderResult.ok) {
-                        setError('Order placement failed.');
+                        const errorMessages = orderResult.errors? orderResult.errors.map(err => err.msg): [orderResult.message];
+                        setErrors(errorMessages);
+                        return;
                     }
                     else window.location.href = '/my-account'
                 }
@@ -67,15 +71,18 @@ export const Order = () => {
             razorpay.open();
             return checkoutResult;
         } catch (err) {
-            console.log(err)
-            setError("Placing order failed, try again later")
+            setErrors(err.message || "Placing order failed, try again later")
         }
     };
+
+    const closeErrorDialogHandler = () => {
+        setErrors(null)
+    }
 
     return (
         <Layout>
             <Card className="p-6">
-                {error && <p className="text-red-500 text-center m-4">{error}</p>}
+                {errors && < ErrorDialog errors={errors} onClose={closeErrorDialogHandler}/>}
                 <form className="space-y-4" onSubmit={orderHandler}>
                     <div>
                         <label htmlFor="street" className="block text-sm font-medium text-gray-700">Street</label>
