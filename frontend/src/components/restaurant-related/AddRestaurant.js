@@ -101,7 +101,8 @@ export const AddRestaurant = () => {
         if (result.errors) {
           const errorMessages = result.errors.map(err => err.msg);
           setErrors(errorMessages);
-        } else {
+        } 
+        else {
           setErrors([result.message]);
         }
         return;
@@ -115,7 +116,7 @@ export const AddRestaurant = () => {
       return result
     }
     catch(err) {
-      setErrors(["Can't save menu, try again later"])
+      setErrors([err.message || "Can't save menu, try again later"])
     }
   }
 
@@ -134,7 +135,8 @@ export const AddRestaurant = () => {
         if (result.errors) {
           const errorMessages = result.errors.map(err => err.msg)
           setErrors(errorMessages);
-        } else {
+        } 
+        else {
           setErrors([result.message]);
         }
         return;
@@ -143,7 +145,7 @@ export const AddRestaurant = () => {
       return result
     }
     catch(err) {
-      setErrors(["Can't edit menu, try again later"])
+      setErrors([err.message || "Can't edit menu, try again later"])
     }
   }
 
@@ -276,7 +278,7 @@ export const AddRestaurant = () => {
      return result
     }
     catch(err) {
-      setErrors([err.message])
+      setErrors([err.message || "Failed saving restaurant, try again later"])
     }
   };
 
