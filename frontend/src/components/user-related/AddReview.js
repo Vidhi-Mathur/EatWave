@@ -1,12 +1,14 @@
 import { forwardRef, useContext, useEffect, useState } from "react"
 import Rating from '@mui/material/Rating';
 import { AuthContext } from "../../store/Auth-Context";
+import { ErrorDialog } from "../UI/ErrorDialog";
 
 export const AddReview = forwardRef(({orderId, restaurantId, existingReview, updateReview}, ref) => {
     const { token, fetchRefreshToken } = useContext(AuthContext);
     const [ addReview, setAddReview ] = useState(existingReview || {})
     const [ editReview, setEditReview ] = useState(!existingReview)
     const [ selectedFile, setSelectedFile ] = useState(null)
+    const [ errors, setErrors ] = useState(null)
 
     useEffect(() => {
         if(existingReview) setAddReview(existingReview)
@@ -81,42 +83,48 @@ export const AddReview = forwardRef(({orderId, restaurantId, existingReview, upd
                 },
                 body: JSON.stringify(reviews)
             })
+            const result = await response.json()
             if(!response.ok){
                 if(response.status === 401){
                    const refreshResponse = await fetchRefreshToken()
-                   if(refreshResponse){
-                     response = await fetch(url, {
-                     method,
-                     headers: {
-                     'Content-Type': 'application/json',
-                     'Authorization': `Bearer ${refreshResponse.accessToken}`
-                     },
-                     body: JSON.stringify(reviews)
-                     })
-                     if(!response.ok){
-                         throw new Error("Can't save review, try again later")
-                     }
-                   }
-                   else {
-                     throw new Error("Session expired, try login")
-                   }
-                }
-                else {
-                 throw new Error("Can't save review, try again later")
-                }
-             }
-            const result = await response.json()
-            setAddReview(result.review)
-            updateReview(orderId, result.review)
-            setEditReview(false)
+                        if(refreshResponse){
+                            response = await fetch(url, {
+                            method,
+                            headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${refreshResponse.accessToken}`
+                            },
+                            body: JSON.stringify(reviews)
+                            })
+                            if(!response.ok){
+                                const errorMessages = result.errors ? result.errors.map(err => err.msg) : [result.message];
+                                setErrors(errorMessages);
+                                return;                   }
+                            else {
+                                setErrors(["Session expired, try login"])
+                            }
+                        }
+                        else {
+                            setErrors(["Can't save review, try again later"])
+                        }
+                    }
+                setAddReview(result.review)
+                updateReview(orderId, result.review)
+                setEditReview(false)
+            }
+            setAddReview(existingReview || {})
+            setEditReview(!existingReview)
+            ref.current.close()
         }
-        setAddReview(existingReview || {})
-        setEditReview(!existingReview)
-        ref.current.close()
+    }
+
+    const closeErrorDialogHandler = () => {
+        setErrors(null)
     }
 
     return (
     <dialog ref={ref} className="fixed z-10 inset-0 overflow-y-auto">
+        {errors && <ErrorDialog errors={errors} onClose={closeErrorDialogHandler}/>}
         <div className="flex items-center justify-center">
             <div className="bg-white rounded-lg p-8">
                 <Rating name="rating" value={addReview.rating || 0} onChange={(e, newRating) => changeHandler(e, newRating)} readOnly={!editReview}/>

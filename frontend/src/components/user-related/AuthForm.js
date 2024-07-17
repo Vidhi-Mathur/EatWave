@@ -9,7 +9,7 @@ import { AuthContext } from "../../store/Auth-Context";
 const AuthForm = ({ signupMode, toggleHandler }) => {
     const { signup, login, token, setToken} = useContext(AuthContext)
     const navigate = useNavigate()
-    const [error, setError] = useState(null)
+    const [errors, setErrors] = useState(null)
     
     const submitHandler = async (e) => {
         e.preventDefault();
@@ -26,8 +26,9 @@ const AuthForm = ({ signupMode, toggleHandler }) => {
                 body: JSON.stringify(data)
             })
             const result = await response.json()
-            if (!response.ok){
-                setError(result.message)
+            if(!response.ok){
+                const errorMessages = result.errors? result.errors.map(err => err.msg): [result.message];
+                setErrors(errorMessages);
                 return;
             }
             signupMode? signup(result.accessToken, result.refreshToken): login(result.accessToken, result.refreshToken)
@@ -37,7 +38,7 @@ const AuthForm = ({ signupMode, toggleHandler }) => {
             return result
         }
         catch (err) {
-            setError(err)
+            setErrors([err || "Can't authenticated, try again later"])
         }
     }
 
@@ -54,7 +55,13 @@ const AuthForm = ({ signupMode, toggleHandler }) => {
                     Don't have an account?{' '}<Link to="/signup" className="text-orange-400 hover:underline">Sign Up</Link>
                 </span>)}
             </p>}
-            {error && <p className="text-red-500 text-center m-4">{error}</p>}
+            {errors && (
+                <div className="text-red-500 text-center m-4">
+                    {errors.map((error, index) => (
+                        <p key={index}>{error}</p>
+                    ))}
+                </div>
+            )}
             <form className="space-y-4" onSubmit={submitHandler}>
                 {signupMode && <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>

@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext, useRef } from "react";
 import { AuthContext } from "../../store/Auth-Context";
 import { AddReview } from "./AddReview";
+import { ErrorDialog } from "../UI/ErrorDialog";
 
 const formattedDate = (dateString) => {
     const options = { 
@@ -20,6 +21,7 @@ export const PastOrders = () => {
     const { token, fetchRefreshToken } = useContext(AuthContext);
     const [ orders, setOrders ] = useState(null);
     const [ review, setReview ] = useState({})
+    const [ errors, setErrors ] = useState(null)
     const dialog = useRef()
 
     const openModalHandler = (orderId) => {
@@ -34,6 +36,7 @@ export const PastOrders = () => {
                     'Authorization': token ? `Bearer ${token}` : ' '
                 }
             });
+            const result = await response.json();
             if(!response.ok) {
                 if(response.status === 401){
                     const refreshResponse = await fetchRefreshToken()
@@ -44,22 +47,26 @@ export const PastOrders = () => {
                             }
                         });
                         if(!response.ok) {
-                            throw new Error("Can't fetch reviews , try again later")
+                            setErrors(["Can't fetch reviews , try again later"])
                         }
                     }
                     else {
-                        throw new Error("Session expired, try again later")
+                        setErrors(["Session expired, try again later"])
                     }
                 }
+                else if(result.errors){
+                    const errorMessages = result.errors.map((err) => err.msg)
+                    setErrors(errorMessages);
+                }
                 else {
-                    throw new Error("Can't fetch reviews, try again later")
+                    setErrors(["Can't fetch reviews, try again later"])
                 }
             }
-            const result = await response.json();
             setReview(prev => ({...prev, [orderId]: result.review[0]}));
             return result
-        } catch (error) {
-            console.error(error);
+        } 
+        catch (err) {
+            setErrors([err || "Failed fetching reviews, try again later"])
         }
     }
 
@@ -71,6 +78,7 @@ export const PastOrders = () => {
                         'Authorization': token ? `Bearer ${token}` : ' '
                     }
                 });
+                const result = await response.json();
                 if(!response.ok) {
                     if(response.status === 401){
                         const refreshResponse = await fetchRefreshToken()
@@ -81,23 +89,27 @@ export const PastOrders = () => {
                                 }
                             });
                             if(!response.ok) {
-                                throw new Error("Can't fetch past orders, try again later")
+                                setErrors(["Can't fetch past orders, try again later"])
                             }
                         }
                         else {
-                            throw new Error("Session expired, try again later")
+                            setErrors(["Session expired, try again later"])
                         }
                     }
+                    else if(result.errors){
+                        const errorMessages = result.errors.map((err) => err.msg)
+                        setErrors(errorMessages);
+                    }
                     else {
-                        throw new Error("Can't fetch past orders, try again later")
+                        setErrors(["Can't fetch past orders, try again later"])
                     }
                 }
-                const result = await response.json();
                 setOrders(result.orders);
                 result.orders.forEach(order => fetchReviewByOrderId(order._id))
                 return result
-            } catch (error) {
-                console.error(error);
+            } 
+            catch (err) {
+                setErrors([err.message || "Fetching Previous Orders failed, try again later"])
             }
         };
         fetchPastOrders();
@@ -107,9 +119,14 @@ export const PastOrders = () => {
         setReview(prev => ({ ...prev, [orderId]: updatedReview }));
     };
 
+    const closeErrorDialogHandler = () => {
+        setErrors(null)
+    }
+
     return (
         <div>
             <h1 className="text-2xl font-bold mb-4">Past Orders</h1>
+            {errors && <ErrorDialog errors={errors} onClose={closeErrorDialogHandler} />}
             <ul className="space-y-4">
                 {orders === null && <p>Loading...</p>}
                 {orders !== null && orders.length === 0 && <p>No orders placed yet</p>}
