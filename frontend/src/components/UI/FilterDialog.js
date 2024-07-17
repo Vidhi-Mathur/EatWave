@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import TuneIcon from '@mui/icons-material/Tune';
 import { cuisine } from '../restaurant-related/AddCuisine';
+import { ErrorDialog } from './ErrorDialog';
 
 export const FilterDialog = ({ setRestaurants }) => { 
   const [selectedSort, setselectedSort] = useState("Relevance (default)");
@@ -9,6 +10,7 @@ export const FilterDialog = ({ setRestaurants }) => {
   const [ratings, setRatings] = useState([])
   const [preference, setPreference] = useState()
   const [costForTwo, setCostForTwo] = useState([])
+  const [errors, setErrors] = useState(null)
  
   const sortChangeHandler = (e) => {
     setselectedSort(e.target.value);
@@ -63,6 +65,10 @@ export const FilterDialog = ({ setRestaurants }) => {
         dialog.current.close()
     }
 
+    const closeErrorDialogHandler = () => {
+        setErrors(null)
+    }
+
     const applyHandler = async() => {
         let url, body;
         if(activeFilter === 'Sort'){
@@ -112,21 +118,25 @@ export const FilterDialog = ({ setRestaurants }) => {
                 options.body = body
             }
             const response = await fetch(url, options)
-            if(!response.ok){
-               throw new Error("Can't apply filter, try again later")
-            }
             const result = await response.json()
-            setRestaurants(result.restaurants)
             closeModalHandler()
+            if(!response.ok) {
+                const errorMessages = result.errors ? result.errors.map(err => err.msg) : [result.message];
+                setErrors(errorMessages);
+                return;
+            }
+            setRestaurants(result.restaurants)
             return result
           }
           catch(err) {
-            console.log(err)
+            closeModalHandler()
+            setErrors([err.message || "Failed filtering, try again later"])
           }
     }
 
     return (
         <>
+        {errors && <ErrorDialog errors={errors} onClose={closeErrorDialogHandler}/>}
         <button className="mr-2 mb-2 px-3 py-1 border rounded bg-white shadow-md mt-6" onClick={openModalHandler}>
             Filter <TuneIcon />
         </button>
