@@ -28,7 +28,7 @@ exports.postReviews = async(req, res, next) => {
         const existingReviewer = await User.findById(reviewer)
         if(!existingReviewer) return res.status(404).json({message: 'No user found'})
         const review = new Review({
-            order,
+            order: orderId,
             restaurant,
             reviewer,
             rating,
@@ -58,7 +58,7 @@ exports.getReviewByOrderId = async(req, res, next) => {
         const { orderId } = req.params
         const order = await Order.findById(orderId)
         if(!order) return res.status(404).json({message: 'Order not found'})
-        const review = await Review.find({ order: id })
+        const review = await Review.find({ order: orderId })
         res.status(200).json({ review })
    }
    catch(err) {
@@ -72,7 +72,7 @@ exports.getReviewsByRestaurantId = async(req, res, next) => {
         const restaurant = await Restaurant.findById(restaurantId)
         if(!restaurant) return res.status(404).json({message: 'Restaurant not found'})
         //To populate reviewer field with corresponding user's name
-        const reviews = await Review.find({ restaurant: id }).populate('reviewer', 'name')
+        const reviews = await Review.find({ restaurant: restaurantId }).populate('reviewer', 'name')
         res.status(200).json({ reviews })
     }
     catch(err) {

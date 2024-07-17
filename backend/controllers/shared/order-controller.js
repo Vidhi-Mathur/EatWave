@@ -115,7 +115,7 @@ exports.getRestaurantOrderHistory = async(req, res, next) => {
         const restaurant = await Restaurant.findById(restaurantId)
         if(!restaurant) return res.status(404).json({message: 'No restaurant found, try sign up.'})
         //Only returns id
-        const orders = await Order.find({ restaurant: id }).select('_id')
+        const orders = await Order.find({ restaurant: restaurantId }).select('_id')
         console.log(orders)
         res.status(200).json({ orders })
     }
