@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import SortIcon from '@mui/icons-material/Sort';
 import { ErrorDialog } from "./ErrorDialog";
 import { SortOptions } from "./SortOptions";
+import { applyFilter } from "../../services/FilterService";
 
 export const SortMenu = ({ setRestaurants }) => {
 	const [showSort, setShowSort] = useState(false);
@@ -10,7 +11,7 @@ export const SortMenu = ({ setRestaurants }) => {
 
   	useEffect(() => {
         //To apply default when component mounts
-    	fetchSortedRestaurants("Relevance (default)")
+    	applyHandler("Relevance (default)")
   	}, [])   
 
       const closeErrorDialogHandler = () => {
@@ -21,47 +22,15 @@ export const SortMenu = ({ setRestaurants }) => {
   	  setShowSort((prevState) => !prevState);
   	};
 
-  	const fetchSortedRestaurants = async(sortedType) => {
-  	  	let url = getSortUrl(sortedType)
-  	  	try {
-  	  	  	const response = await fetch(url, {
-  	  	    	method: 'GET',
-  	  	    	headers: {
-  	  	    	  'Content-Type': 'application/json'
-  	  	    	}
-  	  	  })
-  	  	  	const result = await response.json()
-  	  	 		if (!response.ok) {
-  	  	  	  	const errorMessages = result.errors ? result.errors.map(err => err.msg) : [result.message];
-  	  	  	  	setShowSort(false)
-  	  	  	  	setErrors(errorMessages);
-  	  	  	  	return;
-  	  	  	}
-  	  	  	setRestaurants(result.restaurants)
+  	const applyHandler = async(sortedType) => {
+        const result = await applyFilter('Sort', sortedType);
+        setShowSort(false);
+        if (result.error) {
+            setErrors(Array.isArray(result.error) ? result.error : [result.error]);
+        } 
+        else {
+            setRestaurants(result.restaurants);
             setSelectedSort(sortedType);
-  	  	  	setShowSort(false)
-  	  	  	return result
-  	  	}
-  	  	catch(err) {
-			setErrors(err.message || "Failed sorting, try again later");
-  	  	  	setShowSort(false)
-  	  	}
-  	}
-
-    const getSortUrl = (sortedType) => {
-        switch(sortedType){
-            case "Relevance (default)": 
-                return "http://localhost:3000/restaurant/sort/default"
-            case "Ratings": 
-                return "http://localhost:3000/restaurant/sort/ratings"
-
-            case "Cost: Low To High": 
-                return "http://localhost:3000/restaurant/sort/cost-low-to-high"
-
-            case "Cost: High To Low": 
-                return "http://localhost:3000/restaurant/sort/cost-high-to-low"
-            default: 
-                setErrors("Failed sorting, try again later");
         }
     }
 
@@ -76,14 +45,14 @@ export const SortMenu = ({ setRestaurants }) => {
       <>
         <div className="relative inline-block">
     		{errors && <ErrorDialog errors={errors} onClose={closeErrorDialogHandler}/>}
-          <button className="mr-2 mb-2 px-2 py-1 border rounded bg-white shadow-md" onClick={toggleSort}>
-            Sort By <SortIcon />
-          </button>
-          {showSort && (
-            <div className="z-10 absolute bg-white divide-y divide-gray-100 rounded-lg shadow w-48">
-                <SortOptions onSortChange={fetchSortedRestaurants} initialSort={selectedSort} showApplyButton={true} styling={menuStyling}/>
-            </div>
-          )}
+            <button className="mr-2 mb-2 px-2 py-1 border rounded bg-white shadow-md" onClick={toggleSort}>
+                Sort By <SortIcon />
+            </button>
+            {showSort && (
+              <div className="z-10 absolute bg-white divide-y divide-gray-100 rounded-lg shadow w-48">
+                  <SortOptions onSortChange={applyHandler} initialSort={selectedSort} showApplyButton={true} styling={menuStyling}/>
+              </div>
+            )}
         </div>
       </>
     );
