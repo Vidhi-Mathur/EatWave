@@ -3,6 +3,7 @@ import TuneIcon from '@mui/icons-material/Tune';
 import { cuisine } from '../restaurant-related/AddCuisine';
 import { ErrorDialog } from './ErrorDialog';
 import { SortOptions } from './SortOptions';
+import { applyFilter } from '../../services/FilterService';
 
 export const FilterDialog = ({ setRestaurants }) => { 
     const dialog = useRef()
@@ -67,69 +68,38 @@ export const FilterDialog = ({ setRestaurants }) => {
     }
 
     const applyHandler = async() => {
-        let url, body;
-        if(activeFilter === 'Sort'){
-            if(selectedSort === "Relevance (default)") {
-                url = "http://localhost:3000/restaurant/sort/default"
-              }
-              else if(selectedSort === "Ratings"){
-                url = "http://localhost:3000/restaurant/sort/ratings"
-              } 
-              else if(selectedSort === "Cost: Low To High"){
-                url = "http://localhost:3000/restaurant/sort/cost-low-to-high"
-              } 
-              else if(selectedSort === "Cost: High To Low"){
-                url = "http://localhost:3000/restaurant/sort/cost-high-to-low"
-              }
-              else {
-                setErrors(["Failed sorting, try again later"])
-              }
-        }
-        else if(activeFilter === "Cuisines"){
-            url =  "http://localhost:3000/restaurant/filter/cuisines"
-            body = JSON.stringify({ cuisines })
-        }
-        else if(activeFilter === "Ratings"){
-            url = "http://localhost:3000/restaurant/filter/ratings"
-            body = JSON.stringify({ ratings })
-        }
-        else if(activeFilter === "Food Preference"){
-            url = "http://localhost:3000/restaurant/filter/preference"
-            body = JSON.stringify({ preference })
-        }
-        else if(activeFilter === "Cost For Two"){
-            url = "http://localhost:3000/restaurant/filter/cost-for-two"
-            body = JSON.stringify({ costForTwo })
-        }
-        else {
-            setErrors(["Failed filtering, try again later"])
-        }
-        try {
-            const options = {
-                method: body? 'POST':  'GET',
-                headers: {
-                'Content-Type': 'application/json'
-                }
-            }
-            if(body){
-                options.body = body
-            }
-            const response = await fetch(url, options)
-            const result = await response.json()
-            closeModalHandler()
-            if(!response.ok) {
-                const errorMessages = result.errors ? result.errors.map(err => err.msg) : [result.message];
-                setErrors(errorMessages);
+        let filterData;
+        switch(activeFilter) {
+            case 'Sort':
+                filterData = selectedSort;
+                break;
+            case 'Cuisines':
+                filterData = cuisines;
+                break;
+            case 'Ratings':
+                filterData = ratings;
+                break;
+            case 'Food Preference':
+                filterData = preference;
+                break;
+            case 'Cost For Two':
+                filterData = costForTwo;
+                break;
+            default:
+                setErrors(["Invalid filter type"]);
                 return;
-            }
-            setRestaurants(result.restaurants)
-            return result
-          }
-          catch(err) {
-            closeModalHandler()
-            setErrors([err.message || "Failed filtering, try again later"])
-          }
+        }
+
+        const result = await applyFilter(activeFilter, filterData);
+        closeModalHandler();
+        if (result.error) {
+            setErrors(Array.isArray(result.error) ? result.error : [result.error]);
+        } 
+        else {
+            setRestaurants(result.restaurants);
+        }
     }
+
 
     let checkedRadio = "peer-checked:bg-orange-500 peer-checked:border-transparent mr-2 w-3 h-3 inline-block rounded-full border border-gray-300"
     let checkedBox = "peer-checked:bg-orange-500 peer-checked:border-transparent mr-2 w-3 h-3 inline-block border border-gray-300"
