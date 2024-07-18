@@ -1,61 +1,58 @@
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import TuneIcon from '@mui/icons-material/Tune';
 import { cuisine } from '../restaurant-related/AddCuisine';
 import { ErrorDialog } from './ErrorDialog';
+import { SortOptions } from './SortOptions';
 
 export const FilterDialog = ({ setRestaurants }) => { 
-  const [selectedSort, setselectedSort] = useState("Relevance (default)");
-  const [activeFilter, setActiveFilter] = useState("Sort")
-  const [cuisines, setCuisines] = useState([])
-  const [ratings, setRatings] = useState([])
-  const [preference, setPreference] = useState()
-  const [costForTwo, setCostForTwo] = useState([])
-  const [errors, setErrors] = useState(null)
- 
-  const sortChangeHandler = (e) => {
-    setselectedSort(e.target.value);
-  };
-
-  const filterChangeHandler = (section) => {
-    setActiveFilter(section)
-  }
-
-  const cuisinesHandler = (e) => {
-    setCuisines(prevState => (
-        prevState.includes(e.target.value)? prevState.filter(cuisine => cuisine !== e.target.value): [...prevState, e.target.value]
-    ))
-  }
-
-  const ratingsHandler = (e) => {
-    const value = parseInt(e.target.value, 10);
-    setRatings(prevState => (
-        prevState.includes(value)? prevState.filter(rating => rating !== value): [...prevState, value]
-    ))
-  }
-
-  const preferenceHandler = (e) => {
-    setPreference(e.target.value)
-  }
-
-  const costForTwoHandler = (e) => {
-    setCostForTwo(prevState => (
-        prevState.includes(e.target.value)? prevState.filter(cost => cost !== e.target.value): [...prevState, e.target.value]
-    ))
-  }
-
-  const clearFiltersHandler = () => {
-    setselectedSort("Relevance (default)");
-    setCuisines([])
-    setRatings([])
-    setPreference()
-    costForTwo([])
-  }
-
-  const checkedRadio = "peer-checked:bg-orange-500 peer-checked:border-transparent mr-2 w-3 h-3 inline-block rounded-full border border-gray-300";
-  const checkedBox = "peer-checked:bg-orange-500 peer-checked:border-transparent mr-2 w-3 h-3 inline-block border border-gray-300";
-  const selectedLabel = "peer-checked:text-black font-semibold"
-
     const dialog = useRef()
+    const [selectedSort, setselectedSort] = useState("Relevance (default)");
+    const [activeFilter, setActiveFilter] = useState("Sort")
+    const [cuisines, setCuisines] = useState([])
+    const [ratings, setRatings] = useState([])
+    const [preference, setPreference] = useState()
+    const [costForTwo, setCostForTwo] = useState([])
+    const [errors, setErrors] = useState(null)
+
+    const sortChangeHandler = useCallback(sortType => {
+        setselectedSort(sortType);
+    }, []);    
+
+    const filterChangeHandler = (section) => {
+        setActiveFilter(section)
+    }
+
+    const cuisinesHandler = (e) => {
+        setCuisines(prevState => (
+            prevState.includes(e.target.value)? prevState.filter(cuisine => cuisine !== e.target.value): [...prevState, e.target.value]
+        ))
+    }
+
+    const ratingsHandler = (e) => {
+        const value = parseInt(e.target.value, 10);
+        setRatings(prevState => (
+            prevState.includes(value)? prevState.filter(rating => rating !== value): [...prevState, value]
+        ))
+    }
+
+    const preferenceHandler = (e) => {
+      setPreference(e.target.value)
+    }
+
+    const costForTwoHandler = (e) => {
+        setCostForTwo(prevState => (
+            prevState.includes(e.target.value)? prevState.filter(cost => cost !== e.target.value): [...prevState, e.target.value]
+        ))
+    }
+
+    const clearFiltersHandler = () => {
+        setselectedSort("Relevance (default)");
+        setCuisines([])
+        setRatings([])
+        setPreference()
+        setCostForTwo([])
+    }
+
 
     const openModalHandler = () => {
         dialog.current.showModal()
@@ -85,7 +82,7 @@ export const FilterDialog = ({ setRestaurants }) => {
                 url = "http://localhost:3000/restaurant/sort/cost-high-to-low"
               }
               else {
-                throw new Error("Failed sorting, try again later")
+                setErrors(["Failed sorting, try again later"])
               }
         }
         else if(activeFilter === "Cuisines"){
@@ -105,7 +102,7 @@ export const FilterDialog = ({ setRestaurants }) => {
             body = JSON.stringify({ costForTwo })
         }
         else {
-            throw new Error("Failed filtering, try again later")
+            setErrors(["Failed filtering, try again later"])
         }
         try {
             const options = {
@@ -134,6 +131,16 @@ export const FilterDialog = ({ setRestaurants }) => {
           }
     }
 
+    let checkedRadio = "peer-checked:bg-orange-500 peer-checked:border-transparent mr-2 w-3 h-3 inline-block rounded-full border border-gray-300"
+    let checkedBox = "peer-checked:bg-orange-500 peer-checked:border-transparent mr-2 w-3 h-3 inline-block border border-gray-300"
+
+    const menuStyling = {
+        checkedRadio: checkedRadio,
+        checkedBox: checkedBox,
+        selectedLabel: "peer-checked:text-black font-semibold",
+        optionLabel: "flex items-center px-4 py-2 hover:bg-gray-100"
+    }
+
     return (
         <>
         {errors && <ErrorDialog errors={errors} onClose={closeErrorDialogHandler}/>}
@@ -160,13 +167,7 @@ export const FilterDialog = ({ setRestaurants }) => {
                             {activeFilter === 'Sort' && (
                             <>
                             <h2>SORT BY</h2>
-                            {["Relevance (default)", "Ratings", "Cost: Low To High", "Cost: High To Low"].map((sortOption) => (
-                                <label key={sortOption} className={`flex items-center px-4 py-2 hover:bg-gray-100 ${selectedSort === sortOption ? selectedLabel : ''}`}>
-                                    <input type="radio" className="peer hidden" value={sortOption} checked={selectedSort === sortOption} onChange={sortChangeHandler}/>
-                                    <span className={checkedRadio}></span>
-                                    {sortOption}
-                                </label>
-                            ))} 
+                            <SortOptions onSortChange={sortChangeHandler} initialSort={selectedSort} showApplyButton={false} styling={menuStyling}/>
                             </>
                             )}
                             {activeFilter === 'Cuisines' && (
@@ -229,8 +230,8 @@ export const FilterDialog = ({ setRestaurants }) => {
                     </div>
                 </div>
                 <div className='flex justify-end items-center border-t p-4 space-x-2 sticky bottom-0 bg-white'>
-                    <button className="bg-orange-500 text-white py-2 px-4 rounded" onClick={clearFiltersHandler}>Clear All</button>
-                    <button className="bg-orange-500 text-white py-2 px-4 rounded" onClick={applyHandler}>Apply</button>
+                    <button className="bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600" onClick={clearFiltersHandler}>Clear All</button>
+                    <button className="bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600" onClick={applyHandler}>Apply</button>
                 </div>
             </dialog>
         </div>
