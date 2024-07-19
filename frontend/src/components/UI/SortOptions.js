@@ -6,7 +6,7 @@ export const SortOptions = ({ onSortChange, initialSort, styling, showApplyButto
 
     useEffect(() => {
         if(!showApplyButton) onSortChange(selectedSort)
-    }, [showApplyButton, selectedSort, onSortChange])
+    }, [showApplyButton, selectedSort])
 
     const sortChangeHandler = (e) => {
         setSelectedSort(e.target.value)
