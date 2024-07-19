@@ -47,22 +47,11 @@ exports.restaurantIdValidation = [
     handleValidationErrors
 ]
 
-exports.filterRestaurantsByCuisinesValidation = [
-    body("cuisines").isArray().withMessage("Cuisines must be an array"),
-    handleValidationErrors
-]
-
-exports.filterRestaurantsByRatingsValidation = [
-    body("ratings").isArray().withMessage("Ratings must be an array").bail().custom(value => value.every(rating => typeof rating === 'number' && rating >= 0 && rating <= 5)).withMessage("Invalid rating, should be number between 0 & 5"),
-    handleValidationErrors
-]
-
-exports.filterRestaurantsByPreferenceValidation = [
-    body("preference").isIn(['Veg', 'Non-Veg']).withMessage("Invalid preference"),
-    handleValidationErrors
-]
-
-exports.filterRestaurantsByCostForTwoValidation = [
-    body('costForTwo').isArray().withMessage('Cost for two must be an array').bail().custom((value) => value.every(cost => ['Less than 300', 'Between 300-600', 'Greater than 600'].includes(cost))).withMessage('Invalid cost range'),
+exports.filterRestaurantsValidation = [
+    body('sort').optional().isIn(['Relevance (default)', 'Ratings', 'Cost: Low To High', 'Cost: High To Low']).withMessage('Invalid sort type'),
+    body("cuisines").optional().isArray().withMessage("Cuisines must be an array").bail().custom(value => value.every(cuisine => typeof cuisine === 'string')).withMessage("Invalid cuisine type"),
+    body("ratings").optional().isArray().withMessage("Ratings must be an array").bail().custom(value => value.every(rating => typeof rating === 'number' && rating >= 0 && rating <= 5)).withMessage("Invalid rating, should be number between 0 & 5"),
+    body("preference").optional().isIn(['Veg', 'Non-Veg']).withMessage("Invalid preference"),
+    body('costForTwo').optional().isArray().withMessage('Cost for two must be an array').bail().custom((value) => value.every(cost => ['Less than 300', 'Between 300-600', 'Greater than 600'].includes(cost))).withMessage('Invalid cost range'),
     handleValidationErrors
 ]
