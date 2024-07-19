@@ -7,51 +7,42 @@ import { applyFilter } from '../../services/FilterService';
 
 export const FilterDialog = ({ setRestaurants }) => { 
     const dialog = useRef()
-    const [selectedSort, setselectedSort] = useState("Relevance (default)");
     const [activeFilter, setActiveFilter] = useState("Sort")
-    const [cuisines, setCuisines] = useState([])
-    const [ratings, setRatings] = useState([])
-    const [preference, setPreference] = useState()
-    const [costForTwo, setCostForTwo] = useState([])
+    const [filters, setFilters] = useState({
+        sort: "Relevance (default)",
+        cuisines: [],
+        ratings: [],
+        //To prevent validation error on backend
+        preference: undefined,
+        costForTwo: []
+    })
     const [errors, setErrors] = useState(null)
 
-    const sortChangeHandler = useCallback(sortType => {
-        setselectedSort(sortType);
-    }, []);    
-
-    const filterChangeHandler = (section) => {
+    const activeFilterChangeHandler = (section) => {
         setActiveFilter(section)
     }
 
-    const cuisinesHandler = (e) => {
-        setCuisines(prevState => (
-            prevState.includes(e.target.value)? prevState.filter(cuisine => cuisine !== e.target.value): [...prevState, e.target.value]
-        ))
-    }
-
-    const ratingsHandler = (e) => {
-        const value = parseInt(e.target.value, 10);
-        setRatings(prevState => (
-            prevState.includes(value)? prevState.filter(rating => rating !== value): [...prevState, value]
-        ))
-    }
-
-    const preferenceHandler = (e) => {
-      setPreference(e.target.value)
-    }
-
-    const costForTwoHandler = (e) => {
-        setCostForTwo(prevState => (
-            prevState.includes(e.target.value)? prevState.filter(cost => cost !== e.target.value): [...prevState, e.target.value]
-        ))
-    }
+    const filterChangeHandler = useCallback((type, value) => {
+        setFilters(prevFilters => {
+            if(type === 'sort' || type === 'preference'){
+                return { ...prevFilters, [type]: value };
+            }
+            if(type === 'cuisines' || type === 'ratings' || type === 'costForTwo'){
+                let updateArray = prevFilters[type].includes(value)? prevFilters[type].filter(item => item !== value): [...prevFilters[type], value]
+                return { ...prevFilters, [type]: updateArray }
+            }
+            return prevFilters
+        });
+    }, []);
 
     const clearFiltersHandler = () => {
-        setselectedSort("Relevance (default)");
-        setCuisines([])
-        setRatings([])
-        setPreference()
-        setCostForTwo([])
+        setFilters({
+            sort: "Relevance (default)",
+            cuisines: [],
+            ratings: [],
+            preference: null,
+            costForTwo: []
+        })
     }
 
 
@@ -68,29 +59,7 @@ export const FilterDialog = ({ setRestaurants }) => {
     }
 
     const applyHandler = async() => {
-        let filterData;
-        switch(activeFilter) {
-            case 'Sort':
-                filterData = selectedSort;
-                break;
-            case 'Cuisines':
-                filterData = cuisines;
-                break;
-            case 'Ratings':
-                filterData = ratings;
-                break;
-            case 'Food Preference':
-                filterData = preference;
-                break;
-            case 'Cost For Two':
-                filterData = costForTwo;
-                break;
-            default:
-                setErrors(["Invalid filter type"]);
-                return;
-        }
-
-        const result = await applyFilter(activeFilter, filterData);
+        const result = await applyFilter(filters);
         closeModalHandler();
         if (result.error) {
             setErrors(Array.isArray(result.error) ? result.error : [result.error]);
@@ -98,8 +67,7 @@ export const FilterDialog = ({ setRestaurants }) => {
         else {
             setRestaurants(result.restaurants);
         }
-    }
-
+    };
 
     let checkedRadio = "peer-checked:bg-orange-500 peer-checked:border-transparent mr-2 w-3 h-3 inline-block rounded-full border border-gray-300"
     let checkedBox = "peer-checked:bg-orange-500 peer-checked:border-transparent mr-2 w-3 h-3 inline-block border border-gray-300"
@@ -128,7 +96,7 @@ export const FilterDialog = ({ setRestaurants }) => {
                     <nav className='w-1/4 border-r'>
                         <ul>
                             {['Sort', 'Cuisines', 'Ratings', 'Food Preference', 'Cost For Two'].map((section) => (
-                                <button key={section} className='text-left p-2 py-2 w-full' onClick={() => filterChangeHandler(section)}><li>{section}</li></button>
+                                <button key={section} className='text-left p-2 py-2 w-full' onClick={() => activeFilterChangeHandler(section)}><li>{section}</li></button>
                             ))}
                         </ul>
                     </nav>
@@ -137,7 +105,7 @@ export const FilterDialog = ({ setRestaurants }) => {
                             {activeFilter === 'Sort' && (
                             <>
                             <h2>SORT BY</h2>
-                            <SortOptions onSortChange={sortChangeHandler} initialSort={selectedSort} showApplyButton={false} styling={menuStyling}/>
+                            <SortOptions onSortChange={(value) => filterChangeHandler('sort', value)} initialSort={filters.sort} showApplyButton={false} styling={menuStyling}/>
                             </>
                             )}
                             {activeFilter === 'Cuisines' && (
@@ -145,7 +113,7 @@ export const FilterDialog = ({ setRestaurants }) => {
                                 <h2>FILTER BY CUISINE</h2>
                                 {cuisine.map((item, idx) => (
                                 <label key={idx} className='flex items-center px-4 py-2 hover:bg-gray-100'>
-                                    <input type="checkbox" className="peer hidden" value={item} checked={cuisines.includes(item)} onClick={cuisinesHandler}/>
+                                    <input type="checkbox" className="peer hidden" value={item} checked={filters.cuisines.includes(item)} onChange={() => filterChangeHandler('cuisines', item)}/>
                                     <span className={checkedBox}></span>
                                     {item}
                                 </label>
@@ -157,7 +125,7 @@ export const FilterDialog = ({ setRestaurants }) => {
                                 <h2>FILTER BY RATINGS</h2>
                                 {[4, 3, 2].map((i) => (
                                 <label key={i} className='flex items-center px-4 py-2 hover:bg-gray-100'>
-                                <input type="checkbox" className="peer hidden" value={i} onClick={ratingsHandler} checked={ratings.includes(i)}/>
+                                <input type="checkbox" className="peer hidden" value={i} checked={filters.ratings.includes(i)} onChange={() => filterChangeHandler('ratings', i)}/>
                                 <span className={checkedBox}></span>
                                 {`Rating ${i}+`}
                                 </label>
@@ -169,7 +137,7 @@ export const FilterDialog = ({ setRestaurants }) => {
                                 <h2>FILTER BY FOOD PREFERENCE</h2>
                                 {['Veg', 'Non-Veg'].map((item, idx) => (
                                 <label key={idx} className='flex items-center px-4 py-2 hover:bg-gray-100'>
-                                    <input type="radio" className="peer hidden" value={item} onChange={preferenceHandler} checked={preference=== item} />
+                                    <input type="radio" className="peer hidden" value={item} onChange={() => filterChangeHandler('preference', item)} checked={filters.preference=== item} />
                                     <span className={checkedRadio}></span>
                                     {item}
                                 </label>
@@ -180,17 +148,17 @@ export const FilterDialog = ({ setRestaurants }) => {
                                 <>
                                 <h2>FILTER BY COST FOR TWO</h2>
                                 <label className='flex items-center px-4 py-2 hover:bg-gray-100'>
-                                    <input type="checkbox" className="peer hidden" onClick={costForTwoHandler} checked={costForTwo.includes("Less than 300")} value="Less than 300"/>
+                                    <input type="checkbox" className="peer hidden" value="Less than 300" checked={filters.costForTwo.includes("Less than 300")} onChange={() => filterChangeHandler('costForTwo', "Less than 300")} />
                                     <span className={checkedBox}></span>
                                     Less than &#8377;300
                                 </label>
                                 <label className='flex items-center px-4 py-2 hover:bg-gray-100'>
-                                    <input type="checkbox" className="peer hidden" onClick={costForTwoHandler} checked={costForTwo.includes("Between 300-600")} value="Between 300-600"/>
+                                    <input type="checkbox" className="peer hidden" value="Between 300-600" checked={filters.costForTwo.includes("Between 300-600")} onChange={() => filterChangeHandler('costForTwo', "Between 300-600")}/>
                                     <span className={checkedBox}></span>
                                     Between &#8377;300 - 600
                                 </label>
                                 <label className='flex items-center px-4 py-2 hover:bg-gray-100'>
-                                    <input type="checkbox" className="peer hidden" onClick={costForTwoHandler} checked={costForTwo.includes("Greater than 600")} value="Greater than 600"/>
+                                    <input type="checkbox" className="peer hidden" value="Greater than 600" checked={filters.costForTwo.includes("Greater than 600")} onChange={() => filterChangeHandler('costForTwo', "Greater than 600")}/>
                                     <span className={checkedBox}></span>
                                     Greater than &#8377;600
                                 </label>
