@@ -11,7 +11,7 @@ export const SortMenu = ({ setRestaurants }) => {
 
   	useEffect(() => {
         //To apply default when component mounts
-    	applyHandler("Relevance (default)")
+        applyHandler({ sort: "Relevance (default)" });
   	}, [])   
 
       const closeErrorDialogHandler = () => {
@@ -22,17 +22,20 @@ export const SortMenu = ({ setRestaurants }) => {
   	  setShowSort((prevState) => !prevState);
   	};
 
-  	const applyHandler = async(sortedType) => {
-        const result = await applyFilter('Sort', sortedType);
+  	const applyHandler = async (filterCriteria) => {
+        const result = await applyFilter(filterCriteria);
         setShowSort(false);
         if (result.error) {
             setErrors(Array.isArray(result.error) ? result.error : [result.error]);
-        } 
-        else {
+        } else {
             setRestaurants(result.restaurants);
-            setSelectedSort(sortedType);
+            setSelectedSort(filterCriteria.sort);
         }
-    }
+    };
+
+    const handleSortChange = (sortedType) => {
+        applyHandler({ sort: sortedType });
+    };
 
     let menuStyling = {
         container: "py-2 text-sm text-gray-700",
@@ -50,7 +53,7 @@ export const SortMenu = ({ setRestaurants }) => {
             </button>
             {showSort && (
               <div className="z-10 absolute bg-white divide-y divide-gray-100 rounded-lg shadow w-48">
-                  <SortOptions onSortChange={applyHandler} initialSort={selectedSort} showApplyButton={true} styling={menuStyling}/>
+                  <SortOptions onSortChange={handleSortChange} initialSort={selectedSort} showApplyButton={true} styling={menuStyling}/>
               </div>
             )}
         </div>
