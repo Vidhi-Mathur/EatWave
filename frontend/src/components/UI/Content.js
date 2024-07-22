@@ -1,11 +1,7 @@
-import React from 'react';
-
-const Content = ({ children }) => {
+export const Content = ({ children }) => {
   return (
-    <div className="container mx-auto px-4 py-8 max-h-[calc(100vh-98px)] overflow-y-auto">
-      <div className="bg-white rounded-lg shadow-md">{children}</div>
+    <div className="min-h-screen flex flex-col py-8">
+      <div className={`bg-white shadow-md rounded-lg p-6 w-full max-w-4xl mx-auto`}>{children}</div>
     </div>
   );
 }
-
-export default Content;
