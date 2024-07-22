@@ -1,16 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Layout from "../UI/Layout";
-import Content from "../UI/Content";
+import { Content } from "../UI/Content";
 import { Menu } from "../restaurant-related/Menu";
 import { Review } from "../restaurant-related/Review";
-import { CartContext } from "../../store/Cart-Context";
 import { Photos } from "../restaurant-related/Photos";
 import { ErrorDialog } from "../UI/ErrorDialog";
 
 const RestaurantDetailPage = () => {
     const { restaurantId } = useParams();
-    const { setRestaurantId } = useContext(CartContext)
     const [restaurantDetail, setRestaurantDetail] = useState(null);
     const [active, setActive] = useState('menu')
     const [loading, setLoading] = useState(true)
@@ -28,7 +26,6 @@ const RestaurantDetailPage = () => {
                     return;
                 }
                 setRestaurantDetail(result.restaurant);
-                setRestaurantId(result.restaurant._id)
                 setLoading(false)
             } 
             catch(err) {
@@ -37,7 +34,7 @@ const RestaurantDetailPage = () => {
             }
         };
         fetchRestaurantDetails();
-    }, [restaurantId, setRestaurantId]);
+    }, [restaurantId ]);
 
     const closeErrorDialogHandler = () => {
         setErrors(null)
