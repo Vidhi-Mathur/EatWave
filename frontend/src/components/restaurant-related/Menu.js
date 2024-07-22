@@ -9,6 +9,7 @@ export const Menu = ({menuId}) => {
     const { isAuthenticated } = useContext(AuthContext)
     const { items, addToCart, removeFromCart } = useContext(CartContext)
     const [menu, setMenu] = useState(null)
+    const [restaurant, setRestaurant] = useState(null)
     const [errors, setErrors] = useState(null)
     const [loading, setLoading] = useState(true)
 
@@ -23,7 +24,8 @@ export const Menu = ({menuId}) => {
                     setLoading(false)
                     return;
                 }
-                setMenu(result.menu);
+                setMenu(result.menu.items);
+                setRestaurant(result.menu.restaurant)
                 setLoading(false)
             }
             catch(err) {
@@ -47,7 +49,6 @@ export const Menu = ({menuId}) => {
                     const cartItem = items.find(cartItem => cartItem.id === item._id)
                     const quantity = cartItem? cartItem.quantity: 0;
                     return (
-                    <>
                     <div key={item._id} className="flex items-center justify-between bg-white rounded-lg shadow-md p-4 mb-4">
                         <div>
                         <h3 className="text-lg font-semibold">{item.name}</h3>
@@ -55,16 +56,15 @@ export const Menu = ({menuId}) => {
                         <p className="text-gray-800 mt-2">&#8377; {item.price}</p>
                         </div>
                         {isAuthenticated && (<div>
-                            {quantity === 0? <button onClick={() => addToCart({itemId: item._id, name: item.name, price: item.price, currentRestaurantId: item.restaurant})} className="bg-orange-100 px-4 py-3 rounded-md">ADD</button>: (
+                            {quantity === 0? <button onClick={() => addToCart({itemId: item._id, name: item.name, price: item.price,currentRestaurantId: restaurant })} className="bg-orange-100 px-4 py-3 rounded-md">ADD</button>: (
                                  <div className="flex items-center">
                                  <button onClick={() => removeFromCart({itemId: item._id})} className="bg-orange-100 px-3 py-2 rounded-md"><RemoveIcon /></button>
                                  <span className="px-4">{quantity}</span>
-                                 <button onClick={() => addToCart({itemId: item._id, name: item.name, price: item.price, currentRestaurantId: item.restaurant})} className="bg-orange-100 px-3 py-2 rounded-md"><AddIcon /></button>
+                                 <button onClick={() => addToCart({itemId: item._id, name: item.name, price: item.price, currentRestaurantId: restaurant })} className="bg-orange-100 px-3 py-2 rounded-md"><AddIcon /></button>
                              </div>
                             )}
                         </div>)}
                     </div>
-                    </>
                     )
                 })}
         </div>
