@@ -20,7 +20,7 @@ exports.getMenuById = async(req, res, next) => {
         const { menuId } = req.params
         const menu = await Menu.findById(menuId)
         if(!menu) return res.status(404).json({ message: 'No associated menu found' })
-        res.status(200).json({ menu: menu.items })
+        res.status(200).json({ menu })
     }
     catch(err) {
         next(err)
