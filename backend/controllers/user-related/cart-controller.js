@@ -16,19 +16,22 @@ exports.getCart = async (req, res, next) => {
         }
         //Access items through menuId
         const menu = await Menu.findById(restaurant.menu).select('items');
-        if (!menu) {
+        if (!menu || !menu.items || menu.items.length === 0) {
             return res.status(200).json({ items: [], restaurant: null });
         }
-        //Map cartItemId with those on menu to access name, price and quantity
         const items = cart.items.map(cartItem => {
-            const menuItem = menu.items.find(item => item._id.equals(cartItem.item));
+            const menuItem = menu.items.find(item => item._id && item._id.equals(cartItem.item));
+            if (!menuItem) {
+                return null;
+            }
             return {
                 id: menuItem._id,
                 name: menuItem.name,
                 price: menuItem.price,
                 quantity: cartItem.quantity
             };
-        });
+            //Remove any null items
+        }).filter(Boolean); 
         res.status(200).json({
             items,
             restaurant: {
@@ -42,7 +45,6 @@ exports.getCart = async (req, res, next) => {
     }
 };
 
-
 exports.updateCart = async (req, res, next) => {
     try {
         const { updates, restaurant } = req.body;
@@ -50,13 +52,17 @@ exports.updateCart = async (req, res, next) => {
         let cart = await Cart.findOne({ user });
         if (!cart) {
             cart = new Cart({ user, restaurant, items: [] });
+        } 
+        else if (restaurant && restaurant !== cart.restaurant.toString()) {
+            cart.items = []; 
+            cart.restaurant = restaurant;
         }
         updates.forEach(update => {
-            const { type, itemId } = update;
-            if(type === 'clear'){
-                cart.items = []
-                cart.restaurant = restaurant
-            }
+            const { type, itemId, name, price } = update;
+            if (type === 'clear') {
+                cart.items = [];
+                cart.restaurant = restaurant;
+            } 
             else {
                 const itemIdx = cart.items.findIndex(cartItem => cartItem.item.toString() === itemId);
                 if (type === 'add') {
@@ -64,15 +70,14 @@ exports.updateCart = async (req, res, next) => {
                         cart.items[itemIdx].quantity += 1;
                     } 
                     else {
-                        cart.items.push({ item: itemId, quantity: 1 });
+                        cart.items.push({ item: itemId, quantity: 1, name, price });
                     }
-                } 
-                else if (type === 'remove') {
+                }
+                 else if (type === 'remove') {
                     if (itemIdx !== -1) {
                         if (cart.items[itemIdx].quantity > 1) {
                             cart.items[itemIdx].quantity -= 1;
-                        } 
-                        else {
+                        } else {
                             cart.items.splice(itemIdx, 1);
                         }
                     }
@@ -81,7 +86,8 @@ exports.updateCart = async (req, res, next) => {
         });
         await cart.save();
         res.status(200).json({ cart });
-    } catch (err) {
+    } 
+    catch (err) {
         next(err);
     }
 };
