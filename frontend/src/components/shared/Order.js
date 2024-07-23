@@ -1,40 +1,50 @@
 import { useContext, useState } from "react";
-import { CartContext } from "../../store/Cart-Context"
+import { CartContext } from "../../store/Cart-Context";
 import { AuthContext } from "../../store/Auth-Context";
-import Card from "../UI/Card"
+import { Card } from "../UI/Card";
 import Layout from "../UI/Layout";
-import { ErrorDialog } from "../UI/ErrorDialog"
+import { ErrorDialog } from "../UI/ErrorDialog";
 
 export const Order = () => {
-    const { restaurant, items } = useContext(CartContext);
+    const { restaurantId, items } = useContext(CartContext);
     const { token, setToken } = useContext(AuthContext)
     const [errors, setErrors] = useState(null)
+
     const orderHandler = async (e) => {
         e.preventDefault();
+
+        if (typeof window.Razorpay === 'undefined') {
+            setErrors("Razorpay SDK not loaded. Please check your internet connection or try again later.");
+            return;
+        }
+
         const form = new FormData(e.target);
-        const address = Object.fromEntries(form.entries()); 
-        const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+        const address = Object.fromEntries(form.entries());
+        const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
         const checkoutOrder = {
-            restaurant,
-            items: items.map(item => ({ item: item.id, name: item.name, quantity: item.quantity, price: item.price})),
+            restaurant: restaurantId,
+            items: items.map(item => ({ item: item.id, name: item.name, quantity: item.quantity, price: item.price })),
             totalAmount
         };
+
         try {
             const checkoutResponse = await fetch('http://localhost:3000/order/checkout', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': token ? `Bearer ${token}` : '' 
+                    'Authorization': token ? `Bearer ${token}` : ''
                 },
                 body: JSON.stringify(checkoutOrder)
             });
             const checkoutResult = await checkoutResponse.json();
-            if (!checkoutResponse.ok){
-                const errorMessages = checkoutResult.errors? checkoutResult.errors.map(err => err.msg): [checkoutResult.message];
+            if (!checkoutResponse.ok) {
+                const errorMessages = checkoutResult.errors ? checkoutResult.errors.map(err => err.msg) : [checkoutResult.message];
                 setErrors(errorMessages);
                 return;
             }
-            setToken(checkoutResult.token);      
+
+            setToken(checkoutResult.token);
+
             const options = {
                 key: checkoutResult.key,
                 amount: totalAmount * 100,
@@ -43,46 +53,57 @@ export const Order = () => {
                 description: "Payment for your order",
                 order_id: checkoutResult.order,
                 handler: async (response) => {
-                    const orderResult = await fetch('http://localhost:3000/order/place', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': token? `Bearer ${token}`: ' ' 
-                        },
-                        body: JSON.stringify({
-                            restaurant,
-                            items: checkoutOrder.items,
-                            totalCost: totalAmount,
-                            address,
-                            payment_id: response.razorpay_payment_id,
-                            order_id: response.razorpay_order_id,
-                            signature: response.razorpay_signature
-                        })
-                    });
-                    if (!orderResult.ok) {
-                        const errorMessages = orderResult.errors? orderResult.errors.map(err => err.msg): [orderResult.message];
-                        setErrors(errorMessages);
-                        return;
+                    try {
+                        const orderResult = await fetch('http://localhost:3000/order/place', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': token ? `Bearer ${token}` : ''
+                            },
+                            body: JSON.stringify({
+                                restaurant: restaurantId,
+                                items: checkoutOrder.items,
+                                totalCost: totalAmount,
+                                address,
+                                payment_id: response.razorpay_payment_id,
+                                order_id: response.razorpay_order_id,
+                                signature: response.razorpay_signature
+                            })
+                        });
+                        const orderResponse = await orderResult.json();
+                        if (!orderResult.ok) {
+                            const errorMessages = orderResponse.errors ? orderResponse.errors.map(err => err.msg) : [orderResponse.message];
+                            setErrors(errorMessages);
+                            return;
+                        } 
+                        else {
+                            window.location.href = '/my-account';
+                        }
+                    } 
+                    catch (err) {
+                        setErrors(err.message || "Placing order failed, try again later");
                     }
-                    else window.location.href = '/my-account'
+                },
+                theme: {
+                    color: "#F37254"
                 }
             };
             const razorpay = new window.Razorpay(options);
             razorpay.open();
-            return checkoutResult;
-        } catch (err) {
+        } 
+        catch (err) {
             setErrors(err.message || "Placing order failed, try again later")
         }
     };
 
     const closeErrorDialogHandler = () => {
-        setErrors(null)
-    }
+        setErrors(null);
+    };
 
     return (
         <Layout>
             <Card className="p-6">
-                {errors && < ErrorDialog errors={errors} onClose={closeErrorDialogHandler}/>}
+                {errors && <ErrorDialog errors={errors} onClose={closeErrorDialogHandler} />}
                 <form className="space-y-4" onSubmit={orderHandler}>
                     <div>
                         <label htmlFor="street" className="block text-sm font-medium text-gray-700">Street</label>
@@ -100,7 +121,7 @@ export const Order = () => {
                         <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700">Postal Code</label>
                         <input type="text" name="postalCode" placeholder="Postal Code" required className="w-full pl-3 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-orange-400" />
                     </div>
-                <button type="submit" className="w-full py-2 px-4 bg-orange-400 text-white rounded-md hover:bg-orange-500 focus:outline-none focus:bg-orange-500">Pay and Order</button>
+                    <button type="submit" className="w-full py-2 px-4 bg-orange-400 text-white rounded-md hover:bg-orange-500 focus:outline-none focus:bg-orange-500">Pay and Order</button>
                 </form>
             </Card>
         </Layout>
