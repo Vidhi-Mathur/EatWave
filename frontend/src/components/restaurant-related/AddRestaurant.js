@@ -287,7 +287,7 @@ export const AddRestaurant = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center mt-4 mb-4">
+    <div className="min-h-screen flex items-center justify-center mt-6 mb-4">
       <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-4xl">
         <div className="flex">
           <StepIndicator steps={steps} currentStep={currentStep} />

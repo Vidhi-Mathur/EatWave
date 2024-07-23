@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import Card from "../UI/Card";
+import { Card } from "../UI/Card";
 import { ReviewStar } from "../UI/ReviewStar";
 
 export const SortedRestaurants = ({restaurants}) => {
