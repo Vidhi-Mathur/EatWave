@@ -8,7 +8,7 @@ export const CartContext = createContext({
     items: [],
     addToCart: () => {},
     removeFromCart: () => {},
-    restaurant: null,
+    restaurantId: null,
     setRestaurantId: null
 });
 
@@ -21,9 +21,14 @@ export const CartCtxProvider = ({ children }) => {
     
     useEffect(() => {
         const fetchCart = async () => {
-            const loadedCart = await getCartAPI(token);
-            setCart({ items: loadedCart.items || [] });
-            setRestaurantId( loadedCart.restaurant || null );
+            try {
+                const loadedCart = await getCartAPI(token);
+                setCart({ items: loadedCart.items || [] });
+                setRestaurantId(loadedCart.restaurant ? loadedCart.restaurant._id : null);
+            } 
+            catch (error) {
+                console.error("Failed to fetch cart:", error);
+            }
         };
         if(token){
             fetchCart();
@@ -37,10 +42,10 @@ export const CartCtxProvider = ({ children }) => {
                 batchedCartUpdatesRef.current = [];
             } 
             catch (err) {
-                throw new Error(err || "Failed updating cart")
+                throw new Error("Failed updating cart");
             }
         }
-    }, 300), [token, restaurantId])
+    }, 300), [token, restaurantId]);
 
     const confirmHandler = () => {
         setCart({ items: [{ id: alert.itemId, name: alert.name, quantity: 1, price: alert.price }] });
@@ -55,6 +60,23 @@ export const CartCtxProvider = ({ children }) => {
         setAlert(null)
     }
 
+    const addToCart = ({ itemId, name, price, currentRestaurantId }) => {
+        //If there's no existing cart, create a new one
+        if (!restaurantId) {
+            setRestaurantId(currentRestaurantId);
+            setCart({ items: [{ id: itemId, name, quantity: 1, price }] });
+            batchedCartUpdatesRef.current = [{ type: 'add', itemId, name, price }];
+        } 
+        //If switching restaurants, show alert
+        else if (restaurantId !== currentRestaurantId) {
+            setAlert({ itemId, name, price, currentRestaurantId });
+        } 
+        // Add to existing cart
+        else {
+            addItemToCart({ itemId, name, price, currentRestaurantId });
+        }
+    };
+
     const addItemToCart = ({itemId, name, price, currentRestaurantId }) => {
         setCart((prevCart) => {
             let newCart = [...prevCart.items];
@@ -66,7 +88,8 @@ export const CartCtxProvider = ({ children }) => {
                     quantity: newCart[currentItemIdx].quantity + 1
                 };
                 newCart[currentItemIdx] = newItem;
-            } else {
+            } 
+            else {
                 newItem = {
                     id: itemId,
                     name,
@@ -80,20 +103,12 @@ export const CartCtxProvider = ({ children }) => {
             };
         });
         if(restaurantId !== currentRestaurantId){
-            setRestaurantId(currentRestaurantId)
+            setRestaurantId(currentRestaurantId);
         }
         batchedCartUpdatesRef.current.push({ type: 'add', itemId, name, price });
         processBatchedUpdates();
-    }
-
-    const addToCart = ({ itemId, name, price, currentRestaurantId }) => {
-        if(cart.items.length > 0 && restaurantId && restaurantId !== currentRestaurantId){
-            setAlert({ itemId, name, price, currentRestaurantId })
-        }
-        else {
-            addItemToCart({ itemId, name, price, currentRestaurantId })
-        }
     };
+
 
     const removeFromCart = ({ itemId }) => {
         setCart((prevCart) => {
@@ -118,7 +133,7 @@ export const CartCtxProvider = ({ children }) => {
         items: cart.items,
         addToCart,
         removeFromCart,
-        restaurant: restaurantId,
+        restaurantId,
         setRestaurantId
     };
 
