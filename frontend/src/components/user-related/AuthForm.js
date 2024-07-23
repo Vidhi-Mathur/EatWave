@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import Card from "../UI/Card";
+import { Card } from "../UI/Card";
 import PersonIcon from '@mui/icons-material/Person';
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
