@@ -3,10 +3,10 @@ import { CartContext } from "../../store/Cart-Context";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import Layout from "../UI/Layout";
-import Content from "../UI/Content";
+import { Content } from "../UI/Content";
 import { Link } from "react-router-dom";
 import EmptyPlate from '../../assets/EmptyPlate.jpg'
-import Card from "../UI/Card";
+import { Card } from "../UI/Card";
 import { IconButton, Tooltip } from "@mui/material";
 import Info from "@mui/icons-material/Info";
 
@@ -37,6 +37,7 @@ export const CartPage = () => {
         (sum, item) => sum + item.price * item.quantity,
         0
     );
+    
     let baseDeliveryFee = 50
     let deliveryFee = totalPrice > 500? 0: baseDeliveryFee
     let platformFee = 10
@@ -116,7 +117,7 @@ export const CartPage = () => {
                             ): (
                                 <span>&#8377; {baseDeliveryFee}</span>
                             )}
-                            <Tooltip title="Free delivery on orders above &#8377; 500" placement="right" arrow>
+                            <Tooltip title="Free delivery on orders above item total of &#8377; 500" placement="right" arrow>
                                 <IconButton>
                                     <Info fontSize="small" className="text-gray-400 ml-1 cursor-pointer" />
                                 </IconButton>
@@ -138,7 +139,7 @@ export const CartPage = () => {
                         <span>GST and Restaurant Charges</span>
                         <div className="flex items-center">
                         <span className="mr-1">&#8377; {gstAndRestaurantCharges}</span>
-                        <Tooltip title={<div>GST on total amount: &#8377; {gstCharges} <br /> Packaging Cost: &#8377; {packagingCharges}</div>} placement="right" arrow>
+                        <Tooltip title={<div>GST on item total: &#8377; {gstCharges} <br /> Packaging Cost: &#8377; {packagingCharges}</div>} placement="right" arrow>
                             <IconButton>
                                 <Info fontSize="small" className="text-gray-400 ml-1 cursor-pointer" />
                             </IconButton>

@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom"
-import Content from "../UI/Content"
+import { Content } from "../UI/Content"
 import Layout from "../UI/Layout"
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import FavoriteIcon from '@mui/icons-material/Favorite';

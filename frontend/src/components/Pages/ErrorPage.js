@@ -1,4 +1,4 @@
-import Card from "../UI/Card";
+import { Card } from "../UI/Card";
 import Layout from "../UI/Layout";
 import { Link } from "react-router-dom"
 
