@@ -1,4 +1,5 @@
 import { useState, useRef, useContext } from 'react';
+import { useNavigate } from "react-router-dom"
 import { StepIndicator } from '../UI/StepIndicator';
 import { AddMenuItems } from './AddMenuItems';
 import { AddCuisine } from './AddCuisine';
@@ -16,6 +17,7 @@ export const AddRestaurant = () => {
   const [isEditable, setIsEditable] = useState(true)
   const [errors, setErrors] = useState(null)
   const dialog = useRef()
+  const navigate = useNavigate();
 
   const nextHandler = () => {
     if (currentStep < steps.length - 1) {
@@ -275,7 +277,7 @@ export const AddRestaurant = () => {
             setErrors(["Can't save restaurant, try again later"])
         }
      }
-     return result
+     return navigate('/')
     }
     catch(err) {
       setErrors([err.message || "Failed saving restaurant, try again later"])
