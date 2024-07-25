@@ -6,7 +6,7 @@ exports.createMenuValidation = [
     body("items.*.name").notEmpty().withMessage("Item name can't be empty"),
     body("items.*.description").notEmpty().withMessage("Item description can't be empty"),
     body("items.*.price").notEmpty().withMessage("Item price can't be empty").bail().isNumeric().withMessage("Invalid item price"),
-    body("items.*.foodTags").isEmpty().withMessage("Food tags must be selected"),
+    body("items.*.foodTags").notEmpty().withMessage("Food tags must be selected"),
     body("items.*.foodTags.*").isIn(['Vegan', 'Vegetarian', 'Non-Vegetarian', 'Spicy', 'Non-Spicy', 'Mild-Spicy']).withMessage("Invalid Food Tag"), 
     handleValidationErrors
 ]
@@ -22,7 +22,7 @@ exports.updateMenuValidation = [
     body("items.*.name").notEmpty().withMessage("Item name can't be empty"),
     body("items.*.description").notEmpty().withMessage("Item description can't be empty"),
     body("items.*.price").notEmpty().withMessage("Item price can't be empty").bail().isNumeric().withMessage("Invalid item price"),
-    body("items.*.foodTags").isEmpty().withMessage("Food tags must be selected"),
+    body("items.*.foodTags").notEmpty().withMessage("Food tags must be selected"),
     body("items.*.foodTags.*").isIn(['Vegan', 'Vegetarian', 'Non-Vegetarian', 'Spicy', 'Non-Spicy', 'Mild-Spicy']).withMessage("Invalid Food Tag"), 
     handleValidationErrors
 ]
