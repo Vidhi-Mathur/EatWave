@@ -16,7 +16,7 @@ export const Menu = ({menuId}) => {
     useEffect(() => {
         const fetchMenu = async() => {
             try {
-                const response = await fetch(`http://localhost:3000/restaurant/menu/${menuId}`)
+                const response = await fetch(`https://eatwave-api.onrender.com/restaurant/menu/${menuId}`)
                 const result = await response.json();
                 if (!response.ok) {
                     const errorMessages = result.errors ? result.errors.map(err => err.msg) : [result.message];

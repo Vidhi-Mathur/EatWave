@@ -20,7 +20,7 @@ export const SearchPage = () => {
             return;
         }
         try {
-            const response = await fetch(`http://localhost:3000/search/suggestions?query=${q}`)
+            const response = await fetch(`https://eatwave-api.onrender.com/search/suggestions?query=${q}`)
             const result = await response.json()
             if(!response.ok) {
                 const errorMessages = result.errors ? result.errors.map(err => err.msg) : [result.message];
@@ -41,7 +41,7 @@ export const SearchPage = () => {
             return;
         }
         try {
-            const response = await fetch(`http://localhost:3000/search/results?query=${q}`)
+            const response = await fetch(`https://eatwave-api.onrender.com/search/results?query=${q}`)
             const result = await response.json()
             if(!response.ok) {
                 const errorMessages = result.errors ? result.errors.map(err => err.msg) : [result.message];

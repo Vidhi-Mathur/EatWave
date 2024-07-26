@@ -90,7 +90,7 @@ export const AddRestaurant = () => {
 
   const saveMenuHandler = async() => {
     try {
-      const response = await fetch('http://localhost:3000/restaurant/menu/new', {
+      const response = await fetch('https://eatwave-api.onrender.com/restaurant/menu/new', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -119,7 +119,7 @@ export const AddRestaurant = () => {
 
   const editMenuHandler = async() => {
     try {
-      const response = await fetch(`http://localhost:3000/restaurant/menu/${menuId}`, {
+      const response = await fetch(`https://eatwave-api.onrender.com/restaurant/menu/${menuId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -153,7 +153,7 @@ export const AddRestaurant = () => {
         imageFormData.append('images', files[i]);
       }
       imageFormData.append('folder', folder);
-      const imageResponse = await fetch('http://localhost:3000/upload-image', {
+      const imageResponse = await fetch('https://eatwave-api.onrender.com/upload-image', {
         method: 'POST',
         headers: {
           'Authorization': token ? `Bearer ${token}` : ''
@@ -235,7 +235,7 @@ export const AddRestaurant = () => {
       imageUrls
       };
     try {
-      let response = await fetch('http://localhost:3000/restaurant/new', {
+      let response = await fetch('https://eatwave-api.onrender.com/restaurant/new', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -248,7 +248,7 @@ export const AddRestaurant = () => {
         if(response.status === 401) {
             const refreshResponse = await fetchRefreshToken()
             if(refreshResponse){
-                response = await fetch('http://localhost:3000/restaurant/new', {
+                response = await fetch('https://eatwave-api.onrender.com/restaurant/new', {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',

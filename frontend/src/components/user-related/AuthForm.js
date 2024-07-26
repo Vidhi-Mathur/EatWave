@@ -16,7 +16,7 @@ const AuthForm = ({ signupMode, toggleHandler }) => {
         const form = new FormData(e.target)
         const data = Object.fromEntries(form.entries())
         try {
-            let url = signupMode? 'http://localhost:3000/signup': 'http://localhost:3000/login'
+            let url = signupMode? 'https://eatwave-api.onrender.com/signup': 'https://eatwave-api.onrender.com/login'
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {

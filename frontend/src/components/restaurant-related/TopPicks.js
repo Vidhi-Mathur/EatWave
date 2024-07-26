@@ -16,7 +16,7 @@ const TopPicks = () => {
     useEffect(() => {
         const fetchTopRestaurants = async () => {
             try {
-                const response = await fetch('http://localhost:3000/review/top-rated-restaurants');
+                const response = await fetch('https://eatwave-api.onrender.com/review/top-rated-restaurants');
                 const result = await response.json();
                 if (!response.ok) {
                     setErrors(result.message)

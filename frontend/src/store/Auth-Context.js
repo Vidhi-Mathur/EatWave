@@ -36,7 +36,7 @@ export const AuthCtxProvider = ({ children }) => {
     };
 
     const fetchRefreshToken = async() => {
-        const response = await fetch('http://localhost:3000/refresh-token', {
+        const response = await fetch('https://eatwave-api.onrender.com/refresh-token', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

@@ -33,7 +33,7 @@ export const AddReview = forwardRef(({orderId, restaurantId, existingReview, upd
                 imageFormData.append('image', selectedFile)
                 imageFormData.append('folder', folder)
                 try {
-                    const imageResponse = await fetch('http://localhost:3000/upload-image', {
+                    const imageResponse = await fetch('https://eatwave-api.onrender.com/upload-image', {
                         method: 'POST',
                         headers: {
                             'Authorization': token? `Bearer ${token}`: ''
@@ -52,7 +52,7 @@ export const AddReview = forwardRef(({orderId, restaurantId, existingReview, upd
                     let publicIdWithExtension = urlParts.pop(); 
                     //Removing file extension
                     const publicId = publicIdWithExtension.split('.').slice(0, -1).join('.');
-                        await fetch('http://localhost:3000/delete-image', {
+                        await fetch('https://eatwave-api.onrender.com/delete-image', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ export const AddReview = forwardRef(({orderId, restaurantId, existingReview, upd
                 restaurant: restaurantId,
                 imageUrl
             }
-            let url = `http://localhost:3000/review/${existingReview? existingReview._id: orderId}`
+            let url = `https://eatwave-api.onrender.com/review/${existingReview? existingReview._id: orderId}`
             let method = existingReview? 'PATCH': 'POST'
             let response = await fetch(url, {
                 method,

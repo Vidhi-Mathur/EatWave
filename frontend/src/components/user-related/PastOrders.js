@@ -31,7 +31,7 @@ export const PastOrders = () => {
 
     const fetchReviewByOrderId = async(orderId) => {
         try {
-            let response = await fetch(`http://localhost:3000/review/order/${orderId}`, {
+            let response = await fetch(`https://eatwave-api.onrender.com/review/order/${orderId}`, {
                 headers: {
                     'Authorization': token ? `Bearer ${token}` : ' '
                 }
@@ -41,7 +41,7 @@ export const PastOrders = () => {
                 if(response.status === 401){
                     const refreshResponse = await fetchRefreshToken()
                     if(refreshResponse){
-                        response = await fetch(`http://localhost:3000/review/order/${orderId}`, {
+                        response = await fetch(`https://eatwave-api.onrender.com/review/order/${orderId}`, {
                             headers: {
                                 'Authorization': `Bearer ${refreshResponse.accessToken}`
                             }
@@ -73,7 +73,7 @@ export const PastOrders = () => {
     useEffect(() => {
         const fetchPastOrders = async () => {
             try {
-                let response = await fetch("http://localhost:3000/order/user_history", {
+                let response = await fetch("https://eatwave-api.onrender.com/order/user_history", {
                     headers: {
                         'Authorization': token ? `Bearer ${token}` : ' '
                     }
@@ -83,7 +83,7 @@ export const PastOrders = () => {
                     if(response.status === 401){
                         const refreshResponse = await fetchRefreshToken()
                         if(refreshResponse){
-                            response = await fetch("http://localhost:3000/order/user_history", {
+                            response = await fetch("https://eatwave-api.onrender.com/order/user_history", {
                                 headers: {
                                     'Authorization': `Bearer ${refreshResponse.accessToken}`
                                 }

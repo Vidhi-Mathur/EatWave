@@ -5,7 +5,7 @@ export const Logout = () => {
     const { token, setToken } = useContext(AuthContext)
     useEffect(() => {
         const logoutUser = async() => {
-            const response = await fetch('http://localhost:3000/logout', {
+            const response = await fetch('https://eatwave-api.onrender.com/logout', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json', 

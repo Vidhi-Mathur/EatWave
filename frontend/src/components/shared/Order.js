@@ -28,7 +28,7 @@ export const Order = () => {
         };
 
         try {
-            const checkoutResponse = await fetch('http://localhost:3000/order/checkout', {
+            const checkoutResponse = await fetch('https://eatwave-api.onrender.com/order/checkout', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ export const Order = () => {
                 order_id: checkoutResult.order,
                 handler: async (response) => {
                     try {
-                        const orderResult = await fetch('http://localhost:3000/order/place', {
+                        const orderResult = await fetch('https://eatwave-api.onrender.com/order/place', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
