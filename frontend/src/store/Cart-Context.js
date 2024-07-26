@@ -1,7 +1,4 @@
-import { createContext, useContext, useEffect, useState, useCallback, useRef } from "react";
-import { getCartAPI, updateCartAPI } from "../services/CartService";
-import { AuthContext } from "./Auth-Context";
-import { debounce } from "../util/debounce";
+import { createContext, useState} from "react";
 import { Alert } from "../components/UI/Alert";
 
 export const CartContext = createContext({
@@ -13,46 +10,15 @@ export const CartContext = createContext({
 });
 
 export const CartCtxProvider = ({ children }) => {
-    const { token } = useContext(AuthContext);
     const [cart, setCart] = useState({ items: [] });
     const [restaurantId, setRestaurantId] = useState(null);
     const [alert, setAlert] = useState(null)
-    let batchedCartUpdatesRef = useRef([]);
-    
-    useEffect(() => {
-        const fetchCart = async () => {
-            try {
-                const loadedCart = await getCartAPI(token);
-                setCart({ items: loadedCart.items || [] });
-                setRestaurantId(loadedCart.restaurant ? loadedCart.restaurant._id : null);
-            } 
-            catch (error) {
-                console.error("Failed to fetch cart:", error);
-            }
-        };
-        if(token){
-            fetchCart();
-        }
-    }, [token]);
 
-    const processBatchedUpdates = useCallback(debounce(async () => {
-        if (batchedCartUpdatesRef.current.length > 0) {
-            try {
-                await updateCartAPI(token, { updates: batchedCartUpdatesRef.current, restaurant: restaurantId });
-                batchedCartUpdatesRef.current = [];
-            } 
-            catch (err) {
-                throw new Error("Failed updating cart");
-            }
-        }
-    }, 300), [token, restaurantId]);
 
     const confirmHandler = () => {
         setCart({ items: [{ id: alert.itemId, name: alert.name, quantity: 1, price: alert.price }] });
         //Clear previous and add current
         setRestaurantId(alert.currentRestaurantId);
-        batchedCartUpdatesRef.current = [{ type: 'clear'}, { type: 'add', itemId: alert.itemId, name: alert.name, price: alert.price }];
-        processBatchedUpdates();
         setAlert(null)
     }
 
@@ -65,7 +31,6 @@ export const CartCtxProvider = ({ children }) => {
         if (!restaurantId) {
             setRestaurantId(currentRestaurantId);
             setCart({ items: [{ id: itemId, name, quantity: 1, price }] });
-            batchedCartUpdatesRef.current = [{ type: 'add', itemId, name, price }];
         } 
         //If switching restaurants, show alert
         else if (restaurantId !== currentRestaurantId) {
@@ -105,8 +70,6 @@ export const CartCtxProvider = ({ children }) => {
         if(restaurantId !== currentRestaurantId){
             setRestaurantId(currentRestaurantId);
         }
-        batchedCartUpdatesRef.current.push({ type: 'add', itemId, name, price });
-        processBatchedUpdates();
     };
 
 
@@ -125,8 +88,6 @@ export const CartCtxProvider = ({ children }) => {
                 items: newCart
             };
         });
-        batchedCartUpdatesRef.current.push({ type: 'remove', itemId });
-        processBatchedUpdates();
     };
 
     const ctxValue = {
