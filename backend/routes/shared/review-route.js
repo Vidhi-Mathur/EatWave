@@ -13,7 +13,7 @@ router.get('/top-rated-restaurants', getTopRatedRestaurants)
 router.use(authorizationMiddleware)
 
 //POST /eatwave/reviews/:orderId
-router.post('/:orderId', createReviewValidation, postReviews)
+router.post('/:orderId', postReviews)
 
 //GET /eatwave/review/order/:orderId
 router.get('/order/:orderId', getReviewByOrderIdValidation, getReviewByOrderId)
