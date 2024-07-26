@@ -9,10 +9,13 @@ import EmptyPlate from '../../assets/EmptyPlate.jpg'
 import { Card } from "../UI/Card";
 import { IconButton, Tooltip } from "@mui/material";
 import Info from "@mui/icons-material/Info";
+import { ErrorDialog } from "../UI/ErrorDialog";
 
 export const CartPage = () => {
     const { items, addToCart, removeFromCart, restaurantId } = useContext(CartContext);
     const [restaurantData, setRestaurantData] = useState(null)
+    const [errors, setErrors] = useState(null)
+    const [loading, setLoading] = useState(true)
 
     const emptyCart = items.length === 0 ? EmptyPlate : null;
 
@@ -21,13 +24,17 @@ export const CartPage = () => {
             try {
                 const response = await fetch(`http://localhost:3000/restaurant/${restaurantId}`);
                 const result = await response.json();
-                if(!response.ok) {
-                    throw new Error("failed")
+                if (!response.ok) {
+                    const errorMessages = result.errors ? result.errors.map(err => err.msg) : [result.message];
+                    setErrors(errorMessages);
+                    return;
                 }
                 setRestaurantData(result.restaurant);
+                setLoading(false)
             } 
             catch(err) {
-                console.error("Failed to fetch restaurant details:", err);
+                setErrors([err.message || "Failed fetching cart, try again later"])
+                setLoading(false)
             }
         };
     fetchRestaurantDetails();
@@ -37,6 +44,10 @@ export const CartPage = () => {
         (sum, item) => sum + item.price * item.quantity,
         0
     );
+
+    const closeErrorDialogHandler = () => {
+        setErrors(null)
+    }
     
     let baseDeliveryFee = 50
     let deliveryFee = totalPrice > 500? 0: baseDeliveryFee
@@ -58,6 +69,12 @@ export const CartPage = () => {
         </Card>
         ): (
         <Content>
+            {loading && (
+                <div className="flex justify-center items-center h-screen">
+                    <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
+                </div>
+            )}
+            {errors && <ErrorDialog errors={errors} onClose={closeErrorDialogHandler}/>}
             {/* Restaurant details */}
             {restaurantData && (
                 <Card className="mb-4 p-6">
