@@ -66,7 +66,11 @@ const TopPicks = () => {
     return (
         <div>
              <h1 className="text-3xl font-bold text-center mt-8 mb-4 text-black bg-white bg-opacity-75 px-4 py-2 rounded-lg shadow-lg inline-block ml-[600px]">Top Rated Restaurants</h1>
-            {loading && <div>Loading...</div>}
+             {loading && (
+                    <div className="flex justify-center items-center h-screen">
+                        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
+                    </div>
+            )}
             {errors && <ErrorDialog errors={errors} onClose={closeErrorDialogHandler}/>}
             {topRestaurants.length > 0 && (
                 <Slider {...settings} className='mx-4'>
