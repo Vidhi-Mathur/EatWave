@@ -14,7 +14,7 @@ const { authorizationMiddleware } = require('./controllers/user-related/authenti
 const { cloudinaryDelete } = require('./util/cloudinary')
 
 app.use(cors({
-    origin: 'http://localhost:3001'
+    origin: '*'
 }))
 
 //Parsing JSON bodies
