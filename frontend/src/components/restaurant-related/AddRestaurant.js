@@ -100,14 +100,9 @@ export const AddRestaurant = () => {
       })
       const result = await response.json()
       if(!response.ok){
-        if (result.errors) {
-          const errorMessages = result.errors.map(err => err.msg);
+          const errorMessages = result.errors? result.errors.map(err => err.msg): [result.message];
           setErrors(errorMessages);
-        } 
-        else {
-          setErrors([result.message]);
-        }
-        return;
+          return;
       }
       setFormData(prevState => ({
         ...prevState,
