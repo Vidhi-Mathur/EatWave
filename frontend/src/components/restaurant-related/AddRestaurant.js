@@ -5,6 +5,7 @@ import { AddMenuItems } from './AddMenuItems';
 import { AddCuisine } from './AddCuisine';
 import { AuthContext } from '../../store/Auth-Context';
 import { ErrorDialog } from '../UI/ErrorDialog';
+import { uploadImageHandler } from '../../services/ImageService';
 
 let weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 let steps = ['Restaurant Information', 'Restaurant Documents', 'Menu Setup'];
@@ -144,33 +145,7 @@ export const AddRestaurant = () => {
     catch(err) {
       setErrors([err.message || "Can't edit menu, try again later"])
     }
-  }
-
-  const uploadImageHandler = async(files, folder) => {
-    try {
-      const imageFormData = new FormData();
-      for (let i = 0; i < files.length; i++) {
-        imageFormData.append('images', files[i]);
-      }
-      imageFormData.append('folder', folder);
-      const imageResponse = await fetch('https://eatwave-api.onrender.com/upload-image', {
-        method: 'POST',
-        headers: {
-          'Authorization': token ? `Bearer ${token}` : ''
-        },
-        body: imageFormData
-      });
-      if (!imageResponse.ok) {
-        throw new Error("Can't save image, try again later");
-      }
-      const imageResult = await imageResponse.json();
-      return imageResult.imageUrls; 
-    } 
-    catch (err) {
-      console.log(err); 
-    }
-  }
-  
+  }  
 
   const changeHandler = async(e) => {
     const { name, value, type, checked, files } = e.target;
@@ -209,7 +184,7 @@ export const AddRestaurant = () => {
     let imageUrls = [];
     if (formData.restaurantImages.length > 0) {
       let folder = 'restaurant_images';
-      imageUrls = await uploadImageHandler(formData.restaurantImages, folder);
+      imageUrls = await uploadImageHandler(formData.restaurantImages, folder, token);
     }
     const filteredData = Object.fromEntries(
       Object.entries(formData).filter(
