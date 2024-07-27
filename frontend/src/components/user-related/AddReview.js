@@ -2,6 +2,7 @@ import { forwardRef, useContext, useEffect, useState } from "react"
 import Rating from '@mui/material/Rating';
 import { AuthContext } from "../../store/Auth-Context";
 import { ErrorDialog } from "../UI/ErrorDialog";
+import { deleteImageHandler, uploadImageHandler } from "../../services/ImageService";
 
 export const AddReview = forwardRef(({orderId, restaurantId, existingReview, updateReview}, ref) => {
     const { token, fetchRefreshToken } = useContext(AuthContext);
@@ -30,36 +31,13 @@ export const AddReview = forwardRef(({orderId, restaurantId, existingReview, upd
             let previousImageUrl = existingReview? existingReview.imageUrl: null
             if(selectedFile){
                 const imageFormData = new FormData()
-                imageFormData.append('image', selectedFile)
+                imageFormData.append('images', selectedFile)
                 imageFormData.append('folder', folder)
                 try {
-                    const imageResponse = await fetch('https://eatwave-api.onrender.com/upload-image', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': token? `Bearer ${token}`: ''
-                        },
-                        body: imageFormData
-                    })
-                    if(!imageResponse.ok){
-                        throw new Error("Can't save imageFormData, try again later")
-                    }
-                    const imageResult = await imageResponse.json()
-                    imageUrl = imageResult.imageUrl
+                    imageUrl = await uploadImageHandler([selectedFile], folder, token)
+                    imageUrl = imageUrl[0]
                     if(previousImageUrl){
-                    //Splitting along '/'
-                    const urlParts = previousImageUrl.split('/');
-                    //PublicId with file extension
-                    let publicIdWithExtension = urlParts.pop(); 
-                    //Removing file extension
-                    const publicId = publicIdWithExtension.split('.').slice(0, -1).join('.');
-                        await fetch('https://eatwave-api.onrender.com/delete-image', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': token? `Bearer ${token}`: ''
-                            },
-                            body: JSON.stringify({ public_id: publicId })
-                        })
+                        await deleteImageHandler(previousImageUrl, token);
                     }
                 }
                 catch(err) {
@@ -114,8 +92,8 @@ export const AddReview = forwardRef(({orderId, restaurantId, existingReview, upd
             }
             setAddReview(existingReview || {})
             setEditReview(!existingReview)
-            ref.current.close()
         }
+        ref.current.close()
     }
 
     const closeErrorDialogHandler = () => {
@@ -127,14 +105,14 @@ export const AddReview = forwardRef(({orderId, restaurantId, existingReview, upd
         {errors && <ErrorDialog errors={errors} onClose={closeErrorDialogHandler}/>}
         <div className="flex items-center justify-center">
             <div className="bg-white rounded-lg p-8">
-                <Rating name="rating" value={addReview.rating || 0} onChange={(e, newRating) => changeHandler(e, newRating)} readOnly={!editReview}/>
-                <textarea id="comments" type="text" name="comments" className="border p-2 w-full mb-4" placeholder="comments" onChange={changeHandler} value={addReview.comments || ""} readOnly={!editReview}/>
-                {editReview? <input type="file" name="reviewImage" accept='image/*' className="border p-2 w-full mb-4" onChange={changeHandler} />: <img src={addReview.imageUrl} alt="Review" className="w-full h-auto max-h-64 object-contain rounded-lg mb-4" />}
+                <Rating name="rating" value={addReview.rating || 0} onChange={(e, newRating) => changeHandler(e, newRating)} readOnly={editReview}/>
+                <textarea id="comments" type="text" name="comments" className="border p-2 w-full mb-4" placeholder="comments" onChange={changeHandler} value={addReview.comments || ""} readOnly={editReview}/>
+                {!editReview? <input type="file" name="reviewImage" accept='image/*' className="border p-2 w-full mb-4" onChange={changeHandler} />: <img src={addReview.imageUrl} alt="Review" className="w-full h-auto max-h-64 object-contain rounded-lg mb-4" />}
                 <div className="flex justify-end mt-8">
-                {editReview? (
+                {!editReview? (
                 <button type="button" className="bg-green-500 text-white py-2 px-4 rounded mr-4" onClick={() => modalHandler(true)}>Save</button>
                 ): (
-                    <button type="button" className="bg-orange-500 text-white py-2 px-4 rounded mr-4" onClick={() => setEditReview(true)}>Edit</button>
+                    <button type="button" className="bg-orange-500 text-white py-2 px-4 rounded mr-4" onClick={() => setEditReview(false)}>Edit</button>
                 )}
                 <button type="button" className="bg-red-500 text-white py-2 px-4 rounded" onClick={() => modalHandler(false)}>Cancel</button>
                 </div>
