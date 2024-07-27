@@ -53,6 +53,7 @@ exports.getRestaurantById = async(req, res, next) => {
 exports.filterRestaurants = async (req, res, next) => {
     try {
         const { sort, cuisines, preference, ratings, costForTwo } = req.body;
+        console.log({ sort, cuisines, preference, ratings, costForTwo })
         let query = {};
         if(cuisines && cuisines.length > 0){
             query.cuisine = { $in: cuisines };
@@ -89,10 +90,10 @@ exports.filterRestaurants = async (req, res, next) => {
                 case "Ratings":
                     sortQuery.averageRating = -1;
                     break;
-                case "Cost: Low to High":
+                case "Cost: Low To High":
                     sortQuery.costForTwo = 1;
                     break;
-                case "Cost: High to Low":
+                case "Cost: High To Low":
                     sortQuery.costForTwo = -1;
                     break;
                 default: 
