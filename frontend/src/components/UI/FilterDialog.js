@@ -40,7 +40,7 @@ export const FilterDialog = ({ setRestaurants }) => {
             sort: "Relevance (default)",
             cuisines: [],
             ratings: [],
-            preference: null,
+            preference: undefined,
             costForTwo: []
         })
     }
