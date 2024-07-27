@@ -25,10 +25,10 @@ exports.cloudinaryUpload = async(localStoragePath, folder) => {
 }
 
 exports.cloudinaryDelete = async(req, res) => {
-    const { public_id } = req.body
+    const { public_id, folder } = req.body
     if(!public_id) return res.status(400).json({ message: 'public_id is missing'})
     try {
-        await cloudinary.uploader.destroy(public_id)
+        await cloudinary.uploader.destroy(`${folder}/${public_id}`)
         return res.status(200).json({ message: 'Image deleted successfully'})
     }
     catch(err) {
