@@ -27,7 +27,7 @@ export const uploadImageHandler = async (files, folder, token) => {
     }
   };
   
-  export const deleteImageHandler = async(previousImageUrl, token) => {
+  export const deleteImageHandler = async(previousImageUrl, folder, token) => {
     if(previousImageUrl){
         //Splitting along '/'
         const urlParts = previousImageUrl.split('/');
@@ -41,7 +41,7 @@ export const uploadImageHandler = async (files, folder, token) => {
                     'Content-Type': 'application/json',
                     'Authorization': token? `Bearer ${token}`: ''
                 },
-                body: JSON.stringify({ public_id: publicId })
+                body: JSON.stringify({ public_id: publicId, folder })
             })
         }
   }
