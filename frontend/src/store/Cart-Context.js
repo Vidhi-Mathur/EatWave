@@ -8,7 +8,8 @@ export const CartContext = createContext({
     restaurantId: null,
     setRestaurantId: null,
     finalCost: 0,
-    setFinalCost: () => {}
+    setFinalCost: () => {},
+    clearCart: () => {}
 });
 
 export const CartCtxProvider = ({ children }) => {
@@ -92,6 +93,12 @@ export const CartCtxProvider = ({ children }) => {
         });
     };
 
+    const clearCart = () => {
+        setCart({ items: [] });
+        setRestaurantId(null);
+        setFinalCost(0);
+    }
+
     const ctxValue = {
         items: cart.items,
         addToCart,
@@ -99,7 +106,8 @@ export const CartCtxProvider = ({ children }) => {
         restaurantId,
         setRestaurantId,
         finalCost,
-        setFinalCost
+        setFinalCost,
+        clearCart
     };
 
     return <CartContext.Provider value={ctxValue}>
