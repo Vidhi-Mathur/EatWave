@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Card } from '../UI/Card';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { Card } from '../UI/Card';
 import { Arrow } from '../UI/Arrow';
 import { ReviewStar } from '../UI/ReviewStar';
 import { ErrorDialog } from '../UI/ErrorDialog';
+import { LoadingSpinner } from '../UI/LoadingSpinner';
 
 const TopPicks = () => {
     const [topRestaurants, setTopRestaurants] = useState([]);
@@ -65,12 +66,12 @@ const TopPicks = () => {
 
     return (
         <div>
-             <h1 className="text-3xl font-bold text-center mt-8 mb-4 text-black bg-white bg-opacity-75 px-4 py-2 rounded-lg shadow-lg inline-block ml-[600px]">Top Rated Restaurants</h1>
-             {loading && (
-                    <div className="flex justify-center items-center h-screen">
-                        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
-                    </div>
-            )}
+            <div className='flex justify-center mt-8 mb-4'>
+                <h1 className="text-3xl font-bold text-center text-black bg-white bg-opacity-75 px-4 py-2 rounded-lg shadow-lg">
+                    Top Rated Restaurants
+                </h1>
+            </div>
+             {loading && <LoadingSpinner />}
             {errors && <ErrorDialog errors={errors} onClose={closeErrorDialogHandler}/>}
             {topRestaurants.length > 0 && (
                 <Slider {...settings} className='mx-4'>
