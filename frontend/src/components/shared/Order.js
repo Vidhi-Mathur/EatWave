@@ -7,7 +7,7 @@ import { ErrorDialog } from "../UI/ErrorDialog";
 import { useNavigate } from "react-router-dom";
 
 export const Order = () => {
-    const { restaurantId, items, finalCost } = useContext(CartContext);
+    const { restaurantId, items, finalCost, clearCart } = useContext(CartContext);
     const { token, fetchRefreshToken } = useContext(AuthContext)
     const [errors, setErrors] = useState(null)
     const navigate = useNavigate()
@@ -89,7 +89,7 @@ export const Order = () => {
                 order_id: checkoutResult.order,
                 handler: async (response) => {
                     try {
-                        const orderResult = await fetchWithAuth('http://localhost:3000/order/place', {
+                        const orderResult = await fetchWithAuth('https://eatwave-api.onrender.com/order/place', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -113,6 +113,7 @@ export const Order = () => {
                             return;
                         } 
                         else {
+                            clearCart()
                             navigate('/my-account/orders');
                         }
                     }
