@@ -6,14 +6,16 @@ export const CartContext = createContext({
     addToCart: () => {},
     removeFromCart: () => {},
     restaurantId: null,
-    setRestaurantId: null
+    setRestaurantId: null,
+    finalCost: 0,
+    setFinalCost: () => {}
 });
 
 export const CartCtxProvider = ({ children }) => {
     const [cart, setCart] = useState({ items: [] });
     const [restaurantId, setRestaurantId] = useState(null);
+    const [finalCost, setFinalCost] = useState(0);
     const [alert, setAlert] = useState(null)
-
 
     const confirmHandler = () => {
         setCart({ items: [{ id: alert.itemId, name: alert.name, quantity: 1, price: alert.price }] });
@@ -95,7 +97,9 @@ export const CartCtxProvider = ({ children }) => {
         addToCart,
         removeFromCart,
         restaurantId,
-        setRestaurantId
+        setRestaurantId,
+        finalCost,
+        setFinalCost
     };
 
     return <CartContext.Provider value={ctxValue}>
