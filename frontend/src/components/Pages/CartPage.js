@@ -12,7 +12,7 @@ import Info from "@mui/icons-material/Info";
 import { ErrorDialog } from "../UI/ErrorDialog";
 
 export const CartPage = () => {
-    const { items, addToCart, removeFromCart, restaurantId } = useContext(CartContext);
+    const { items, addToCart, removeFromCart, restaurantId, setFinalCost} = useContext(CartContext);
     const [restaurantData, setRestaurantData] = useState(null)
     const [errors, setErrors] = useState(null)
     const [loading, setLoading] = useState(true)
@@ -56,6 +56,10 @@ export const CartPage = () => {
     let packagingCharges = restaurantData?.packagingCharges || 0
     let gstAndRestaurantCharges = parseFloat(gstCharges) + packagingCharges
     let totalToPay = totalPrice + deliveryFee + platformFee + gstAndRestaurantCharges
+
+    useEffect(() => {
+        setFinalCost(totalToPay);
+    }, [totalToPay])
 
     return (
         <Layout customisedImageUrl={emptyCart}>   
