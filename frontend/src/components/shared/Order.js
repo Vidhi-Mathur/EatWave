@@ -7,7 +7,7 @@ import { ErrorDialog } from "../UI/ErrorDialog";
 import { useNavigate } from "react-router-dom";
 
 export const Order = () => {
-    const { restaurantId, items } = useContext(CartContext);
+    const { restaurantId, items, finalCost } = useContext(CartContext);
     const { token, fetchRefreshToken } = useContext(AuthContext)
     const [errors, setErrors] = useState(null)
     const navigate = useNavigate()
@@ -57,16 +57,14 @@ export const Order = () => {
 
         const form = new FormData(e.target);
         const address = Object.fromEntries(form.entries());
-        const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
         const checkoutOrder = {
             restaurant: restaurantId,
             items: items.map(item => ({ item: item.id, name: item.name, quantity: item.quantity, price: item.price })),
-            totalAmount
+            totalAmount: finalCost
         };
 
         try {
             const checkoutResponse = await fetchWithAuth('https://eatwave-api.onrender.com/order/checkout', {
-
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -84,14 +82,14 @@ export const Order = () => {
 
             const options = {
                 key: checkoutResult.key,
-                amount: totalAmount * 100,
+                amount: Math.round(finalCost * 100),
                 currency: "INR",
                 name: "EatWave",
                 description: "Payment for your order",
                 order_id: checkoutResult.order,
                 handler: async (response) => {
                     try {
-                        const orderResult = await fetchWithAuth('https://eatwave-api.onrender.com/order/place', {
+                        const orderResult = await fetchWithAuth('http://localhost:3000/order/place', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -99,7 +97,7 @@ export const Order = () => {
                             body: JSON.stringify({
                                 restaurant: restaurantId,
                                 items: checkoutOrder.items,
-                                totalCost: totalAmount,
+                                totalCost: checkoutOrder.totalAmount,
                                 address,
                                 payment_id: response.razorpay_payment_id,
                                 order_id: response.razorpay_order_id,
