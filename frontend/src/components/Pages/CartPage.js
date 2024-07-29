@@ -1,15 +1,16 @@
 import { useContext, useEffect, useState } from "react";
-import { CartContext } from "../../store/Cart-Context";
-import RemoveIcon from "@mui/icons-material/Remove";
-import AddIcon from "@mui/icons-material/Add";
-import Layout from "../UI/Layout";
-import { Content } from "../UI/Content";
 import { Link } from "react-router-dom";
-import EmptyPlate from '../../assets/EmptyPlate.jpg'
-import { Card } from "../UI/Card";
 import { IconButton, Tooltip } from "@mui/material";
 import Info from "@mui/icons-material/Info";
+import RemoveIcon from "@mui/icons-material/Remove";
+import AddIcon from "@mui/icons-material/Add";
+import EmptyPlate from '../../assets/EmptyPlate.jpg'
+import { CartContext } from "../../store/Cart-Context";
+import Layout from "../UI/Layout";
+import { Content } from "../UI/Content";
+import { Card } from "../UI/Card";
 import { ErrorDialog } from "../UI/ErrorDialog";
+import { LoadingSpinner } from "../UI/LoadingSpinner";
 
 export const CartPage = () => {
     const { items, addToCart, removeFromCart, restaurantId, setFinalCost} = useContext(CartContext);
@@ -73,11 +74,7 @@ export const CartPage = () => {
         </Card>
         ): (
         <Content>
-            {loading && (
-                <div className="flex justify-center items-center h-screen">
-                    <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
-                </div>
-            )}
+            {loading && <LoadingSpinner />}
             {errors && <ErrorDialog errors={errors} onClose={closeErrorDialogHandler}/>}
             {/* Restaurant details */}
             {restaurantData && (

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { AccessTime, Phone, Email, LocationOn, Restaurant, CurrencyRupee, Star } from '@mui/icons-material';
 import Layout from "../UI/Layout";
 import { Content } from "../UI/Content";
 import { Menu } from "../restaurant-related/Menu";
 import { Review } from "../restaurant-related/Review";
 import { Photos } from "../restaurant-related/Photos";
 import { ErrorDialog } from "../UI/ErrorDialog";
-import { AccessTime, Phone, Email, LocationOn, Restaurant, CurrencyRupee, Star } from '@mui/icons-material';
+import { LoadingSpinner } from "../UI/LoadingSpinner";
 
 const RestaurantDetailPage = () => {
     const { restaurantId } = useParams();
@@ -44,11 +45,7 @@ const RestaurantDetailPage = () => {
     return (
         <Layout>
             <Content>
-                {loading && (
-                    <div className="flex justify-center items-center h-screen">
-                        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
-                    </div>
-                )}
+                {loading && <LoadingSpinner />}
                 {errors && <ErrorDialog errors={errors} onClose={closeErrorDialogHandler}/>}
                 {!restaurantDetail && <div className="text-xl font-semibold">No restaurant details found.</div>}
                 {restaurantDetail && (
