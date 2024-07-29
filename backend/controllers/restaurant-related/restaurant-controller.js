@@ -53,7 +53,6 @@ exports.getRestaurantById = async(req, res, next) => {
 exports.filterRestaurants = async (req, res, next) => {
     try {
         const { sort, cuisines, preference, ratings, costForTwo } = req.body;
-        console.log({ sort, cuisines, preference, ratings, costForTwo })
         let query = {};
         if(cuisines && cuisines.length > 0){
             query.cuisine = { $in: cuisines };
