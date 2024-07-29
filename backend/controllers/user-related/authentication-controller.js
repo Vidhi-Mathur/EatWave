@@ -4,12 +4,13 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 let blacklistedTokens = []
 
+//Set expiration time
 const generateAccessToken = (payload) => {
-    return jwt.sign(payload, process.env.ACCESS_SECRET_KEY)
+    return jwt.sign(payload, process.env.ACCESS_SECRET_KEY, { expiresIn: '15m' })
 }
 
 const generateRefreshToken = (payload) => {
-    return jwt.sign(payload, process.env.REFRESH_SECRET_KEY)
+    return jwt.sign(payload, process.env.REFRESH_SECRET_KEY, { expiresIn: '7d' })
 }
 
 exports.postSignup = async(req, res, next) => {
@@ -84,11 +85,21 @@ exports.postRefreshToken = async(req, res, next) => {
     try {
         const { refreshToken } = req.body
         if(!refreshToken) return res.status(401).json({ message: 'Unauthorized' })
-        let decodedToken = await jwt.verify(token, process.env.REFRESH_SECRET_KEY)
+        let decodedToken
+        try {
+            decodedToken = await jwt.verify(refreshToken, process.env.REFRESH_SECRET_KEY)
+        } 
+        catch(err) {
+            return res.status(401).json({ message: 'Invalid refresh token' })
+        }
         const user = await User.findById(decodedToken._id)
         if(!user || user.refreshToken !== refreshToken) return res.status(401).json({ message: 'Unauthorized' })
+        //Generate new to make refresh tokens single use
         const newAccessToken = generateAccessToken({_id: user._id})
-        res.status(200).json({ accessToken: newAccessToken })
+        const newRefreshToken = generateRefreshToken({_id: user._id})
+        user.refreshToken = newRefreshToken
+        await user.save()
+        res.status(200).json({ accessToken: newAccessToken, refreshToken: newRefreshToken })
     }
     catch(err) {
         next(err)
@@ -104,7 +115,16 @@ exports.authorizationMiddleware = async(req, res, next) => {
         let token = await authorization.split(' ')[1]
         if(!token || blacklistedTokens.includes(token)) return res.status(401).json({message: 'Unauthorized'})
         //Verify
-        let decodedToken = await jwt.verify(token, process.env.ACCESS_SECRET_KEY)
+        let decodedToken
+        try {
+            decodedToken = await jwt.verify(token, process.env.ACCESS_SECRET_KEY)
+        }
+        catch(err){
+            if(err instanceof jwt.TokenExpiredError){
+                return res.status(401).json({message: 'Token expired'})
+            }
+            return res.status(401).json({message: 'Invalid token'})
+        }
         req.user = decodedToken
         next()
     }
