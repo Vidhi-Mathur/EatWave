@@ -1,14 +1,51 @@
-import { useContext, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { CartContext } from "../../store/Cart-Context";
 import { AuthContext } from "../../store/Auth-Context";
 import { Card } from "../UI/Card";
 import Layout from "../UI/Layout";
 import { ErrorDialog } from "../UI/ErrorDialog";
+import { useNavigate } from "react-router-dom";
 
 export const Order = () => {
     const { restaurantId, items } = useContext(CartContext);
-    const { token, setToken } = useContext(AuthContext)
+    const { token, fetchRefreshToken } = useContext(AuthContext)
     const [errors, setErrors] = useState(null)
+    const navigate = useNavigate()
+
+    const fetchWithAuth = useCallback(async (url, options) => {
+        let response = await fetch(url, {
+            ...options,
+            headers: {
+                ...options.headers,
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (response.status === 401) {
+            try {
+                const refreshResult = await fetchRefreshToken();
+                if (refreshResult.accessToken) {
+                    response = await fetch(url, {
+                        ...options,
+                        headers: {
+                            ...options.headers,
+                            'Authorization': `Bearer ${refreshResult.accessToken}`
+                        }
+                    });
+                } 
+                else {
+                    setErrors(['Session expired. Please log in again.']);
+                    return
+                }
+            } 
+            catch (error) {
+                setErrors(['Session expired. Please log in again.']);
+                navigate('/login');
+            }
+        }
+
+        return response;
+    }, [token, fetchRefreshToken, navigate]);
 
     const orderHandler = async (e) => {
         e.preventDefault();
@@ -28,22 +65,22 @@ export const Order = () => {
         };
 
         try {
-            const checkoutResponse = await fetch('https://eatwave-api.onrender.com/order/checkout', {
+            const checkoutResponse = await fetchWithAuth('https://eatwave-api.onrender.com/order/checkout', {
+
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': token ? `Bearer ${token}` : ''
                 },
                 body: JSON.stringify(checkoutOrder)
             });
-            const checkoutResult = await checkoutResponse.json();
+
+            const checkoutResult = await checkoutResponse.json()
+            
             if (!checkoutResponse.ok) {
                 const errorMessages = checkoutResult.errors ? checkoutResult.errors.map(err => err.msg) : [checkoutResult.message];
                 setErrors(errorMessages);
                 return;
             }
-
-            setToken(checkoutResult.token);
 
             const options = {
                 key: checkoutResult.key,
@@ -54,11 +91,10 @@ export const Order = () => {
                 order_id: checkoutResult.order,
                 handler: async (response) => {
                     try {
-                        const orderResult = await fetch('https://eatwave-api.onrender.com/order/place', {
+                        const orderResult = await fetchWithAuth('https://eatwave-api.onrender.com/order/place', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'Authorization': token ? `Bearer ${token}` : ''
                             },
                             body: JSON.stringify({
                                 restaurant: restaurantId,
@@ -70,17 +106,19 @@ export const Order = () => {
                                 signature: response.razorpay_signature
                             })
                         });
+
                         const orderResponse = await orderResult.json();
-                        if (!orderResult.ok) {
+
+                        if(!orderResult.ok){
                             const errorMessages = orderResponse.errors ? orderResponse.errors.map(err => err.msg) : [orderResponse.message];
                             setErrors(errorMessages);
                             return;
                         } 
                         else {
-                            window.location.href = '/my-account';
+                            navigate('/my-account/orders');
                         }
-                    } 
-                    catch (err) {
+                    }
+                    catch (err){
                         setErrors(err.message || "Placing order failed, try again later");
                     }
                 },
@@ -92,13 +130,14 @@ export const Order = () => {
             razorpay.open();
         } 
         catch (err) {
-            setErrors(err.message || "Placing order failed, try again later")
+            setErrors(err.message || "Placing order failed, try again later");
         }
     };
 
     const closeErrorDialogHandler = () => {
         setErrors(null);
     };
+    
 
     return (
         <Layout>
