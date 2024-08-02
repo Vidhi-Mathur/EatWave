@@ -7,7 +7,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../../store/Auth-Context";
 
 const AuthForm = ({ signupMode, toggleHandler }) => {
-    const { signup, login, token, setToken} = useContext(AuthContext)
+    const { signup, login, token, setToken } = useContext(AuthContext)
     const navigate = useNavigate()
     const [errors, setErrors] = useState(null)
     
@@ -31,7 +31,7 @@ const AuthForm = ({ signupMode, toggleHandler }) => {
                 setErrors(errorMessages);
                 return;
             }
-            signupMode? signup(result.accessToken, result.refreshToken): login(result.accessToken, result.refreshToken)
+            signupMode? signup(result.accessToken, result.refreshToken, result.name, result.email): login(result.accessToken, result.refreshToken, result.name, result.email)
             setToken(result.accessToken)
             navigate('/')
             //In case needed anywhere in component

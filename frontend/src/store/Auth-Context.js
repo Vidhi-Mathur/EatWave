@@ -9,30 +9,47 @@ export const AuthContext = createContext({
     refreshToken: null,
     setToken: () => {},
     setRefreshToken: () => {},
-    fetchRefreshToken: () => {}
+    fetchRefreshToken: () => {},
+    details: () => {}
 });
 
 export const AuthCtxProvider = ({ children }) => {
     const [auth, setAuth] = useState(false);
     const [token, setToken] = useState(null); 
     const [refreshToken, setRefreshToken] = useState(null)
+    const [details, setDetails] = useState({ name: '', email: ''})
 
-    const login = (newToken, newRefreshToken) => {
+    const login = (newToken, newRefreshToken, name, email) => {
         setAuth(true);
         setToken(newToken); 
         setRefreshToken(newRefreshToken)
+        setDetails({name, email})
     };
 
-    const signup = (newToken, newRefreshToken) => {
+    const signup = (newToken, newRefreshToken, name, email) => {
         setAuth(true);
         setToken(newToken); 
         setRefreshToken(newRefreshToken)
+        setDetails({name, email})
     };
 
-    const logout = () => {
-        setAuth(false);
-        setToken(null); 
-        setRefreshToken(null)
+    const logout = async() => {
+        try {
+            const response = await fetch('https://eatwave-api.onrender.com/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (!response.ok) throw new Error('Failed to log user out');
+            setAuth(false);
+            setToken(null); 
+            setRefreshToken(null)
+        } 
+        catch (error) {
+            console.error(error.message);
+        }
     };
 
     const fetchRefreshToken = async() => {
@@ -61,7 +78,8 @@ export const AuthCtxProvider = ({ children }) => {
         refreshToken, 
         setToken,
         setRefreshToken,
-        fetchRefreshToken
+        fetchRefreshToken,
+        details
     };
 
     return <AuthContext.Provider value={ctxValue}>{children}</AuthContext.Provider>;
