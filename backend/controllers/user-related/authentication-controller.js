@@ -58,7 +58,7 @@ exports.postLogin = async(req, res, next) => {
         let refreshToken = generateRefreshToken({ _id: existingUser._id })
         existingUser.refreshToken = refreshToken
         await existingUser.save()
-        res.status(200).json({accessToken, refreshToken, message: 'Logged in successfully'})
+        res.status(200).json({accessToken, refreshToken, name: existingUser.name, email})
     }
     catch(err){
         next(err)
@@ -72,8 +72,12 @@ exports.postLogout = async(req, res, next) => {
         //Not a token
         let token = await authorization.split(' ')[1]
         blacklistedTokens.push(token)
-        const email = jwt.decode(token)
-        await User.findByIdAndUpdate({email}, {$unset: {refreshToken: 1}})
+        const decodedToken = jwt.decode(token);
+        // Assuming the `_id` field is included in the token payload
+        const userId = decodedToken._id;
+        if (!userId) return res.status(400).json({ message: 'Invalid token' });
+        // Perform the update
+        await User.findByIdAndUpdate(userId, { $unset: { refreshToken: 1 } });
         res.status(200).json({message: 'Logged out successfully'})
     }
     catch(err) {
