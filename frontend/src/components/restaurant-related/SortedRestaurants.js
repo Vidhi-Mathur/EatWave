@@ -6,7 +6,7 @@ export const SortedRestaurants = ({restaurants}) => {
     return (
         <div>
             {restaurants.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-4 px-4">
                     {restaurants.map((restaurant) => (
                         <div key={restaurant._id} className="w-full h-[360px]">
                             <Card className="p-0">
