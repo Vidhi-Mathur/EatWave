@@ -6,6 +6,7 @@ import { AddCuisine } from './AddCuisine';
 import { AuthContext } from '../../store/Auth-Context';
 import { ErrorDialog } from '../UI/ErrorDialog';
 import { uploadImageHandler } from '../../services/ImageService';
+import { LoadingSpinner } from '../UI/LoadingSpinner';
 
 let weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 let steps = ['Restaurant Information', 'Restaurant Documents', 'Menu Setup'];
@@ -17,6 +18,7 @@ export const AddRestaurant = () => {
   const [menuId, setMenuId] = useState()
   const [isEditable, setIsEditable] = useState(true)
   const [errors, setErrors] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
   const dialog = useRef()
   const navigate = useNavigate();
 
@@ -40,7 +42,8 @@ export const AddRestaurant = () => {
     setFormData(prevState => {
       if (prevState.working_days.length === weekdays.length) {
         return { ...prevState, working_days: [] };
-      } else {
+      } 
+      else {
         return { ...prevState, working_days: weekdays };
       }
     });
@@ -115,6 +118,7 @@ export const AddRestaurant = () => {
     }
     catch(err) {
       setErrors([err.message || "Can't save menu, try again later"])
+      return
     }
   }
 
@@ -130,13 +134,8 @@ export const AddRestaurant = () => {
       })
       const result = await response.json()
       if(!response.ok){
-        if (result.errors) {
-          const errorMessages = result.errors.map(err => err.msg)
-          setErrors(errorMessages);
-        } 
-        else {
-          setErrors([result.message]);
-        }
+        const errorMessages = result.errors? result.errors.map(err => err.msg): [result.message]
+        setErrors(errorMessages);
         return;
       }
       setIsEditable(false)
@@ -144,6 +143,7 @@ export const AddRestaurant = () => {
     }
     catch(err) {
       setErrors([err.message || "Can't edit menu, try again later"])
+      return
     }
   }  
 
@@ -181,6 +181,7 @@ export const AddRestaurant = () => {
   const submitHandler = async(e) => {
     e.preventDefault();
     setErrors(null)
+    setIsLoading(true) 
     let imageUrls = [];
     if (formData.restaurantImages.length > 0) {
       let folder = 'restaurant_images';
@@ -233,24 +234,34 @@ export const AddRestaurant = () => {
                 });
                 if(!response.ok) {
                     setErrors(["Can't save restaurant, try again later"])
+                    setIsLoading(false)
+                    return
                 }
             }
             else {
                 setErrors(["Session expired, try again later"])
+                setIsLoading(false)
+                return
             }
         }
         else if(result.errors){
           const errorMessages = result.errors.map((err) => err.msg)
           setErrors(errorMessages);
+          setIsLoading(false)
+          return
         }
         else {
             setErrors(["Can't save restaurant, try again later"])
+            setIsLoading(false)
+            return
         }
      }
-     return navigate('/')
+     setIsLoading(false)
+     navigate('/')
     }
     catch(err) {
       setErrors([err.message || "Failed saving restaurant, try again later"])
+      setIsLoading(false)
     }
   };
 
@@ -265,10 +276,10 @@ export const AddRestaurant = () => {
           <StepIndicator steps={steps} currentStep={currentStep} />
           <div className="w-3/4 p-4">
             <form onChange={changeHandler} onSubmit={submitHandler} className="space-y-4">
+            {errors && <ErrorDialog errors={errors} onClose={closeErrorDialogHandler}/>}
             {[...Array(steps.length)].map((_, index) => {
                 return (
                   <>
-                    {errors && <ErrorDialog errors={errors} onClose={closeErrorDialogHandler}/>}
                     <div key={index} className={currentStep === index ? '' : 'hidden'}>
                       {index === 0 && (
                         <>
@@ -410,8 +421,10 @@ export const AddRestaurant = () => {
                 <button type="button" onClick={nextHandler} className="bg-orange-500 text-white py-2 px-4 rounded">Proceed</button>
               )}
               {currentStep === steps.length - 1 && (
-                <button type="submit" className="bg-green-500 text-white py-2 px-4 rounded">Submit</button>
-              )}
+                  <button type="submit" className="bg-green-500 text-white py-2 px-4 rounded flex items-center justify-center w-24 h-10" disabled={isLoading}>
+                    {isLoading ? <LoadingSpinner size={6} /> : 'Submit'}
+                  </button>
+                )}
             </div>
             </form>
           </div>
