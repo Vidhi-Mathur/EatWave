@@ -28,6 +28,7 @@ export const CartPage = () => {
                 if (!response.ok) {
                     const errorMessages = result.errors ? result.errors.map(err => err.msg) : [result.message];
                     setErrors(errorMessages);
+                    setLoading(false);
                     return;
                 }
                 setRestaurantData(result.restaurant);

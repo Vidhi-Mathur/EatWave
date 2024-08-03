@@ -25,9 +25,11 @@ export const SortMenu = ({ setRestaurants }) => {
   	const applyHandler = async (filterCriteria) => {
         const result = await applyFilter(filterCriteria);
         setShowSort(false);
-        if (result.error) {
+        if(result.error) {
             setErrors(Array.isArray(result.error) ? result.error : [result.error]);
-        } else {
+            return
+        }
+        else {
             setRestaurants(result.restaurants);
             setSelectedSort(filterCriteria.sort);
         }

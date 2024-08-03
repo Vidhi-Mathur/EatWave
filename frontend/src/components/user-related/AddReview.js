@@ -83,10 +83,12 @@ export const AddReview = forwardRef(({orderId, restaurantId, existingReview, upd
                                 }
                                 else {
                                     setErrors(["Session expired, try login"])
+                                    return
                                 }
                             }
                             else {
                                 setErrors(["Can't save review, try again later"])
+                                return
                             }
                         }
                     setAddReview(result.review)
@@ -96,6 +98,7 @@ export const AddReview = forwardRef(({orderId, restaurantId, existingReview, upd
             }
             catch(err){
                 setErrors([err.message || "Failed saving review, try again later"])
+                return
             }
         }
         onClose()

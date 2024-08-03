@@ -63,6 +63,7 @@ export const FilterDialog = ({ setRestaurants }) => {
         closeModalHandler();
         if (result.error) {
             setErrors(Array.isArray(result.error) ? result.error : [result.error]);
+            return
         } 
         else {
             setRestaurants(result.restaurants);

@@ -17,6 +17,7 @@ export const Review = ({restaurantId}) => {
                     const errorMessages = result.errors ? result.errors.map(err => err.msg) : [result.message];
                     setErrors(errorMessages);
                     setLoading(false)
+                    return
                 }
                 setReviews(result.reviews)
                 setLoading(false)

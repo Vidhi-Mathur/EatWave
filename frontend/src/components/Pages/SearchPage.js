@@ -32,6 +32,7 @@ export const SearchPage = () => {
         }
         catch(err){
             setErrors([err.message || "Failed fetching suggestions try again later"])
+            return
         }
     }, [])
 
@@ -53,6 +54,7 @@ export const SearchPage = () => {
         }
         catch(err) {
             setErrors([err.message || "Failed fetching search results try again later"]);
+            return
         }
     }, [])
 

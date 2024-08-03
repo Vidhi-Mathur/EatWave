@@ -119,6 +119,7 @@ export const Order = () => {
                     }
                     catch (err){
                         setErrors(err.message || "Placing order failed, try again later");
+                        return
                     }
                 },
                 theme: {
@@ -130,6 +131,7 @@ export const Order = () => {
         } 
         catch (err) {
             setErrors(err.message || "Placing order failed, try again later");
+            return
         }
     };
 

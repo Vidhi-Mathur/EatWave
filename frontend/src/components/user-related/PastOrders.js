@@ -54,18 +54,22 @@ export const PastOrders = () => {
                         });
                         if(!response.ok) {
                             setErrors(["Can't fetch reviews , try again later"])
+                            return
                         }
                     }
                     else {
                         setErrors(["Session expired, try again later"])
+                        return
                     }
                 }
                 else if(result.errors){
                     const errorMessages = result.errors.map((err) => err.msg)
                     setErrors(errorMessages);
+                    return
                 }
                 else {
                     setErrors(["Can't fetch reviews, try again later"])
+                    return
                 }
             }
             setReviews(prev => ({...prev, [orderId]: result.review[0]}));
@@ -73,6 +77,7 @@ export const PastOrders = () => {
         } 
         catch (err) {
             setErrors([err.message || "Failed fetching reviews, try again later"])
+            return
         }
     }
 
@@ -96,18 +101,22 @@ export const PastOrders = () => {
                             });
                             if(!response.ok) {
                                 setErrors(["Can't fetch past orders, try again later"])
+                                return
                             }
                         }
                         else {
                             setErrors(["Session expired, try again later"])
+                            return
                         }
                     }
                     else if(result.errors){
                         const errorMessages = result.errors.map((err) => err.msg)
                         setErrors(errorMessages);
+                        return 
                     }
                     else {
                         setErrors(["Can't fetch past orders, try again later"])
+                        return
                     }
                 }
                 setOrders(result.orders);
@@ -116,6 +125,7 @@ export const PastOrders = () => {
             } 
             catch (err) {
                 setErrors([err.message || "Fetching Previous Orders failed, try again later"])
+                return
             }
         };
         fetchPastOrders();

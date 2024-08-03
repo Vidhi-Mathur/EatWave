@@ -39,6 +39,7 @@ const AuthForm = ({ signupMode, toggleHandler }) => {
         }
         catch (err) {
             setErrors([err.message || "Can't authenticated, try again later"])
+            return
         }
     }
 
