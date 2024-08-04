@@ -293,7 +293,7 @@ export const AddRestaurant = () => {
                             <input type="text" name="address.street" className="border p-2 w-full mb-2" placeholder="Street" />
                             <input type="text" name="address.city" className="border p-2 w-full mb-2" placeholder="City" />
                             <input type="text" name="address.state" className="border p-2 w-full mb-2" placeholder="State" />
-                            <input type="number" name="address.postalCode" className="border p-2 w-full mb-2" placeholder="Postal Code" />
+                            <input type="number" name="address.postalCode" className="border p-2 w-full mb-2" placeholder="Postal Code" min={0}/>
                           </div>
                           <div className="border rounded p-4 shadow mb-6">
                             <h1 className="text-md font-semibold mb-2">Owner Contact Details</h1>
@@ -354,7 +354,7 @@ export const AddRestaurant = () => {
                           </div>
                           <div className="border rounded p-4 shadow">
                             <h1 className="text-md font-semibold">FSSAI certificate</h1>
-                            <input type="number" name="fssai" className="border p-2 w-full mb-4" placeholder="FSSAI certificate number" />
+                            <input type="number" name="fssai" className="border p-2 w-full mb-4" placeholder="FSSAI certificate number" min={0}/>
                           </div>
                         </>
                       )}
@@ -383,7 +383,7 @@ export const AddRestaurant = () => {
                           </div>
                           <div className="border rounded p-4 shadow mb-6">
                             <h3 className="text-md font-semibold mb-2">Cost For Two</h3>
-                            <input type="number" id="cost_for_two" name="cost_for_two" placeholder=" &#8377;" className="border p-2 w-full mb-4" />
+                            <input type="number" id="cost_for_two" name="cost_for_two" placeholder=" &#8377;" className="border p-2 w-full mb-4" min={0} max={100000}/>
                           </div>
                           <div className="border rounded p-4 shadow mb-6">
                           <h3 className="text-md font-semibold mb-2">Add your menu</h3>
@@ -405,7 +405,7 @@ export const AddRestaurant = () => {
                           <div className="border rounded p-4 shadow mb-6">
                           <h3 className="text-md font-semibold mb-2">Packaging Charges</h3>
                           <p className="mb-4">Not applicable on Indian Breads, packaged items, and beverages</p>
-                          <input type="number" id="packaging_cost" name="packaging_cost" placeholder=" &#8377;" className="border p-2 w-full mb-4" />
+                          <input type="number" id="packaging_cost" name="packaging_cost" placeholder=" &#8377;" className="border p-2 w-full mb-4" min={0} max={100000}/>
                           </div>
                         </>
                       )}
