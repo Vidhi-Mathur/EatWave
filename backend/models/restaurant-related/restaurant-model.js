@@ -42,7 +42,7 @@ const restaurant = new schema({
         default: 0
     },
     accountNumber: {
-        type: Number,
+        type: String,
         required: true
     },
     fssai: {
