@@ -10,14 +10,14 @@ exports.createRestaurantValidation = [
     body("openingTime").notEmpty().withMessage("Opening Time is required").bail().matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/).withMessage("Invalid opening time format"),
     body("closingTime").notEmpty().withMessage("Closing Time is required").bail().matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/).withMessage("Invalid closing time format"),
     body("workingDays").notEmpty().withMessage("Working Days are required").bail().isArray().withMessage("Invalid Working Days format"),
-    body("packagingCharges").optional().isNumeric().withMessage("Invalid packaging charges"),
-    body("accountNumber").notEmpty().withMessage("Account Number is required").bail().isNumeric().withMessage("Invalid Account Number"),
+    body("packagingCharges").optional().isInt({min: 0, max: 1000000}).withMessage("Invalid packaging charges, should not exceed ₹100000"),
+    body("accountNumber").notEmpty().withMessage("Account Number is required").bail().isString().withMessage("Invalid Account Number"),
     body("fssai").notEmpty().withMessage("FSSAI certificate number is required").bail().isNumeric().withMessage("Invalid FSSAI certificate number"),
     body("foodType").notEmpty().withMessage("Food type must be selected").bail().isIn(['Veg', 'Both']).withMessage("Invalid food type"),
     body("cuisine").notEmpty().withMessage("Cuisine is required").bail().isArray().withMessage("Invalid cuisine format"),
     body("menu").notEmpty().withMessage("No Menu saved").bail().isMongoId().withMessage("Invalid MenuId"),
     body("imageUrls").optional().isArray().custom((arr) => arr.every(url => typeof url === 'string')).withMessage("Invalid imageUrl format"),
-    body("costForTwo").notEmpty().withMessage("Cost For Two is required").bail().isNumeric("Invalid Cost for Two"),
+    body("costForTwo").notEmpty().withMessage("Cost For Two is required").bail().isInt({ min: 0, max: 1000000 }).withMessage("Invalid Cost for Two, should not exceed ₹100000"),
     handleValidationErrors
 ]
 
@@ -31,14 +31,14 @@ exports.updateRestaurantValidation = [
     body("openingTime").notEmpty().withMessage("Opening Time is required").bail().matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/).withMessage("Invalid opening time format"),
     body("closingTime").notEmpty().withMessage("Closing Time is required").bail().matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/).withMessage("Invalid closing time format"),
     body("workingDays").notEmpty().withMessage("Working Days are required").bail().isArray().withMessage("Invalid Working Days format"),
-    body("packagingCharges").optional().isNumeric().withMessage("Invalid packaging charges"),
-    body("accountNumber").notEmpty().withMessage("Account Number is required").bail().isNumeric().withMessage("Invalid Account Number"),
+    body("packagingCharges").optional().isInt({min: 0, max: 1000000}).withMessage("Invalid packaging charges, should not exceed ₹100000"),
+    body("accountNumber").notEmpty().withMessage("Account Number is required").bail().isString().withMessage("Invalid Account Number"),
     body("fssai").notEmpty().withMessage("FSSAI certificate number is required").bail().isNumeric().withMessage("Invalid FSSAI certificate number"),
     body("foodType").notEmpty().withMessage("Food type must be selected").bail().isIn(['Veg', 'Both']).withMessage("Invalid food type"),
     body("cuisine").notEmpty().withMessage("Cuisine is required").bail().isArray().withMessage("Invalid cuisine format"),
     body("menu").notEmpty().withMessage("No Menu saved").bail().isMongoId().withMessage("Invalid MenuId"),
     body("imageUrls").optional().isArray().custom((arr) => arr.every(url => typeof url === 'string')).withMessage("Invalid imageUrl format"),
-    body("costForTwo").notEmpty().withMessage("Cost For Two is required").bail().isNumeric("Invalid Cost for Two"),
+    body("costForTwo").notEmpty().withMessage("Cost For Two is required").bail().isInt({ min: 0, max: 1000000 }).withMessage("Invalid Cost for Two, should not exceed ₹100000"),
     handleValidationErrors
 ]
 
