@@ -46,7 +46,7 @@ const NavigationBar = (props) => {
                 <NavLinks />
             </div>
             <div className="md:hidden">
-                <button onClick={toggleNavBar}>{isOpen ? <CloseIcon /> : <MenuIcon />}</button>
+                <button onClick={toggleNavBar}>{isOpen ? <CloseIcon className="absolute right-2 top-20"/> : <MenuIcon />}</button>
             </div>
         </nav>
         {isOpen && <div className="flex basis-full flex-col items-center "><NavLinks /></div>}
