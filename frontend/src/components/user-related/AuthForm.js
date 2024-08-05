@@ -5,14 +5,17 @@ import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
 import { useContext, useState } from "react";
 import { AuthContext } from "../../store/Auth-Context";
+import { LoadingSpinner } from "../UI/LoadingSpinner";
 
 const AuthForm = ({ signupMode, toggleHandler }) => {
     const { signup, login, token, setToken } = useContext(AuthContext)
     const navigate = useNavigate()
     const [errors, setErrors] = useState(null)
+    const [loading, setLoading] = useState(false)
     
     const submitHandler = async (e) => {
         e.preventDefault();
+        setLoading(true)
         const form = new FormData(e.target)
         const data = Object.fromEntries(form.entries())
         try {
@@ -29,20 +32,29 @@ const AuthForm = ({ signupMode, toggleHandler }) => {
             if(!response.ok){
                 const errorMessages = result.errors? result.errors.map(err => err.msg): [result.message];
                 setErrors(errorMessages);
+                setLoading(false)
                 return;
             }
             signupMode? signup(result.accessToken, result.refreshToken, result.name, result.email): login(result.accessToken, result.refreshToken, result.name, result.email)
             setToken(result.accessToken)
             navigate('/')
+            setLoading(false)
             //In case needed anywhere in component
             return result
         }
         catch (err) {
             setErrors([err.message || "Can't authenticated, try again later"])
+            setLoading(false)
             return
         }
     }
 
+    const getButtonContent = () => {
+        if (loading){
+            return <LoadingSpinner size={6} />;
+        }
+        return signupMode ? 'Sign Up' : 'Login';
+    } 
 
     return (
         <Card className="p-6">
@@ -85,7 +97,7 @@ const AuthForm = ({ signupMode, toggleHandler }) => {
                         <input name="password" type="password" placeholder="Password" required autoComplete="off" className="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-orange-400" />
                     </div>
                 </div>
-                <button className="w-full py-2 px-4 bg-orange-400 text-white rounded-md hover:bg-orange-500 focus:outline-none focus:bg-orange-500">{signupMode ? 'Sign Up' : 'Login'}</button>
+                <button className="w-full h-10 py-2 px-4 bg-orange-400 text-white rounded-md hover:bg-orange-500 focus:outline-none focus:bg-orange-500 flex items-center justify-center" disabled={loading}>{getButtonContent()}</button>
             </form>
             {signupMode && <p className="mt-4 text-sm text-gray-600 text-center">
                 By Signing In, I accept the EatWave's <Link to="/terms-and-conditions" className="font-semibold text-orange-400">Terms & Conditions & Privacy Policy</Link>
