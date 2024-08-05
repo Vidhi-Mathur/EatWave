@@ -12,34 +12,44 @@ export const AccountPage = () => {
     return (
         <Layout>
           <Content>
-            <div className="container mx-auto p-4">
-                <h1>{details.name}</h1>
-                <h1>{details.email}</h1>
-              <main className="flex">
-                <nav className="w-1/4 p-4 bg-gray-100">
-                  <ul>
-                    <li className="mb-2">
-                      <NavLink to="/my-account/orders" className="flex items-center p-2 hover:bg-white rounded">
-                        <span className="ml-2"><ShoppingBagIcon /> Orders</span>
-                      </NavLink>
-                    </li>
-                    <li className="mb-2">
-                      <NavLink to="/my-account/favorites" className="flex items-center p-2 hover:bg-white rounded">
-                        <span className="ml-2"><FavoriteIcon /> Favorites</span>
-                      </NavLink>
-                    </li>
-                    <li className="mb-2">
-                      <NavLink to="/my-account/addresses" className="flex items-center p-2 hover:bg-white rounded">
-                        <span className="ml-2"><LocationOnIcon /> Addresses</span>
-                      </NavLink>
-                    </li>
-                  </ul>
-                </nav>
-                <section className="w-3/4 p-4">
-                  <Outlet />
-                </section>
-              </main>
-              </div>
+                <div className="bg-orange-500 text-white p-8">
+                    <div className="container mx-auto">
+                        <h1 className="text-3xl font-bold">{details.name}</h1>
+                        <h1 className="text-lg">{details.email}</h1>
+                    </div>
+                </div>
+                <div className="container mx-auto p-4">
+                    <main className="flex bg-white shadow-lg rounded-lg overflow-hidden">
+                        <nav className="w-1/4 p-4 bg-orange-100">
+                          <ul>
+                            <li className="mb-2">
+                              <NavLink to="/my-account/orders" className={({ isActive }) => `flex items-center p-3 rounded-lg ${
+                                isActive ? 'bg-orange-500 text-white' : 'hover:bg-orange-200'}`}>
+                                <ShoppingBagIcon className="mr-3"/>
+                                <span>Orders</span>
+                              </NavLink>
+                            </li>
+                            <li className="mb-2">
+                              <NavLink to="/my-account/favorites" className={({ isActive }) => `flex items-center p-3 rounded-lg ${
+                                isActive ? 'bg-orange-500 text-white' : 'hover:bg-orange-200'}`}>
+                                <FavoriteIcon className="mr-3"/>
+                                <span>Favorites</span>
+                              </NavLink>
+                            </li>
+                            <li className="mb-2">
+                              <NavLink to="/my-account/addresses" className={({ isActive }) => `flex items-center p-3 rounded-lg ${
+                                isActive ? 'bg-orange-500 text-white' : 'hover:bg-orange-200'}`}>
+                                <LocationOnIcon className="mr-3"/>
+                                <span>Addresses</span>
+                              </NavLink>
+                            </li>
+                          </ul>
+                        </nav>
+                        <section className="w-3/4 p-4">
+                          <Outlet />
+                        </section>
+                    </main>
+                </div>
             </Content>
         </Layout>
     )
