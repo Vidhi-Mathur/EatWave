@@ -36,9 +36,9 @@ const TopPicks = () => {
     }, []);
 
     const settings = {
-        infinite: true,
+        infinite: topRestaurants.length > 2,
         speed: 500,
-        slidesToShow: 3,
+        slidesToShow: Math.min(topRestaurants.length, 3),
         slidesToScroll: 1,
         prevArrow: <Arrow direction="left"/>,
         nextArrow: <Arrow direction="right" />,
@@ -46,8 +46,8 @@ const TopPicks = () => {
             breakpoint: 1024,
             settings: {
                 dots: true,
-                infinite: true,
-                slidesToShow: 2,
+                infinite: topRestaurants.length > 1,
+                slidesToShow: Math.min(topRestaurants.length, 2),
                 slidesToScroll: 1
             }
         }, 
@@ -75,8 +75,8 @@ const TopPicks = () => {
             {errors && <ErrorDialog errors={errors} onClose={closeErrorDialogHandler}/>}
             {topRestaurants.length > 0 && (
                 <Slider {...settings} className='mx-4'>
-                    {topRestaurants.map((restaurant, idx) => (
-                       <div key={idx} className='p-2'>
+                    {topRestaurants.map((restaurant) => (
+                       <div key={restaurant._id} className='p-2'>
                         <Card className="p-4">
                                 <Link to={`/restaurant/${restaurant._id}`} className="flex flex-col h-full">
                                     <div className="relative h-48">
