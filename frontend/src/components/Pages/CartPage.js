@@ -56,7 +56,7 @@ export const CartPage = () => {
     let platformFee = 10
     let gstCharges = (totalPrice * 0.05).toFixed(2) //5%
     let packagingCharges = restaurantData?.packagingCharges || 0
-    let gstAndRestaurantCharges = parseFloat(gstCharges) + packagingCharges
+    let gstAndRestaurantCharges = parseInt(gstCharges) + packagingCharges
     let totalToPay = totalPrice + deliveryFee + platformFee + gstAndRestaurantCharges
 
     useEffect(() => {
