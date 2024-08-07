@@ -184,7 +184,7 @@ export const AddRestaurant = () => {
     setIsLoading(true) 
     let imageUrls = [];
     if (formData.restaurantImages.length > 0) {
-      let folder = 'restaurant_images';
+      let folder = 'restaurant_images_production';
       imageUrls = await uploadImageHandler(formData.restaurantImages, folder, token);
     }
     const filteredData = Object.fromEntries(
