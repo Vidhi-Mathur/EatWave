@@ -28,7 +28,7 @@ export const AddReview = forwardRef(({orderId, restaurantId, existingReview, upd
     const modalHandler = async(confirmed) => {
         if(confirmed){
             let imageUrl = addReview.imageUrl
-            let folder = 'review_images'
+            let folder = 'review_images_production'
             let previousImageUrl = existingReview? existingReview.imageUrl: null
             if(selectedFile){
                 const imageFormData = new FormData()
@@ -113,7 +113,17 @@ export const AddReview = forwardRef(({orderId, restaurantId, existingReview, upd
         {errors && <ErrorDialog errors={errors} onClose={closeErrorDialogHandler}/>}
         <div className="flex items-center justify-center">
             <div className="bg-white rounded-lg p-8">
-                <Rating name="rating" value={addReview.rating || 0} onChange={(e, newRating) => changeHandler(e, newRating)} readOnly={!editReview}/>
+                {editReview? (
+                    <Rating name="rating" value={addReview.rating || 0} onChange={(e, newRating) => changeHandler(e, newRating)} />
+                ): (
+                    <div className="flex">
+                    {[...Array(5)].map((index) => (
+                        <svg key={index} className={`w-6 h-6 ${index < addReview.rating ? 'text-yellow-500' : 'text-gray-300'}`} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049.75a1.13 1.13 0 011.902 0l1.885 3.824 4.217.613a1.13 1.13 0 01.627 1.932l-3.053 2.977.72 4.196a1.13 1.13 0 01-1.64 1.194L10 14.305l-3.766 1.98a1.13 1.13 0 01-1.64-1.194l.72-4.196L2.261 7.12a1.13 1.13 0 01.627-1.932l4.217-.613L9.049.75z" />
+                        </svg>
+                    ))}
+                </div>
+                )}
                 <textarea id="comments" type="text" name="comments" className="border p-2 w-full mb-4" placeholder="comments" onChange={changeHandler} value={addReview.comments || ""} readOnly={!editReview}/>
                 {editReview? (
                     <input type="file" name="reviewImage" accept='image/*' className="border p-2 w-full mb-4" onChange={changeHandler} />
