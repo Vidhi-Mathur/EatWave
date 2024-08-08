@@ -2,7 +2,7 @@ import { useCallback, useContext, useState } from "react";
 import { CartContext } from "../../store/Cart-Context";
 import { AuthContext } from "../../store/Auth-Context";
 import { Card } from "../UI/Card";
-import Layout from "../UI/Layout";
+import { Layout }from "../UI/Layout";
 import { ErrorDialog } from "../UI/ErrorDialog";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from '../../assets/OrderPage.jpeg'
