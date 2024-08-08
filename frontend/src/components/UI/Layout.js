@@ -1,8 +1,7 @@
-import React from "react";
-import Header from "../UI/Header";
+import { Header } from "../UI/Header";
 import backgroundImage from "../../assets/DefaultPage.jpeg";
 
-const Layout = ({children, customisedImageUrl}) => {
+export const Layout = ({children, customisedImageUrl}) => {
     return (
       <div className="relative">
         <Header />
@@ -15,6 +14,4 @@ const Layout = ({children, customisedImageUrl}) => {
       </div>
     )
 }
-
-export default Layout
 

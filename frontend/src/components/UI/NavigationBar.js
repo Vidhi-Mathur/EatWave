@@ -28,7 +28,7 @@ const NavLinks = (props) => {
     )
 }
 
-const NavigationBar = (props) => {
+export const NavigationBar = (props) => {
     const [isOpen, setOpen] = useState(false);
 
     const toggleNavBar = () => {
@@ -49,5 +49,3 @@ const NavigationBar = (props) => {
         </>
     );
 }
-
-export default NavigationBar

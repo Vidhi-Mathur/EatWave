@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 import logo from '../../assets/EatWaveLogo.png';
-import NavigationBar from './NavigationBar';
+import { NavigationBar } from './NavigationBar';
 
-const Header = (props) => {
+export const Header = (props) => {
   return (
     <header className='sticky top-0 z-50 mx-auto flex w-full max-w-8xl items-center justify-between border-b border-orange-400 bg-transparent p-[1em] text-black font-sans font-bold backdrop-blur-[100px]'>
       <Link to="/" className="flex items-center">
@@ -13,5 +13,3 @@ const Header = (props) => {
     </header>
   )
 }
-
-export default Header;
