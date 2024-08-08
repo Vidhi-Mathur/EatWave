@@ -33,7 +33,7 @@ exports.postSignup = async(req, res, next) => {
         let refreshToken = generateRefreshToken({ _id: newUser._id })
         newUser.refreshToken = refreshToken
         await newUser.save()
-        res.status(200).json({accessToken, refreshToken, message: newUser})
+        res.status(200).json({accessToken, refreshToken, name: newUser.name, email: newUser.email})
     }
     catch(err) {
         next(err)
