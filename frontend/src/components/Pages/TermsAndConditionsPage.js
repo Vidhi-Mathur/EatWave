@@ -1,8 +1,8 @@
 import React from "react";
 import backgroundImage from '../../assets/TermsAndConditionsPage.jpeg'
-import Layout from "../UI/Layout";
+import { Layout }from "../UI/Layout";
 
-const TermsAndConditions = () => {
+export const TermsAndConditions = () => {
   return (
     <Layout customisedImageUrl={backgroundImage}>
   <div className="container mx-auto px-4 py-8 max-h-[calc(100vh-98px)] overflow-y-auto">
@@ -70,4 +70,3 @@ const TermsAndConditions = () => {
   );
 };
 
-export default TermsAndConditions;

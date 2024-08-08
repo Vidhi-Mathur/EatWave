@@ -1,10 +1,10 @@
 import React, { Suspense, useState } from "react"
 import backgroundImage from '../../assets/AuthPage.jpg'
-import Layout from "../UI/Layout"
+import { Layout }from "../UI/Layout"
 
 const AuthForm = React.lazy(() => import("../user-related/AuthForm"))
 
-const AuthFormPage = ({signup}) => {
+export const AuthFormPage = ({signup}) => {
     const [signupMode, setSignupMode] = useState(signup)
     const toggleHandler = () => {
         setSignupMode(prevMode => !prevMode)
@@ -19,6 +19,4 @@ const AuthFormPage = ({signup}) => {
         </>
     )
 }
-
-export default AuthFormPage
 

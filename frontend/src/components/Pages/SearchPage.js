@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import SearchSharpIcon from '@mui/icons-material/SearchTwoTone';
-import Layout from "../UI/Layout"
+import { Layout }from "../UI/Layout"
 import SearchFood from "../../assets/SearchFood.jpg"
 import { SuggestionList } from "../user-related/SuggestionList";
 import { SearchList } from "../user-related/SearchList";

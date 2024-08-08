@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { AccessTime, Phone, Email, LocationOn, Restaurant, CurrencyRupee, Star } from '@mui/icons-material';
-import Layout from "../UI/Layout";
+import { Layout }from "../UI/Layout";
 import { Content } from "../UI/Content";
 import { Menu } from "../restaurant-related/Menu";
 import { Review } from "../restaurant-related/Review";
@@ -10,7 +10,7 @@ import { ErrorDialog } from "../UI/ErrorDialog";
 import { LoadingSpinner } from "../UI/LoadingSpinner";
 import backgroundImage from '../../assets/RestaurantDetailPage.jpeg'
 
-const RestaurantDetailPage = () => {
+export const RestaurantDetailPage = () => {
     const { restaurantId } = useParams();
     const [restaurantDetail, setRestaurantDetail] = useState(null);
     const [active, setActive] = useState('menu')
@@ -140,5 +140,3 @@ const RestaurantDetailPage = () => {
         </Layout>
     );
 }
-
-export default RestaurantDetailPage;

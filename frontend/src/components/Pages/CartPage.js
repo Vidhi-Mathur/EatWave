@@ -7,7 +7,7 @@ import AddIcon from "@mui/icons-material/Add";
 import EmptyCart from '../../assets/EmptyCartPage.jpg'
 import NonEmptyCart from '../../assets/NonEmptyCartPage.jpeg'
 import { CartContext } from "../../store/Cart-Context";
-import Layout from "../UI/Layout";
+import { Layout }from "../UI/Layout";
 import { Content } from "../UI/Content";
 import { Card } from "../UI/Card";
 import { ErrorDialog } from "../UI/ErrorDialog";

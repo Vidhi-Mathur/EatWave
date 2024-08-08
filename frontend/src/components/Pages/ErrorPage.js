@@ -1,5 +1,5 @@
 import { Card } from "../UI/Card";
-import Layout from "../UI/Layout";
+import { Layout }from "../UI/Layout";
 import { Link } from "react-router-dom"
 import backgroundImage from '../../assets/NotFoundPage.jpeg'
 

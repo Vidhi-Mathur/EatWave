@@ -1,4 +1,4 @@
-import Layout from "../UI/Layout"
+import { Layout }from "../UI/Layout"
 import { AddRestaurant } from "../restaurant-related/AddRestaurant"
 import backgroundImage from "../../assets/AddRestaurantPage.jpg"
 

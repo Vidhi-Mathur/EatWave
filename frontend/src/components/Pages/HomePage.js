@@ -1,11 +1,11 @@
 import React, { Suspense, useState } from "react";
-import Layout from "../UI/Layout";
+import { Layout }from "../UI/Layout";
 import { SortMenu } from "../UI/SortMenu";
 import { FilterDialog } from "../UI/FilterDialog";
 import { SortedRestaurants } from "../restaurant-related/SortedRestaurants";
 let TopPicks = React.lazy(() => import("../restaurant-related/TopPicks"))
 
-const HomePage = () => {
+export const HomePage = () => {
 const [restaurants, setRestaurants] = useState([])
   return (
     <Layout>
@@ -23,5 +23,3 @@ const [restaurants, setRestaurants] = useState([])
     </Layout>
   );
 };
-
-export default HomePage;
