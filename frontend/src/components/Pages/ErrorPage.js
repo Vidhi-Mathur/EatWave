@@ -1,10 +1,11 @@
 import { Card } from "../UI/Card";
 import Layout from "../UI/Layout";
 import { Link } from "react-router-dom"
+import backgroundImage from '../../assets/NotFoundPage.jpeg'
 
 export const ErrorPage = () => {
     return (
-        <Layout>
+        <Layout customisedImageUrl={backgroundImage}>
             <Card className="p-6">
             <div className="flex flex-col items-center justify-center h-full">
                 <h1 className="text-4xl font-bold text-center text-gray-900 mb-4">Oops!</h1>

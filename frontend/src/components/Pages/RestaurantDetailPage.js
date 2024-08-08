@@ -8,6 +8,7 @@ import { Review } from "../restaurant-related/Review";
 import { Photos } from "../restaurant-related/Photos";
 import { ErrorDialog } from "../UI/ErrorDialog";
 import { LoadingSpinner } from "../UI/LoadingSpinner";
+import backgroundImage from '../../assets/RestaurantDetailPage.jpeg'
 
 const RestaurantDetailPage = () => {
     const { restaurantId } = useParams();
@@ -43,7 +44,7 @@ const RestaurantDetailPage = () => {
     }
 
     return (
-        <Layout>
+        <Layout customisedImageUrl={backgroundImage}>
             <Content>
                 {loading && <LoadingSpinner />}
                 {errors && <ErrorDialog errors={errors} onClose={closeErrorDialogHandler}/>}

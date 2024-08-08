@@ -1,5 +1,5 @@
 import React, { Suspense, useState } from "react"
-import backgroundImage from '../../assets/EatWaveBg2.jpg'
+import backgroundImage from '../../assets/AuthPage.jpg'
 import Layout from "../UI/Layout"
 
 const AuthForm = React.lazy(() => import("../user-related/AuthForm"))

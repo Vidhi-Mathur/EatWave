@@ -4,7 +4,8 @@ import { IconButton, Tooltip } from "@mui/material";
 import Info from "@mui/icons-material/Info";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
-import EmptyPlate from '../../assets/EmptyPlate.jpg'
+import EmptyCart from '../../assets/EmptyCartPage.jpg'
+import NonEmptyCart from '../../assets/NonEmptyCartPage.jpeg'
 import { CartContext } from "../../store/Cart-Context";
 import Layout from "../UI/Layout";
 import { Content } from "../UI/Content";
@@ -18,7 +19,7 @@ export const CartPage = () => {
     const [errors, setErrors] = useState(null)
     const [loading, setLoading] = useState(true)
 
-    const emptyCart = items.length === 0 ? EmptyPlate : null;
+    const emptyCart = items.length === 0 ? EmptyCart : NonEmptyCart;
 
     useEffect(() => {
         const fetchRestaurantDetails = async () => {

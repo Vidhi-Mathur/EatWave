@@ -1,5 +1,5 @@
 import React from "react";
-import backgroundImage from '../../assets/EatWaveLogo1.png'
+import backgroundImage from '../../assets/TermsAndConditionsPage.jpeg'
 import Layout from "../UI/Layout";
 
 const TermsAndConditions = () => {
