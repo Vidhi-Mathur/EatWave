@@ -1,14 +1,12 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import HomePage from './components/Pages/HomePage';
-import AuthFormPage from './components/Pages/AuthPage.js';
-import TermsAndConditions from './components/Pages/TermsAndConditionsPage';
-import RestaurantDetailPage from './components/Pages/RestaurantDetailPage.js';
+import { HomePage }from './components/Pages/HomePage';
+import { AuthFormPage }from './components/Pages/AuthPage.js';
+import { TermsAndConditions } from './components/Pages/TermsAndConditionsPage';
+import { RestaurantDetailPage } from './components/Pages/RestaurantDetailPage.js';
 import { CartPage } from './components/Pages/CartPage.js';
 import { OrderPage } from './components/Pages/OrderPage.js';
 import { ErrorPage } from './components/Pages/ErrorPage.js';
-import { Cancel } from './components/Pages/Cancel.js';
-import { SuccessPage } from './components/Pages/SuccessPage.js';
 import { AccountPage } from './components/Pages/AccountPage.js';
 import { PastOrders } from './components/user-related/PastOrders.js';
 import { AddRestaurantPage } from './components/Pages/AddRestaurantPage.js';
@@ -16,7 +14,7 @@ import { SearchPage } from './components/Pages/SearchPage.js';
 import { ProtectedRoutes } from './components/user-related/ProtectedRoutes.js';
 
 function App() {
-  return (
+    return (
     <div className="App">
       <Router>
             <Routes>
@@ -29,11 +27,10 @@ function App() {
               <Route element={<ProtectedRoutes />}>
                   <Route path='/cart' element={<CartPage />} />
                   <Route path='/order' element={<OrderPage />} />
-                  <Route path='/cancel' element={<Cancel />} />
-                  <Route path='/success' element={<SuccessPage />} />
                   <Route path="/my-account" element={<AccountPage />}>
-                    <Route path="orders" element={<PastOrders />} />
-                    {/* <Route path="/favorites" element={} /> */}
+                        <Route index element={<PastOrders />} />
+                        <Route path="orders" element={<PastOrders />} />
+                        {/* <Route path="/favorites" element={} /> */}
                   </Route>
                   <Route path='/restaurant/add-restaurant' element={<AddRestaurantPage />} />
               </Route>
