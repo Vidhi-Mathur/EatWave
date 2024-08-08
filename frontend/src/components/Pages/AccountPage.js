@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from "react-router-dom"
+import { NavLink, Outlet, useLocation } from "react-router-dom"
 import { Content } from "../UI/Content"
 import Layout from "../UI/Layout"
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
@@ -6,11 +6,16 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { useContext } from "react";
 import { AuthContext } from "../../store/Auth-Context";
+import backgroundImage from "../../assets/AccountPage.jpeg"
 
 export const AccountPage = () => {
     const { details } = useContext(AuthContext)
+    const location = useLocation()
+
+    const isOrdersActive = location.pathname === '/my-account' || location.pathname === '/my-account/orders';
+
     return (
-        <Layout>
+        <Layout customisedImageUrl={backgroundImage}>
           <Content>
                 <div className="bg-orange-500 text-white p-8">
                     <div className="container mx-auto">
@@ -19,12 +24,12 @@ export const AccountPage = () => {
                     </div>
                 </div>
                 <div className="container mx-auto p-4">
-                    <main className="flex bg-white shadow-lg rounded-lg overflow-hidden">
-                        <nav className="w-1/4 p-4 bg-orange-100">
+                    <main className="flex flex-col md:flex-row bg-white shadow-lg rounded-lg overflow-hidden">
+                        <nav className="w-full md:w-1/4 p-4 bg-orange-100">
                           <ul>
                             <li className="mb-2">
-                              <NavLink to="/my-account/orders" className={({ isActive }) => `flex items-center p-3 rounded-lg ${
-                                isActive ? 'bg-orange-500 text-white' : 'hover:bg-orange-200'}`}>
+                              <NavLink to="/my-account/orders" className={ `flex items-center p-3 rounded-lg ${
+                                isOrdersActive ? 'bg-orange-500 text-white' : 'hover:bg-orange-200'}`}>
                                 <ShoppingBagIcon className="mr-3"/>
                                 <span>Orders</span>
                               </NavLink>
@@ -45,7 +50,7 @@ export const AccountPage = () => {
                             </li>
                           </ul>
                         </nav>
-                        <section className="w-3/4 p-4">
+                        <section className="w-full md:w-3/4 p-4">
                           <Outlet />
                         </section>
                     </main>
