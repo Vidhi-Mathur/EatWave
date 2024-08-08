@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import logo from '../../assets/EatWaveLogo2.png';
+import logo from '../../assets/EatWaveLogo.png';
 import NavigationBar from './NavigationBar';
 
 const Header = (props) => {

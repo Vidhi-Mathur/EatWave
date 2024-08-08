@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "../UI/Header";
-import backgroundImage from "../../assets/EatWaveBg.jpeg";
+import backgroundImage from "../../assets/DefaultPage.jpeg";
 
 const Layout = ({children, customisedImageUrl}) => {
     return (
