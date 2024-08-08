@@ -2,6 +2,7 @@ import { useEffect, useState, useContext, useRef } from "react";
 import { AuthContext } from "../../store/Auth-Context";
 import { AddReview } from "./AddReview";
 import { ErrorDialog } from "../UI/ErrorDialog";
+import { LoadingSpinner } from "../UI/LoadingSpinner";
 
 const formattedDate = (dateString) => {
     const options = { 
@@ -23,6 +24,7 @@ export const PastOrders = () => {
     const [ reviews, setReviews ] = useState({})
     const [ currentOrderId, setCurrentOrderId ] = useState(null)
     const [ errors, setErrors ] = useState(null)
+    const [loading, setLoading] = useState(true);
     const dialog = useRef()
 
     const openModalHandler = (orderId) => {
@@ -121,10 +123,12 @@ export const PastOrders = () => {
                 }
                 setOrders(result.orders);
                 result.orders.forEach(order => fetchReviewByOrderId(order._id))
+                setLoading(false);
                 return result
             } 
             catch (err) {
                 setErrors([err.message || "Fetching Previous Orders failed, try again later"])
+                setLoading(false);
                 return
             }
         };
@@ -144,12 +148,9 @@ export const PastOrders = () => {
             <h1 className="text-2xl font-bold mb-4">Past Orders</h1>
             {errors && <ErrorDialog errors={errors} onClose={closeErrorDialogHandler} />}
             <ul className="space-y-4">
-                {orders === null && (
-                <div className="flex justify-center items-center h-screen">
-                    <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
-                </div>)}
-                {orders !== null && orders.length === 0 && <p>No orders placed yet</p>}
-                {orders !== null && orders.length > 0 && orders.map(order => (
+                {loading && <LoadingSpinner />}
+                {!loading && orders && orders.length === 0 && <p>No orders placed yet</p>}
+                {!loading && orders && orders.length > 0 && orders.map(order => (
                     <li key={order._id} className="border rounded p-4 shadow">
                         <h1 className="font-semibold">ORDER #{order._id}</h1>
                         <p className="text-gray-700">from {order.restaurant.restaurantName}</p>
