@@ -1,7 +1,5 @@
 import { NavLink } from "react-router-dom";
 import SearchSharpIcon from '@mui/icons-material/SearchTwoTone';
-import HelpOutlineSharpIcon from '@mui/icons-material/HelpOutlineSharp';
-import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
 import LoginIcon from '@mui/icons-material/Login';
 import ShoppingCartSharpIcon from '@mui/icons-material/ShoppingCartSharp';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -17,8 +15,6 @@ const NavLinks = (props) => {
     return (
         <>
         <NavLink to="/search" className="mr-4 md:mr-16"><SearchSharpIcon /> Search</NavLink>
-        <NavLink to="/offers" className="mr-4 md:mr-16"><LocalOfferOutlinedIcon /> Offers</NavLink>
-        <NavLink to="/help" className="mr-4 md:mr-16"><HelpOutlineSharpIcon /> Help</NavLink> 
         {isAuthenticated? (
             <>
             <NavLink to="/cart" className="mr-4 md:mr-16"><ShoppingCartSharpIcon /> Cart</NavLink>
