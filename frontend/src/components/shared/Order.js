@@ -5,6 +5,7 @@ import { Card } from "../UI/Card";
 import Layout from "../UI/Layout";
 import { ErrorDialog } from "../UI/ErrorDialog";
 import { useNavigate } from "react-router-dom";
+import backgroundImage from '../../assets/OrderPage.jpeg'
 
 export const Order = () => {
     const { restaurantId, items, finalCost, clearCart } = useContext(CartContext);
@@ -141,7 +142,7 @@ export const Order = () => {
     
 
     return (
-        <Layout>
+        <Layout customisedImageUrl={backgroundImage}>
             <Card className="p-6">
                 {errors && <ErrorDialog errors={errors} onClose={closeErrorDialogHandler} />}
                 <form className="space-y-4" onSubmit={orderHandler}>
