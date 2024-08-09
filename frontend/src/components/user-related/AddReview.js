@@ -52,7 +52,7 @@ export const AddReview = forwardRef(({orderId, restaurantId, existingReview, upd
                 restaurant: restaurantId,
                 imageUrl
             }
-            let url = `https://eatwave-api.onrender.com/review/${existingReview? existingReview._id: orderId}`
+            let url = `${process.env.REACT_APP_API_URL}/review/${existingReview? existingReview._id: orderId}`
             let method = existingReview? 'PATCH': 'POST'
             try {
                 let response = await fetch(url, {

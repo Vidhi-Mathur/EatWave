@@ -1,5 +1,5 @@
 export const applyFilter = async(filters) => {
-    const url = "https://eatwave-api.onrender.com/restaurant/filter";
+    const url = `${process.env.REACT_APP_API_URL}/restaurant/filter`;
     const options = {
         method: 'POST',
         headers: {

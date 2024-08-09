@@ -65,7 +65,7 @@ export const Order = () => {
         };
 
         try {
-            const checkoutResponse = await fetchWithAuth('https://eatwave-api.onrender.com/order/checkout', {
+            const checkoutResponse = await fetchWithAuth(`${process.env.REACT_APP_API_URL}/order/checkout`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -90,7 +90,7 @@ export const Order = () => {
                 order_id: checkoutResult.order,
                 handler: async (response) => {
                     try {
-                        const orderResult = await fetchWithAuth('https://eatwave-api.onrender.com/order/place', {
+                        const orderResult = await fetchWithAuth(`${process.env.REACT_APP_API_URL}/order/place`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',

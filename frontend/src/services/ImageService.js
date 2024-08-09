@@ -6,7 +6,7 @@ export const uploadImageHandler = async (files, folder, token) => {
       }
       imageFormData.append('folder', folder);
   
-      const imageResponse = await fetch('https://eatwave-api.onrender.com/upload-image', {
+      const imageResponse = await fetch(`${process.env.REACT_APP_API_URL}/upload-image`, {
         method: 'POST',
         headers: {
           'Authorization': token ? `Bearer ${token}` : ''
@@ -35,7 +35,7 @@ export const uploadImageHandler = async (files, folder, token) => {
         let publicIdWithExtension = urlParts.pop(); 
         //Removing file extension
         const publicId = publicIdWithExtension.split('.').slice(0, -1).join('.');
-            await fetch('https://eatwave-api.onrender.com/delete-image', {
+            await fetch(`${process.env.REACT_APP_API_URL}/delete-image`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

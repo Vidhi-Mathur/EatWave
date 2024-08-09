@@ -39,7 +39,7 @@ export const PastOrders = () => {
 
     const fetchReviewByOrderId = async(orderId) => {
         try {
-            let response = await fetch(`https://eatwave-api.onrender.com/review/order/${orderId}`, {
+            let response = await fetch(`${process.env.REACT_APP_API_URL}/review/order/${orderId}`, {
                 headers: {
                     'Authorization': token ? `Bearer ${token}` : ' '
                 }
@@ -49,7 +49,7 @@ export const PastOrders = () => {
                 if(response.status === 401){
                     const refreshResponse = await fetchRefreshToken()
                     if(refreshResponse){
-                        response = await fetch(`https://eatwave-api.onrender.com/review/order/${orderId}`, {
+                        response = await fetch(`${process.env.REACT_APP_API_URL}/review/order/${orderId}`, {
                             headers: {
                                 'Authorization': `Bearer ${refreshResponse.accessToken}`
                             }
@@ -86,7 +86,7 @@ export const PastOrders = () => {
     useEffect(() => {
         const fetchPastOrders = async () => {
             try {
-                let response = await fetch("https://eatwave-api.onrender.com/order/user_history", {
+                let response = await fetch(`${process.env.REACT_APP_API_URL}/order/user_history`, {
                     headers: {
                         'Authorization': token ? `Bearer ${token}` : ' '
                     }
@@ -96,7 +96,7 @@ export const PastOrders = () => {
                     if(response.status === 401){
                         const refreshResponse = await fetchRefreshToken()
                         if(refreshResponse){
-                            response = await fetch("https://eatwave-api.onrender.com/order/user_history", {
+                            response = await fetch(`${process.env.REACT_APP_API_URL}/order/user_history`, {
                                 headers: {
                                     'Authorization': `Bearer ${refreshResponse.accessToken}`
                                 }
