@@ -19,12 +19,14 @@ export const CartPage = () => {
     const [errors, setErrors] = useState(null)
     const [loading, setLoading] = useState(true)
 
-    const emptyCart = items.length === 0 ? EmptyCart : NonEmptyCart;
+    const isCartEmpty = items.length === 0;
+    const emptyCart = isCartEmpty ? EmptyCart : NonEmptyCart;
 
     useEffect(() => {
         const fetchRestaurantDetails = async () => {
+            if (isCartEmpty || !restaurantId) return;
             try {
-                const response = await fetch(`https://eatwave-api.onrender.com/restaurant/${restaurantId}`);
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/restaurant/${restaurantId}`);
                 const result = await response.json();
                 if (!response.ok) {
                     const errorMessages = result.errors ? result.errors.map(err => err.msg) : [result.message];
@@ -41,7 +43,7 @@ export const CartPage = () => {
             }
         };
     fetchRestaurantDetails();
-    }, [restaurantId]);
+    }, [restaurantId, isCartEmpty]);
 
     const totalPrice = items.reduce(
         (sum, item) => sum + item.price * item.quantity,
@@ -66,7 +68,7 @@ export const CartPage = () => {
 
     return (
         <Layout customisedImageUrl={emptyCart}>   
-        {emptyCart? (
+        {isCartEmpty? (
         <Card className="p-6">
           <div className="flex flex-col items-center justify-center h-full">
               <h1 className="text-4xl font-bold text-center text-gray-900 mb-4">Your Cart is Empty</h1>
