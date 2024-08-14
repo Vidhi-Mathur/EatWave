@@ -12,8 +12,8 @@ export const AccountPage = () => {
     const { details } = useContext(AuthContext)
     const location = useLocation()
 
-    const isOrdersActive = location.pathname === '/my-account' || location.pathname === '/my-account/orders';
-
+    const isOrdersActive = location.pathname.startsWith('/my-account/orders') || location.pathname === '/my-account';
+    
     return (
         <Layout customisedImageUrl={backgroundImage}>
           <Content>
