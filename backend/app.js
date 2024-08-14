@@ -10,10 +10,10 @@ const server = http.createServer(app)
 //Initialising and configuring socket.io with http server
 const io = new Server(server, {
     cors: {
-        origin: process.env.CLIENT_URL, // Allow requests from this origin
-        methods: ["GET", "POST"], // Allow these HTTP methods
-        allowedHeaders: ["Authorization"], // Allow these headers if needed
-        credentials: true // Allow credentials like cookies to be sent
+        origin: process.env.CLIENT_URL, 
+        methods: ["GET", "POST"],
+        allowedHeaders: ["Authorization"], 
+        credentials: true 
     }
 });
 const authRoutes = require('./routes/user-related/authentication-route')
