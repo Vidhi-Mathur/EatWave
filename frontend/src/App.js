@@ -12,6 +12,7 @@ import { PastOrders } from './components/user-related/PastOrders.js';
 import { AddRestaurantPage } from './components/Pages/AddRestaurantPage.js';
 import { SearchPage } from './components/Pages/SearchPage.js';
 import { ProtectedRoutes } from './components/user-related/ProtectedRoutes.js';
+import { TrackOrder } from './components/user-related/TrackOrder.js';
 
 function App() {
     return (
@@ -30,6 +31,7 @@ function App() {
                   <Route path="/my-account" element={<AccountPage />}>
                         <Route index element={<PastOrders />} />
                         <Route path="orders" element={<PastOrders />} />
+                        <Route path="orders/track-order/:orderId" element={<TrackOrder />} />
                         {/* <Route path="/favorites" element={} /> */}
                   </Route>
                   <Route path='/restaurant/add-restaurant' element={<AddRestaurantPage />} />
