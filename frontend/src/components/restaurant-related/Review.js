@@ -11,7 +11,7 @@ export const Review = ({restaurantId}) => {
     useEffect(() => {
         const fetchReviews = async() => {
             try {
-                const response = await fetch(`${process.env.SERVER_URL}/review/restaurant/${restaurantId}`)
+                const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/review/restaurant/${restaurantId}`)
                 const result = await response.json()
                 if(!response.ok) {
                     const errorMessages = result.errors ? result.errors.map(err => err.msg) : [result.message];

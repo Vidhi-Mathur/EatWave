@@ -16,7 +16,7 @@ export const TrackOrder = () => {
 
     useEffect(() => {
         //Establishing socket connection after configuring
-        socket.current = io(process.env.SERVER_URL, {
+        socket.current = io(process.env.REACT_APP_SERVER_URL, {
             auth: {
                 token: `Bearer ${token}`
             },
@@ -26,7 +26,7 @@ export const TrackOrder = () => {
         //To fetch initial order status
         const fetchOrderStatus = async () => {
             try {
-                const response = await fetch(`${process.env.SERVER_URL}/order/${orderId}`, {
+                const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/order/${orderId}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     },

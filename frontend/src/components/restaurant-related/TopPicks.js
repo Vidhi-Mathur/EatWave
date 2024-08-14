@@ -17,7 +17,7 @@ const TopPicks = () => {
     useEffect(() => {
         const fetchTopRestaurants = async () => {
             try {
-                const response = await fetch(`${process.env.SERVER_URL}/review/top-rated-restaurants`);
+                const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/review/top-rated-restaurants`);
                 const result = await response.json();
                 if (!response.ok) {
                     setErrors(result.message)

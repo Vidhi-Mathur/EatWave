@@ -1,5 +1,5 @@
 export const applyFilter = async(filters) => {
-    const url = `${process.env.SERVER_URL}/restaurant/filter`;
+    const url = `${process.env.REACT_APP_SERVER_URL}/restaurant/filter`;
     const options = {
         method: 'POST',
         headers: {

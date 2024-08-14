@@ -20,7 +20,7 @@ export const SearchPage = () => {
             return;
         }
         try {
-            const response = await fetch(`${process.env.SERVER_URL}/search/suggestions?query=${q}`)
+            const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/search/suggestions?query=${q}`)
             const result = await response.json()
             if(!response.ok) {
                 const errorMessages = result.errors ? result.errors.map(err => err.msg) : [result.message];
@@ -42,7 +42,7 @@ export const SearchPage = () => {
             return;
         }
         try {
-            const response = await fetch(`${process.env.SERVER_URL}/search/results?query=${q}`)
+            const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/search/results?query=${q}`)
             const result = await response.json()
             if(!response.ok) {
                 const errorMessages = result.errors ? result.errors.map(err => err.msg) : [result.message];
