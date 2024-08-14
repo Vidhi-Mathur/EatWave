@@ -60,6 +60,8 @@ exports.placeOrder = async (req, res, next) => {
         existingRestaurant.pastOrders.push(order._id);
         await existingRestaurant.save();
         res.status(200).json({ order });
+        //Handle status updates
+        handleOrderStatusUpdates(order, req.io);
     } 
     catch (err) {
         next(err);
@@ -72,24 +74,6 @@ exports.getOrderByOrderId = async(req, res, next) => {
         const order = await Order.findById(orderId)
         if(!order) return res.status(404).json({message: 'Order not found'})
         res.status(200).json({ order })
-    }
-    catch(err) {
-        next(err)
-    }
-}
-
-exports.updateOrderStatus = async(req, res, next) => {
-    try {
-        const { orderId } = req.params
-        const { status } = req.body
-        // Validate status)
-        const valid = ['Placed', 'Confirmed', 'Preparing', 'On the way', 'Delivered', 'Cancelled'];
-        if (!valid.includes(status)) return res.status(400).json({ message: 'Invalid order status' });
-        const order = await Order.findById(orderId)
-        if(!order) return res.status(404).json({message: 'Order not found'})
-        order.status = status
-        await order.save()
-        return res.status(200).json()
     }
     catch(err) {
         next(err)
@@ -124,14 +108,20 @@ exports.getRestaurantOrderHistory = async(req, res, next) => {
     }
 }
 
-exports.cancelOrder = async(req, res, next) => {
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+const handleOrderStatusUpdates = async (order, io) => {
     try {
-        const { orderId } = req.params
-        const order = await Order.findById(orderId)
-        if(!order) return res.status(404).json({message: 'Order not found'})
-        order.status = 'Cancelled'
-        return res.status(200).json({ message: 'Order cancelled successfully' })
-    }
+        const statuses = ['Confirmed', 'Preparing', 'On the way', 'Delivered'];
+        for (let status of statuses) {
+            //Delay up to [1, 2] min
+            const randomTime = Math.floor(Math.random() * (120000 - 60000 + 1)) + 60000;
+            await delay(randomTime);
+            order.status = status;
+            await order.save();
+            io.emit('orderStatusUpdate', { orderId: order._id, status });
+        }
+    } 
     catch(err) {
         next(err)
     }
