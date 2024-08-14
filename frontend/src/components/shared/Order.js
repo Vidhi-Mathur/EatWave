@@ -65,7 +65,7 @@ export const Order = () => {
         };
 
         try {
-            const checkoutResponse = await fetchWithAuth(`${process.env.REACT_APP_API_URL}/order/checkout`, {
+            const checkoutResponse = await fetchWithAuth(`${process.env.SERVER_URL}/order/checkout`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -90,7 +90,7 @@ export const Order = () => {
                 order_id: checkoutResult.order,
                 handler: async (response) => {
                     try {
-                        const orderResult = await fetchWithAuth(`${process.env.REACT_APP_API_URL}/order/place`, {
+                        const orderResult = await fetchWithAuth(`${process.env.SERVER_URL}/order/place`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',

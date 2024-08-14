@@ -94,7 +94,7 @@ export const AddRestaurant = () => {
 
   const saveMenuHandler = async() => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/restaurant/menu/new`, {
+      const response = await fetch(`${process.env.SERVER_URL}/restaurant/menu/new`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -124,7 +124,7 @@ export const AddRestaurant = () => {
 
   const editMenuHandler = async() => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/restaurant/menu/${menuId}`, {
+      const response = await fetch(`${process.env.SERVER_URL}/restaurant/menu/${menuId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -211,7 +211,7 @@ export const AddRestaurant = () => {
       imageUrls
       };
     try {
-      let response = await fetch(`${process.env.REACT_APP_API_URL}/restaurant/new`, {
+      let response = await fetch(`${process.env.SERVER_URL}/restaurant/new`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -224,7 +224,7 @@ export const AddRestaurant = () => {
         if(response.status === 401) {
             const refreshResponse = await fetchRefreshToken()
             if(refreshResponse){
-                response = await fetch(`${process.env.REACT_APP_API_URL}/restaurant/new`, {
+                response = await fetch(`${process.env.SERVER_URL}/restaurant/new`, {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',

@@ -26,7 +26,7 @@ export const CartPage = () => {
         const fetchRestaurantDetails = async () => {
             if (isCartEmpty || !restaurantId) return;
             try {
-                const response = await fetch(`${process.env.REACT_APP_API_URL}/restaurant/${restaurantId}`);
+                const response = await fetch(`${process.env.SERVER_URL}/restaurant/${restaurantId}`);
                 const result = await response.json();
                 if (!response.ok) {
                     const errorMessages = result.errors ? result.errors.map(err => err.msg) : [result.message];

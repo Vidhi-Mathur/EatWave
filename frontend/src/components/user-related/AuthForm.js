@@ -19,7 +19,7 @@ const AuthForm = ({ signupMode, toggleHandler }) => {
         const form = new FormData(e.target)
         const data = Object.fromEntries(form.entries())
         try {
-            let url = signupMode? `${process.env.REACT_APP_API_URL}/signup`: `${process.env.REACT_APP_API_URL}/login`
+            let url = signupMode? `${process.env.SERVER_URL}/signup`: `${process.env.SERVER_URL}/login`
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
