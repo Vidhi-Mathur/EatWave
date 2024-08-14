@@ -35,7 +35,7 @@ export const AuthCtxProvider = ({ children }) => {
 
     const logout = async() => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/logout`, {
+            const response = await fetch(`${process.env.SERVER_URL}/logout`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ export const AuthCtxProvider = ({ children }) => {
     };
 
     const fetchRefreshToken = async() => {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/refresh-token`, {
+        const response = await fetch(`${process.env.SERVER_URL}/refresh-token`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
