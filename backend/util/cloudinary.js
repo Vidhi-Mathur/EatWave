@@ -12,8 +12,9 @@ exports.cloudinaryUpload = async(localStoragePath, folder) => {
     try {
         if(!localStoragePath) return null;
         const response = await cloudinary.uploader.upload(localStoragePath, {
-            resource_type: "auto",
-            folder
+            resource_type: "image",
+            folder,
+            format: "webp"
         });
         return response
     }
